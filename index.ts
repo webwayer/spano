@@ -12,8 +12,10 @@ import { setup3DScene, imageFrom3DScene } from "./lib/3d/scene";
 import { draw3DPoint } from "./lib/3d/draw";
 import { addShapes } from "./lib/3d/worlds/shapes";
 import { drawPoint, drawLine } from "./lib/2d/draw";
-import { Point, calculateTriangleFromCoordinates, calculateTriangleCustom2, lengthFromCoordinates } from "./lib/math";
+import { Point, calculateTriangleCustom2, lengthFromCoordinates } from "./lib/math";
 import { simple } from "./lib/3d/planes/simple";
+
+declare const google: any;
 
 async function drawControlPointsOn3DScene(steps, viewPoint, scene) {
     await draw3DPoint({ x: viewPoint.x, y: 0 }, 0x00ffff, scene);
@@ -56,10 +58,6 @@ async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
     console.log(shots);
     console.log(steps);
 
-    for (const step of steps) {
-        getPointsForViewport(step, 62.4)
-    }
-
     drawShots(shots, viewPoint);
 
     const [preview, images] = await ShitIn3D(steps, viewPoint);
@@ -81,6 +79,44 @@ async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
 
     const geoSteps = getGeoSteps(startPoint, directionPoint, steps);
 
+    await new Promise((resolve => {
+        setTimeout(resolve, 3000)
+    }));
+
+    const map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 17,
+        center: new google.maps.LatLng(geoSteps[0].geoPoint.lat, geoSteps[0].geoPoint.lon),
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+
+    for (let i = 0; i < steps.length; i++) {
+        const step = steps[i];
+        const geoStep = geoSteps[i];
+
+        const { bottomViewportOffset, topViewportOffset } = getPointsForViewport(step, 62.4);
+
+        const bottomLeftStepGeoPoint = getGeoPointFromStartPointDistanceBearing(getGeoPointFromStartPointDistanceBearing(startPoint, step.firstElement.pointOnTheGround.x, geoStep.heading), bottomViewportOffset, geoStep.heading - 90);
+        const bottomRightStepGeoPoint = getGeoPointFromStartPointDistanceBearing(getGeoPointFromStartPointDistanceBearing(startPoint, step.firstElement.pointOnTheGround.x, geoStep.heading), bottomViewportOffset, geoStep.heading + 90);
+        const topLeftStepGeoPoint = getGeoPointFromStartPointDistanceBearing(getGeoPointFromStartPointDistanceBearing(startPoint, step.lastElement.pointOnTheGround.x, geoStep.heading), topViewportOffset, geoStep.heading - 90);
+        const topRightStepGeoPoint = getGeoPointFromStartPointDistanceBearing(getGeoPointFromStartPointDistanceBearing(startPoint, step.lastElement.pointOnTheGround.x, geoStep.heading), topViewportOffset, geoStep.heading + 90);
+
+        new google.maps.Polygon({
+            paths: [
+                { lat: bottomLeftStepGeoPoint.lat, lng: bottomLeftStepGeoPoint.lon },
+                { lat: bottomRightStepGeoPoint.lat, lng: bottomRightStepGeoPoint.lon },
+                { lat: topRightStepGeoPoint.lat, lng: topRightStepGeoPoint.lon },
+                { lat: topLeftStepGeoPoint.lat, lng: topLeftStepGeoPoint.lon },
+                { lat: bottomLeftStepGeoPoint.lat, lng: bottomLeftStepGeoPoint.lon },
+            ],
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#FF0000',
+            fillOpacity: 0.35,
+            map
+        });
+    }
+
     makeLitchi(geoSteps);
 
     (<any>document.getElementById('preview')).onclick = async function () {
@@ -90,9 +126,15 @@ async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
 }
 
 function getPointsForViewport(step, hFov) {
-    const bottomViewSideTriangle = calculateTriangleCustom2({x:0,y:lengthFromCoordinates(step.shootingPoint, step.firstElement.pointOnTheGround)}, hFov / 2, { x: 0, y: 0 }, 90);
-    const topViewSideTriangle = calculateTriangleCustom2({x:0,y:lengthFromCoordinates(step.shootingPoint, step.lastElement.pointOnTheGround)}, hFov / 2, { x: 0, y: 0 }, 90);
-    console.log(bottomViewSideTriangle.B.x, -bottomViewSideTriangle.B.x, topViewSideTriangle.B.x, -topViewSideTriangle.B.x);
+    const bottomViewSideTriangle = calculateTriangleCustom2({
+        x: 0,
+        y: lengthFromCoordinates(step.shootingPoint, step.firstElement.pointOnTheGround)
+    }, hFov / 2, { x: 0, y: 0 }, 90);
+    const topViewSideTriangle = calculateTriangleCustom2({
+        x: 0,
+        y: lengthFromCoordinates(step.shootingPoint, step.lastElement.pointOnTheGround)
+    }, hFov / 2, { x: 0, y: 0 }, 90);
+    return { bottomViewportOffset: bottomViewSideTriangle.B.x, topViewportOffset: topViewSideTriangle.B.x }
 }
 
 async function processImages(steps, images, vFov, output) {
