@@ -13,6 +13,7 @@ import { draw3DPoint } from "./lib/3d/draw";
 import { addShapes } from "./lib/3d/worlds/shapes";
 import { drawPoint, drawLine } from "./lib/2d/draw";
 import { Point, calculateTriangleFromCoordinates, calculateTriangleCustom2, lengthFromCoordinates } from "./lib/math";
+import { simple } from "./lib/3d/planes/simple";
 
 async function drawControlPointsOn3DScene(steps, viewPoint, scene) {
     await draw3DPoint({ x: viewPoint.x, y: 0 }, 0x00ffff, scene);
@@ -25,6 +26,7 @@ async function drawControlPointsOn3DScene(steps, viewPoint, scene) {
 
 async function ShitIn3D(steps, viewPoint) {
     const { scene, camera, renderer } = await setup3DScene();
+    await simple(scene);
     //await addShapes(scene);
     await drawControlPointsOn3DScene(steps, viewPoint, scene);
 
