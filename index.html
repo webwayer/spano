@@ -1,0 +1,48 @@
+<style type="text/css">
+    #top_leftCanvas {
+        -moz-transform: scale(-1, -1);
+        -webkit-transform: scale(-1, -1);
+        -o-transform: scale(-1, -1);
+        transform: scale(-1, -1);
+    }
+    #bottom_leftCanvas {
+        -moz-transform: scale(-1, 1);
+        -webkit-transform: scale(-1, 1);
+        -o-transform: scale(-1, 1);
+        transform: scale(-1, 1);
+    }
+    #top_rightCanvas {
+        -moz-transform: scale(1, -1);
+        -webkit-transform: scale(1, -1);
+        -o-transform: scale(1, -1);
+        transform: scale(1, -1);
+    }
+    #bottom_rightCanvas {
+        -moz-transform: scale(1, 1);
+        -webkit-transform: scale(1, 1);
+        -o-transform: scale(1, 1);
+        transform: scale(1, 1);
+    }
+</style>
+
+<div id="real-output"></div>
+<div id="preview-output"></div>
+
+<input id="photos" type="file" multiple><br />
+<button id="preview">preview</button><br />
+
+<canvas style="border: 1px black solid" id="top_leftCanvas" width="800" height="500"></canvas>
+<canvas style="border: 1px black solid" id="top_rightCanvas" width="800" height="500"></canvas><br/>
+<canvas style="border: 1px black solid" id="bottom_leftCanvas" width="800" height="500"></canvas>
+<canvas style="border: 1px black solid" id="bottom_rightCanvas" width="800" height="500"></canvas>
+
+<script>
+    function getScript(src) {
+        const script = document.createElement('script');
+        script.src = src;
+        document.body.appendChild(script);
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+        getScript('dist/bundle.js?' + Math.random())
+    });
+</script>
