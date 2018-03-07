@@ -51,7 +51,7 @@ export function divideTriplesIntoSegmentsByErrors(pointTriples, shootingErrors) 
                 triples: currentSegment.triples,
                 avgError: currentSegment.errors.reduce((acc, err) => acc + err, 0) / currentSegment.errors.length
             });
-            currentSegment = { triples: [pointTriples[i], pointTriples[i + 1]], errors: [shootingErrors[i]] };
+            currentSegment = { triples: [pointTriples[i + 1]], errors: [] };
         } else {
             currentSegment.triples.push(pointTriples[i + 1]);
             currentSegment.errors.push(shootingErrors[i]);
@@ -135,6 +135,11 @@ export function divideSegmentsIntoShots(segments, maxViewAngle, maxDistortionAng
         }
         lastSegment = segment;
     }
+
+    for (let i = 1; i < shots.length; i++) {
+        shots[i].triples.unshift(shots[i - 1].triples[shots[i - 1].triples.length - 1]);
+    }
+
     return shots;
 }
 

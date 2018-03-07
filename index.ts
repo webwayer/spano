@@ -52,6 +52,7 @@ async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
     const pointTriples = getPointTriples(curve, viewPoint, 1);
     const shootingErrors = getShootingErrorsForTriples(pointTriples);
     const segments = divideTriplesIntoSegmentsByErrors(pointTriples, shootingErrors);
+    console.log(segments)
     const shots = divideSegmentsIntoShots(segments, maxViewAngle, maxDistortionAngle);
     const steps = convertShotsIntoSteps(shots);
 
@@ -80,7 +81,7 @@ async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
     const geoSteps = getGeoSteps(startPoint, directionPoint, steps);
 
     await new Promise((resolve => {
-        setTimeout(resolve, 3000)
+        setTimeout(resolve, 500)
     }));
 
     const map = new google.maps.Map(document.getElementById('map'), {
