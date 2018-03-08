@@ -46,7 +46,7 @@ export function divideTriplesIntoSegmentsByErrors(pointTriples, shootingErrors) 
     let currentSegment = { triples: [pointTriples[0], pointTriples[1]], errors: [shootingErrors[0]] };
     for (let i = 1; i < shootingErrors.length; i++) {
         const deltaError = Math.abs(shootingErrors[i] - shootingErrors[i - 1]);
-        if (deltaError > 0.1) {
+        if (deltaError > 0.1 && currentSegment.triples.length > 1) {
             segments.push({
                 triples: currentSegment.triples,
                 avgError: currentSegment.errors.reduce((acc, err) => acc + err, 0) / currentSegment.errors.length

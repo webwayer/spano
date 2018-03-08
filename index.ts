@@ -14,6 +14,7 @@ import { addShapes } from "./lib/3d/worlds/shapes";
 import { drawPoint, drawLine } from "./lib/2d/draw";
 import { Point, calculateTriangleCustom2, lengthFromCoordinates } from "./lib/math";
 import { simple } from "./lib/3d/planes/simple";
+import { StunningCurve } from "./lib/curves/StunningCurve";
 
 declare const google: any;
 
@@ -29,37 +30,34 @@ async function drawControlPointsOn3DScene(steps, viewPoint, scene) {
 async function ShitIn3D(steps, viewPoint) {
     const { scene, camera, renderer } = await setup3DScene();
     await simple(scene);
-    //await addShapes(scene);
+    await addShapes(scene);
     await drawControlPointsOn3DScene(steps, viewPoint, scene);
 
     const overviewImage = await imageFrom3DScene({
         x: -100, y: 200, z: 200
     }, {
         x: 200, y: 0, z: 0
-    }, scene, camera, renderer);
+    }, false, scene, camera, renderer);
 
     const shots = [];
     for (const step of steps) {
-        shots.push(await imageFrom3DScene(step.shootingPoint, step.shootedPoint, scene, camera, renderer));
+        shots.push(await imageFrom3DScene(step.shootingPoint, step.shootedPoint, step.backwards, scene, camera, renderer));
     }
 
     return [overviewImage, shots]
 }
 
-doWork(new SimpleCurve(50, 50, 100, 100), new Point(0, 20), 5, 41);
+doWork(new StunningCurve(50, 50, 100, 50), new Point(0, 20), 5, 40);
 
 async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
     const pointTriples = getPointTriples(curve, viewPoint, 1);
     const shootingErrors = getShootingErrorsForTriples(pointTriples);
     const segments = divideTriplesIntoSegmentsByErrors(pointTriples, shootingErrors);
-    console.log(segments)
     const shots = divideSegmentsIntoShots(segments, maxViewAngle, maxDistortionAngle);
-    const steps = convertShotsIntoSteps(shots);
-
-    console.log(shots);
-    console.log(steps);
-
     drawShots(shots, viewPoint);
+
+    const steps = convertShotsIntoSteps(shots);
+    console.log(steps)
 
     const [preview, images] = await ShitIn3D(steps, viewPoint);
 
@@ -96,19 +94,37 @@ async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
 
         const { bottomViewportOffset, topViewportOffset } = getPointsForViewport(step, 62.4);
 
-        const bottomLeftStepGeoPoint = getGeoPointFromStartPointDistanceBearing(getGeoPointFromStartPointDistanceBearing(startPoint, step.firstElement.pointOnTheGround.x, geoStep.heading), bottomViewportOffset, geoStep.heading - 90);
-        const bottomRightStepGeoPoint = getGeoPointFromStartPointDistanceBearing(getGeoPointFromStartPointDistanceBearing(startPoint, step.firstElement.pointOnTheGround.x, geoStep.heading), bottomViewportOffset, geoStep.heading + 90);
-        const topLeftStepGeoPoint = getGeoPointFromStartPointDistanceBearing(getGeoPointFromStartPointDistanceBearing(startPoint, step.lastElement.pointOnTheGround.x, geoStep.heading), topViewportOffset, geoStep.heading - 90);
-        const topRightStepGeoPoint = getGeoPointFromStartPointDistanceBearing(getGeoPointFromStartPointDistanceBearing(startPoint, step.lastElement.pointOnTheGround.x, geoStep.heading), topViewportOffset, geoStep.heading + 90);
+        let paths;
+        if (step.backwards) {
+            const bottomLeftStepGeoPoint = getGeoPointFromStartPointDistanceBearing(getGeoPointFromStartPointDistanceBearing(startPoint, step.lastElement.pointOnTheGround.x, geoStep.heading + 180), bottomViewportOffset, geoStep.heading - 90);
+            const bottomRightStepGeoPoint = getGeoPointFromStartPointDistanceBearing(getGeoPointFromStartPointDistanceBearing(startPoint, step.lastElement.pointOnTheGround.x, geoStep.heading + 180), bottomViewportOffset, geoStep.heading + 90);
+            const topLeftStepGeoPoint = getGeoPointFromStartPointDistanceBearing(getGeoPointFromStartPointDistanceBearing(startPoint, step.firstElement.pointOnTheGround.x, geoStep.heading + 180), topViewportOffset, geoStep.heading - 90);
+            const topRightStepGeoPoint = getGeoPointFromStartPointDistanceBearing(getGeoPointFromStartPointDistanceBearing(startPoint, step.firstElement.pointOnTheGround.x, geoStep.heading + 180), topViewportOffset, geoStep.heading + 90);
 
-        new google.maps.Polygon({
-            paths: [
+            paths = [
                 { lat: bottomLeftStepGeoPoint.lat, lng: bottomLeftStepGeoPoint.lon },
                 { lat: bottomRightStepGeoPoint.lat, lng: bottomRightStepGeoPoint.lon },
                 { lat: topRightStepGeoPoint.lat, lng: topRightStepGeoPoint.lon },
                 { lat: topLeftStepGeoPoint.lat, lng: topLeftStepGeoPoint.lon },
                 { lat: bottomLeftStepGeoPoint.lat, lng: bottomLeftStepGeoPoint.lon },
-            ],
+            ];
+        } else {
+            const bottomLeftStepGeoPoint = getGeoPointFromStartPointDistanceBearing(getGeoPointFromStartPointDistanceBearing(startPoint, step.firstElement.pointOnTheGround.x, geoStep.heading), bottomViewportOffset, geoStep.heading - 90);
+            const bottomRightStepGeoPoint = getGeoPointFromStartPointDistanceBearing(getGeoPointFromStartPointDistanceBearing(startPoint, step.firstElement.pointOnTheGround.x, geoStep.heading), bottomViewportOffset, geoStep.heading + 90);
+            const topLeftStepGeoPoint = getGeoPointFromStartPointDistanceBearing(getGeoPointFromStartPointDistanceBearing(startPoint, step.lastElement.pointOnTheGround.x, geoStep.heading), topViewportOffset, geoStep.heading - 90);
+            const topRightStepGeoPoint = getGeoPointFromStartPointDistanceBearing(getGeoPointFromStartPointDistanceBearing(startPoint, step.lastElement.pointOnTheGround.x, geoStep.heading), topViewportOffset, geoStep.heading + 90);
+
+            paths = [
+                { lat: bottomLeftStepGeoPoint.lat, lng: bottomLeftStepGeoPoint.lon },
+                { lat: bottomRightStepGeoPoint.lat, lng: bottomRightStepGeoPoint.lon },
+                { lat: topRightStepGeoPoint.lat, lng: topRightStepGeoPoint.lon },
+                { lat: topLeftStepGeoPoint.lat, lng: topLeftStepGeoPoint.lon },
+                { lat: bottomLeftStepGeoPoint.lat, lng: bottomLeftStepGeoPoint.lon },
+            ];
+        }
+
+        new google.maps.Polygon({
+            paths,
             strokeColor: '#FF0000',
             strokeOpacity: 0.8,
             strokeWeight: 2,
@@ -127,15 +143,27 @@ async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
 }
 
 function getPointsForViewport(step, hFov) {
-    const bottomViewSideTriangle = calculateTriangleCustom2({
-        x: 0,
-        y: lengthFromCoordinates(step.shootingPoint, step.firstElement.pointOnTheGround)
-    }, hFov / 2, { x: 0, y: 0 }, 90);
-    const topViewSideTriangle = calculateTriangleCustom2({
-        x: 0,
-        y: lengthFromCoordinates(step.shootingPoint, step.lastElement.pointOnTheGround)
-    }, hFov / 2, { x: 0, y: 0 }, 90);
-    return { bottomViewportOffset: bottomViewSideTriangle.B.x, topViewportOffset: topViewSideTriangle.B.x }
+    if (step.backwards) {
+        const bottomViewSideTriangle = calculateTriangleCustom2({
+            x: 0,
+            y: lengthFromCoordinates(step.shootingPoint, step.lastElement.pointOnTheGround)
+        }, hFov / 2, { x: 0, y: 0 }, 90);
+        const topViewSideTriangle = calculateTriangleCustom2({
+            x: 0,
+            y: lengthFromCoordinates(step.shootingPoint, step.firstElement.pointOnTheGround)
+        }, hFov / 2, { x: 0, y: 0 }, 90);
+        return { bottomViewportOffset: bottomViewSideTriangle.B.x, topViewportOffset: topViewSideTriangle.B.x }
+    } else {
+        const bottomViewSideTriangle = calculateTriangleCustom2({
+            x: 0,
+            y: lengthFromCoordinates(step.shootingPoint, step.firstElement.pointOnTheGround)
+        }, hFov / 2, { x: 0, y: 0 }, 90);
+        const topViewSideTriangle = calculateTriangleCustom2({
+            x: 0,
+            y: lengthFromCoordinates(step.shootingPoint, step.lastElement.pointOnTheGround)
+        }, hFov / 2, { x: 0, y: 0 }, 90);
+        return { bottomViewportOffset: bottomViewSideTriangle.B.x, topViewportOffset: topViewSideTriangle.B.x }
+    }
 }
 
 async function processImages(steps, images, vFov, output) {
@@ -399,7 +427,7 @@ function drawShots(shots, viewPoint) {
             shootingTriple = lastElement
         }
 
-        for (const { pointOnTheCurve, pointOnTheGround, shootingPoint } of shot) {
+        for (const { pointOnTheCurve, pointOnTheGround, shootingPoint } of shot.triples) {
             drawLine(top_leftCanvasContext, pointOnTheGround, shootingPoint, '#b6b9ff');
             drawLine(bottom_leftCanvasContext, viewPoint, pointOnTheCurve, '#ffc2fc');
             drawPoint(bottom_leftCanvasContext, pointOnTheCurve, '#ff00f1');

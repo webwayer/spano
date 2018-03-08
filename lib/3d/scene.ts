@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { toDegrees, toRadians } from "../math";
 
 export async function setup3DScene() {
     const scene = new THREE.Scene();
@@ -19,14 +20,20 @@ export async function setup3DScene() {
     return { scene, camera, renderer }
 }
 
-export async function imageFrom3DScene(shootingPoint, shootedPoint, scene, camera, renderer) {
+export async function imageFrom3DScene(shootingPoint, shootedPoint, backwards, scene, camera, renderer) {
     camera.position.x = shootingPoint.z || 0;
     camera.position.y = shootingPoint.y;
     camera.position.z = shootingPoint.x;
 
     camera.lookAt(shootedPoint.z || 0, shootedPoint.y, shootedPoint.x);
 
+    if (backwards) {
+        camera.rotateZ(toRadians(180));
+    }
     renderer.render(scene, camera);
+    // if (backwards) {
+    //     camera.rotateZ(toDegrees(180));
+    // }
 
     return renderer.domElement.toDataURL();
 }
