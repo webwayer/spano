@@ -12,7 +12,7 @@ import { setup3DScene, imageFrom3DScene } from "./lib/3d/scene";
 import { draw3DPoint } from "./lib/3d/draw";
 import { addShapes } from "./lib/3d/worlds/shapes";
 import { drawPoint, drawLine } from "./lib/2d/draw";
-import { Point, calculateTriangleCustom2, lengthFromCoordinates } from "./lib/math";
+import { Point, calculateTriangleCustom2, lengthFromCoordinates, toRadians } from "./lib/math";
 import { simple } from "./lib/3d/planes/simple";
 import { StunningCurve } from "./lib/curves/StunningCurve";
 
@@ -169,7 +169,7 @@ function getPointsForViewport(step, hFov) {
 async function processImages(steps, images, vFov, output) {
     for (let i = 0; i < images.length; i++) {
         const step = steps[i];
-        const stepDataUrl = images[i];
+        const stepDataUrl = step.backwards ? (await updownImage(images[i])) : images[i];
 
         const stepImage = await waitForImage(stepDataUrl);
 
@@ -189,6 +189,21 @@ async function processImages(steps, images, vFov, output) {
         }
         output.prepend(viewportStepImage);
     }
+}
+
+async function updownImage(imageDataUrl) {
+    const image = await waitForImage(imageDataUrl);
+
+    const canvas = document.createElement('canvas');
+    const canvasContext = canvas.getContext('2d');
+    canvas.height = image.height;
+    canvas.width = image.width;
+
+    canvasContext.translate(canvas.width / 2, canvas.height / 2);
+    canvasContext.rotate(toRadians(180));
+    canvasContext.drawImage(image, -canvas.width / 2, -canvas.height / 2);
+
+    return canvas.toDataURL();
 }
 
 async function getFiles() {
