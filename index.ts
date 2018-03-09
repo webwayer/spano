@@ -81,7 +81,7 @@ async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
     }));
     const map = new google.maps.Map(document.getElementById('map'), {
         zoom: 17,
-        center: new google.maps.LatLng(startPoint.lat, startPoint.lon),
+        center: new google.maps.LatLng(directionPoint.lat, directionPoint.lon),
         mapTypeId: google.maps.MapTypeId.ROADMAP
     });
 
@@ -109,12 +109,15 @@ async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
     });
     directionPointMarker.addListener('dragend', function () {
         figures.forEach(figure => figure.setMap(null));
-        directionPoint = { lat: directionPointMarker.getPosition().lat(), lon: directionPointMarker.getPosition().lng() };
+        directionPoint = {
+            lat: directionPointMarker.getPosition().lat(),
+            lon: directionPointMarker.getPosition().lng()
+        };
         geoSteps = getGeoSteps(startPoint, directionPoint, steps);
         figures = drawOnMap(map, steps, geoSteps, startPoint);
     });
 
-    // makeLitchi(geoSteps);
+    makeLitchi(geoSteps);
 
     (<any>document.getElementById('preview')).onclick = async function () {
         const imageDataUrls = await getFiles();
@@ -124,6 +127,19 @@ async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
 
 function drawOnMap(map, steps, geoSteps, startPoint) {
     const figures = [];
+
+    figures.push(new google.maps.Polygon({
+        paths: [
+            { lat: startPoint.lat, lng: startPoint.lon },
+            { lat: geoSteps[geoSteps.length - 1].geoPoint.lat, lng: geoSteps[geoSteps.length - 1].geoPoint.lon }
+        ],
+        strokeColor: '#FF0000',
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: '#FF0000',
+        fillOpacity: 0.35,
+        map
+    }));
 
     for (let i = 0; i < steps.length; i++) {
         const step = steps[i];
