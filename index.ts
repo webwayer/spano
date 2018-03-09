@@ -30,7 +30,7 @@ async function drawControlPointsOn3DScene(steps, viewPoint, scene) {
 async function ShitIn3D(steps, viewPoint) {
     const { scene, camera, renderer } = await setup3DScene();
     await simple(scene);
-    await addShapes(scene);
+    // await addShapes(scene);
     await drawControlPointsOn3DScene(steps, viewPoint, scene);
 
     const overviewImage = await imageFrom3DScene({
@@ -47,7 +47,7 @@ async function ShitIn3D(steps, viewPoint) {
     return [overviewImage, shots]
 }
 
-doWork(new StunningCurve(50, 50, 100, 50), new Point(0, 20), 5, 40);
+doWork(new StunningCurve(50, 100, 100, 90), new Point(0, 10), 7, 40);
 
 async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
     const pointTriples = getPointTriples(curve, viewPoint, 1);
@@ -68,12 +68,12 @@ async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
     await processImages(steps, images, 45, <any>document.getElementById('preview-output'));
 
     const startPoint = {
-        lat: 37.772667,
-        lon: -122.394502
+        lat: 37.770698,
+        lon: -122.392501
     };
     const directionPoint = {
-        lat: 37.771438,
-        lon: -122.396054
+        lat: 37.770501,
+        lon: -122.396027
     };
 
     const geoSteps = getGeoSteps(startPoint, directionPoint, steps);

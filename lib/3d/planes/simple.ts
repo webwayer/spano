@@ -20,6 +20,10 @@ export async function simple(scene) {
     await draw3DPlane(scene, texture, { x: 0, y: 0, z: 300 });
     await draw3DPlane(scene, texture, { x: 0, y: 0, z: 350 });
     await draw3DPlane(scene, texture, { x: 0, y: 0, z: 400 });
+    await draw3DPlane(scene, texture, { x: 0, y: 0, z: 450 });
+    await draw3DPlane(scene, texture, { x: 0, y: 0, z: 500 });
+    await draw3DPlane(scene, texture, { x: 0, y: 0, z: 550 });
+    await draw3DPlane(scene, texture, { x: 0, y: 0, z: 600 });
 
     await draw3DPlane(scene, texture, { x: 50, y: 0, z: 0 });
     await draw3DPlane(scene, texture, { x: 50, y: 0, z: 50 });
@@ -30,6 +34,10 @@ export async function simple(scene) {
     await draw3DPlane(scene, texture, { x: 50, y: 0, z: 300 });
     await draw3DPlane(scene, texture, { x: 50, y: 0, z: 350 });
     await draw3DPlane(scene, texture, { x: 50, y: 0, z: 400 });
+    await draw3DPlane(scene, texture, { x: 50, y: 0, z: 450 });
+    await draw3DPlane(scene, texture, { x: 50, y: 0, z: 500 });
+    await draw3DPlane(scene, texture, { x: 50, y: 0, z: 550 });
+    await draw3DPlane(scene, texture, { x: 50, y: 0, z: 600 });
 
     await draw3DPlane(scene, texture, { x: -50, y: 0, z: 0 });
     await draw3DPlane(scene, texture, { x: -50, y: 0, z: 50 });
@@ -40,6 +48,10 @@ export async function simple(scene) {
     await draw3DPlane(scene, texture, { x: -50, y: 0, z: 300 });
     await draw3DPlane(scene, texture, { x: -50, y: 0, z: 350 });
     await draw3DPlane(scene, texture, { x: -50, y: 0, z: 400 });
+    await draw3DPlane(scene, texture, { x: -50, y: 0, z: 450 });
+    await draw3DPlane(scene, texture, { x: -50, y: 0, z: 500 });
+    await draw3DPlane(scene, texture, { x: -50, y: 0, z: 550 });
+    await draw3DPlane(scene, texture, { x: -50, y: 0, z: 600 });
 
     await draw3DPlane(scene, texture, { x: 100, y: 0, z: 0 });
     await draw3DPlane(scene, texture, { x: 100, y: 0, z: 50 });
@@ -50,6 +62,10 @@ export async function simple(scene) {
     await draw3DPlane(scene, texture, { x: 100, y: 0, z: 300 });
     await draw3DPlane(scene, texture, { x: 100, y: 0, z: 350 });
     await draw3DPlane(scene, texture, { x: 100, y: 0, z: 400 });
+    await draw3DPlane(scene, texture, { x: 100, y: 0, z: 450 });
+    await draw3DPlane(scene, texture, { x: 100, y: 0, z: 500 });
+    await draw3DPlane(scene, texture, { x: 100, y: 0, z: 550 });
+    await draw3DPlane(scene, texture, { x: 100, y: 0, z: 600 });
 
     await draw3DPlane(scene, texture, { x: -100, y: 0, z: 0 });
     await draw3DPlane(scene, texture, { x: -100, y: 0, z: 50 });
@@ -60,4 +76,8 @@ export async function simple(scene) {
     await draw3DPlane(scene, texture, { x: -100, y: 0, z: 300 });
     await draw3DPlane(scene, texture, { x: -100, y: 0, z: 350 });
     await draw3DPlane(scene, texture, { x: -100, y: 0, z: 400 });
+    await draw3DPlane(scene, texture, { x: -100, y: 0, z: 450 });
+    await draw3DPlane(scene, texture, { x: -100, y: 0, z: 500 });
+    await draw3DPlane(scene, texture, { x: -100, y: 0, z: 550 });
+    await draw3DPlane(scene, texture, { x: -100, y: 0, z: 600 });
 }
