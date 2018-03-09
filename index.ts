@@ -47,7 +47,7 @@ async function ShitIn3D(steps, viewPoint) {
     return [overviewImage, shots]
 }
 
-doWork(new StunningCurve(50, 100, 100, 90), new Point(0, 10), 7, 40);
+doWork(new StunningCurve(50, 100, 100, 100), new Point(0, 10), 7, 45);
 
 async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
     const pointTriples = getPointTriples(curve, viewPoint, 1);
@@ -57,36 +57,73 @@ async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
     drawShots(shots, viewPoint);
 
     const steps = convertShotsIntoSteps(shots);
-    console.log(steps)
 
     const [preview, images] = await ShitIn3D(steps, viewPoint);
 
-    // const previewImage = new Image(400, 300);
-    // previewImage.src = preview;
-    // (<any>document.body).prepend(previewImage);
+    const previewImage = new Image(400, 300);
+    previewImage.src = preview;
+    (<any>document.body).prepend(previewImage);
 
     await processImages(steps, images, 45, <any>document.getElementById('preview-output'));
 
-    const startPoint = {
-        lat: 37.770698,
-        lon: -122.392501
+    let startPoint = {
+        lat: 37.770695,
+        lon: -122.392770
     };
-    const directionPoint = {
+    let directionPoint = {
         lat: 37.770501,
         lon: -122.396027
     };
-
-    const geoSteps = getGeoSteps(startPoint, directionPoint, steps);
+    let geoSteps = getGeoSteps(startPoint, directionPoint, steps);
 
     await new Promise((resolve => {
         setTimeout(resolve, 500)
     }));
-
     const map = new google.maps.Map(document.getElementById('map'), {
         zoom: 17,
-        center: new google.maps.LatLng(geoSteps[0].geoPoint.lat, geoSteps[0].geoPoint.lon),
+        center: new google.maps.LatLng(startPoint.lat, startPoint.lon),
         mapTypeId: google.maps.MapTypeId.ROADMAP
     });
+
+
+    let figures = drawOnMap(map, steps, geoSteps, startPoint);
+
+    const startPointMaker = new google.maps.Marker({
+        position: { lat: startPoint.lat, lng: startPoint.lon },
+        map,
+        draggable: true,
+        title: 'Start Point'
+    });
+    startPointMaker.addListener('dragend', function () {
+        figures.forEach(figure => figure.setMap(null));
+        startPoint = { lat: startPointMaker.getPosition().lat(), lon: startPointMaker.getPosition().lng() };
+        geoSteps = getGeoSteps(startPoint, directionPoint, steps);
+        figures = drawOnMap(map, steps, geoSteps, startPoint);
+    });
+
+    const directionPointMarker = new google.maps.Marker({
+        position: { lat: directionPoint.lat, lng: directionPoint.lon },
+        map,
+        draggable: true,
+        title: 'Directional Point'
+    });
+    directionPointMarker.addListener('dragend', function () {
+        figures.forEach(figure => figure.setMap(null));
+        directionPoint = { lat: directionPointMarker.getPosition().lat(), lon: directionPointMarker.getPosition().lng() };
+        geoSteps = getGeoSteps(startPoint, directionPoint, steps);
+        figures = drawOnMap(map, steps, geoSteps, startPoint);
+    });
+
+    // makeLitchi(geoSteps);
+
+    (<any>document.getElementById('preview')).onclick = async function () {
+        const imageDataUrls = await getFiles();
+        await processImages(steps, imageDataUrls, 46.8, <any>document.getElementById('real-output'));
+    }
+}
+
+function drawOnMap(map, steps, geoSteps, startPoint) {
+    const figures = [];
 
     for (let i = 0; i < steps.length; i++) {
         const step = steps[i];
@@ -123,7 +160,7 @@ async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
             ];
         }
 
-        new google.maps.Polygon({
+        figures.push(new google.maps.Polygon({
             paths,
             strokeColor: '#FF0000',
             strokeOpacity: 0.8,
@@ -131,15 +168,10 @@ async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
             fillColor: '#FF0000',
             fillOpacity: 0.35,
             map
-        });
+        }));
     }
 
-    makeLitchi(geoSteps);
-
-    (<any>document.getElementById('preview')).onclick = async function () {
-        const imageDataUrls = await getFiles();
-        await processImages(steps, imageDataUrls, 46.8, <any>document.getElementById('real-output'));
-    }
+    return figures;
 }
 
 function getPointsForViewport(step, hFov) {
