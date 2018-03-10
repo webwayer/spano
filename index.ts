@@ -34,6 +34,7 @@ function setupUI() {
         drawShots(shots, viewPoint);
 
         await setup3DUI(steps, viewPoint);
+        await setupRealUI(steps);
     })
 }
 
@@ -50,15 +51,28 @@ async function setup3DUI(steps, viewPoint) {
     $('#preview3D').empty();
     $('#debug3D').empty();
     $('#scene3D').empty();
+    $('#generateButton3D').off('click');
+
     $('#scene3D').append(previewImage);
-
-    async function generate3DHandler() {
+    $('#generateButton3D').on('click', async function () {
         $('#generateButton3D').attr('disabled', true);
-        $('#generateButton3D').off('click', generate3DHandler);
+        $('#generateButton3D').off('click');
         await processImages(steps, images, 45, <any>document.getElementById('preview3D'), <any>document.getElementById('debug3D'));
-    }
+    })
+}
 
-    $('#generateButton3D').on('click', generate3DHandler)
+async function setupRealUI(steps) {
+    $('#previewReal').empty();
+    $('#debugReal').empty();
+    $('#generateButtonReal').off('click');
+
+    $('#generateButtonReal').on('click', async function() {
+        $('#previewReal').empty();
+        $('#debugReal').empty();
+
+        const images = await getFiles();
+        await processImages(steps, images, 46.8, <any>document.getElementById('previewReal'), <any>document.getElementById('debugReal'));
+    })
 }
 
 function calcModel(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
@@ -292,7 +306,7 @@ async function updownImage(imageDataUrl) {
 }
 
 async function getFiles() {
-    const photos = (<any>document.getElementById('photos')).files;
+    const photos = (<any>document.getElementById('filesReal')).files;
     const imageDataUrls = [];
     for (let i = 0; i < photos.length; i++) {
         const photo = photos[i];

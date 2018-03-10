@@ -81,7 +81,7 @@
     <canvas id="bottom_rightCanvas" width="580" height="300"></canvas>
 
     <div class="jumbotron" style="text-align: center">
-        <button type="button" class="btn btn-danger btn-lg" id="generateButton3D">Generate in 3D</button>
+        <button type="button" class="btn btn-danger btn-lg" id="generateButton3D" disabled>Generate in 3D</button>
         <div style="margin-top: 10px" id="scene3D"></div>
     </div>
     <div class="jumbotron" style="text-align: center" id="preview3D">
@@ -89,10 +89,13 @@
     <div class="jumbotron" style="text-align: center" id="debug3D">
     </div>
 
-
     <div class="jumbotron" style="text-align: center">
-        <input type="file" class="form-control-file" id="exampleFormControlFile1" multiple>
+        <input type="file" class="form-control-file" id="filesReal" multiple>
         <button type="button" class="btn btn-success btn-lg" id="generateButtonReal">Generate from Real Images</button>
+    </div>
+    <div class="jumbotron" style="text-align: center" id="previewReal">
+    </div>
+    <div class="jumbotron" style="text-align: center" id="debugReal">
     </div>
 
     <div id="map" style="width: 1200px; height: 1000px; margin-bottom: 30px"></div>
