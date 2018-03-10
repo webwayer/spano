@@ -74,7 +74,7 @@ export function divideSegmentsIntoShots(segments, maxViewAngle, maxDistortionAng
                 const lastElement = triplesForShot[triplesForShot.length - 1];
 
                 const currentShotViewAngle = getTopAngle(firstElement.shootingPoint, firstElement.pointOnTheGround, lastElement.pointOnTheGround);
-                if (currentShotViewAngle > (maxViewAngle / 2)) {
+                if (currentShotViewAngle > maxViewAngle) {
                     return false
                 }
 
@@ -83,7 +83,7 @@ export function divideSegmentsIntoShots(segments, maxViewAngle, maxDistortionAng
 
             for (const flatShot of flatShots) {
                 shots.push({
-                    shotOn: 'start',
+                    shotOn: 'center',
                     triples: flatShot
                 })
             }
@@ -93,7 +93,7 @@ export function divideSegmentsIntoShots(segments, maxViewAngle, maxDistortionAng
                 const lastElement = triplesForShot[triplesForShot.length - 1];
 
                 const currentShotViewAngle = getTopAngle(firstElement.shootingPoint, firstElement.pointOnTheGround, lastElement.pointOnTheGround);
-                if (currentShotViewAngle > (maxViewAngle / 2)) {
+                if (currentShotViewAngle > maxViewAngle) {
                     return false
                 }
 
