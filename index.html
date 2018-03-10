@@ -1,21 +1,117 @@
-<div id="map" style="width: 1000px; height: 1000px;"></div>
+<!doctype html>
+<html lang="en">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkC7o5fGKTjKB3jQj_9E6ypQ44ZIMAXW0">
+</script>
 
-<script type="text/javascript">
-    function initMap() {
-        // var map = new google.maps.Map(document.getElementById('map'), {
-        //     zoom: 4,
-        //     center: uluru
-        // });
-        // var marker = new google.maps.Marker({
-        //     position: uluru,
-        //     map: map
-        // });
-        console.log('gmaps runned!')
+<div class="container" style="min-width: 1200px">
+    <div class="jumbotron">
+        <form>
+            <div class="row">
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Curve Type</span>
+                        </div>
+                        <select class="form-control" id="curveType">
+                            <option value="simpleCurve">Simple Curve</option>
+                            <option value="stunningCurve">More Curved Curve</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon2">Offset</span>
+                        </div>
+                        <input type="number" class="form-control" id="offset" placeholder="Offset"
+                               min="10"
+                               max="200"
+                               value="50">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon3">First Line Length</span>
+                        </div>
+                        <input type="number" class="form-control" id="firstLineLength"
+                               placeholder="First Line Length"
+                               min="10" max="200" value="50">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon4">Curved Line Radius</span>
+                        </div>
+                        <input type="number" class="form-control" id="curvedLineLength"
+                               placeholder="Curved Line Radius"
+                               min="10" max="200" value="100">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon5">Second Line Length</span>
+                        </div>
+                        <input type="number" class="form-control" id="secondLineLength"
+                               placeholder="Second Segment Length"
+                               min="10" max="200" value="50">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon6">View Point Height</span>
+                        </div>
+                        <input type="number" class="form-control" id="viewPointHeight"
+                               placeholder="View Point Height"
+                               min="10"
+                               max="200" value="50">
+                    </div>
+                </div>
+                <div class="col" style="text-align: right">
+                    <button type="button" class="btn btn-primary" id="generateButton">Generate</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <canvas id="top_leftCanvas" width="580" height="300"></canvas>
+    <canvas id="top_rightCanvas" width="580" height="300"></canvas>
+    <br/>
+    <canvas id="bottom_leftCanvas" width="580" height="300"></canvas>
+    <canvas id="bottom_rightCanvas" width="580" height="300"></canvas>
+
+    <div class="jumbotron" style="text-align: center">
+        <button type="button" class="btn btn-danger btn-lg" id="generateButton3D">Generate in 3D</button>
+        <div style="margin-top: 10px" id="scene3D"></div>
+    </div>
+    <div class="jumbotron" style="text-align: center" id="preview3D">
+    </div>
+    <div class="jumbotron" style="text-align: center" id="debug3D">
+    </div>
+
+
+    <div class="jumbotron" style="text-align: center">
+        <input type="file" class="form-control-file" id="exampleFormControlFile1" multiple>
+        <button type="button" class="btn btn-success btn-lg" id="generateButtonReal">Generate from Real Images</button>
+    </div>
+
+    <div id="map" style="width: 1200px; height: 1000px; margin-bottom: 30px"></div>
+
+    <div class="jumbotron" style="text-align: center">
+        <a role="button" class="btn btn-info btn-lg" href="#">Download Litchi mission</a>
+    </div>
+</div>
+
+<script>
+    function getScript(src) {
+        const script = document.createElement('script');
+        script.src = src;
+        document.body.appendChild(script);
     }
 
-</script>
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkC7o5fGKTjKB3jQj_9E6ypQ44ZIMAXW0&callback=initMap">
+    document.addEventListener("DOMContentLoaded", function () {
+        getScript('dist/bundle.js?' + Math.random())
+    });
 </script>
 
 <style type="text/css">
@@ -25,18 +121,21 @@
         -o-transform: scale(-1, -1);
         transform: scale(-1, -1);
     }
+
     #bottom_leftCanvas {
         -moz-transform: scale(-1, 1);
         -webkit-transform: scale(-1, 1);
         -o-transform: scale(-1, 1);
         transform: scale(-1, 1);
     }
+
     #top_rightCanvas {
         -moz-transform: scale(1, -1);
         -webkit-transform: scale(1, -1);
         -o-transform: scale(1, -1);
         transform: scale(1, -1);
     }
+
     #bottom_rightCanvas {
         -moz-transform: scale(1, 1);
         -webkit-transform: scale(1, 1);
@@ -44,25 +143,4 @@
         transform: scale(1, 1);
     }
 </style>
-
-<div id="real-output"></div>
-<div id="preview-output"></div>
-
-<input id="photos" type="file" multiple><br />
-<button id="preview">preview</button><br />
-
-<canvas style="border: 1px black solid" id="top_leftCanvas" width="800" height="500"></canvas>
-<canvas style="border: 1px black solid" id="top_rightCanvas" width="800" height="500"></canvas><br/>
-<canvas style="border: 1px black solid" id="bottom_leftCanvas" width="800" height="500"></canvas>
-<canvas style="border: 1px black solid" id="bottom_rightCanvas" width="800" height="500"></canvas>
-
-<script>
-    function getScript(src) {
-        const script = document.createElement('script');
-        script.src = src;
-        document.body.appendChild(script);
-    }
-    document.addEventListener("DOMContentLoaded", function() {
-        getScript('dist/bundle.js?' + Math.random())
-    });
-</script>
+</html>

@@ -16,6 +16,7 @@
     "webpack": "^3.8.1"
   },
   "dependencies": {
+    "jquery": "^3.3.1",
     "three": "^0.90.0"
   }
 }

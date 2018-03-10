@@ -12,11 +12,64 @@ import { setup3DScene, imageFrom3DScene } from "./lib/3d/scene";
 import { draw3DPoint } from "./lib/3d/draw";
 import { addShapes } from "./lib/3d/worlds/shapes";
 import { drawPoint, drawLine } from "./lib/2d/draw";
-import { Point, calculateTriangleCustom2, lengthFromCoordinates, toRadians } from "./lib/math";
+import { calculateTriangleCustom2, lengthFromCoordinates, toRadians } from "./lib/math";
 import { simple } from "./lib/3d/planes/simple";
 import { StunningCurve } from "./lib/curves/StunningCurve";
+import * as $ from 'jquery';
 
 declare const google: any;
+
+function setupUI() {
+    $('#generateButton').on('click', async function () {
+        const Curve = $("#curveType").val() === 'simpleCurve' ? SimpleCurve : StunningCurve;
+        const curve = new Curve(
+            parseInt($('#offset').val()),
+            parseInt($('#firstLineLength').val()),
+            parseInt($('#curvedLineLength').val()),
+            parseInt($('#secondLineLength').val())
+        );
+        const viewPoint = { x: 0, y: parseInt($('#viewPointHeight').val()) };
+
+        const { shots, steps } = calcModel(curve, viewPoint, 7, 20);
+        drawShots(shots, viewPoint);
+
+        await setup3DUI(steps, viewPoint);
+    })
+}
+
+setupUI();
+$('#generateButton').click();
+
+async function setup3DUI(steps, viewPoint) {
+    const [preview, images] = await ShitIn3D(steps, viewPoint);
+
+    $('#generateButton3D').attr('disabled', false);
+    const previewImage = await waitForImage(preview);
+    previewImage.width = 500;
+
+    $('#preview3D').empty();
+    $('#debug3D').empty();
+    $('#scene3D').empty();
+    $('#scene3D').append(previewImage);
+
+    async function generate3DHandler() {
+        $('#generateButton3D').attr('disabled', true);
+        $('#generateButton3D').off('click', generate3DHandler);
+        await processImages(steps, images, 45, <any>document.getElementById('preview3D'), <any>document.getElementById('debug3D'));
+    }
+
+    $('#generateButton3D').on('click', generate3DHandler)
+}
+
+function calcModel(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
+    const pointTriples = getPointTriples(curve, viewPoint, 1);
+    const shootingErrors = getShootingErrorsForTriples(pointTriples);
+    const segments = divideTriplesIntoSegmentsByErrors(pointTriples, shootingErrors);
+    const shots = divideSegmentsIntoShots(segments, maxViewAngle, maxDistortionAngle);
+    const steps = convertShotsIntoSteps(shots);
+
+    return { pointTriples, shootingErrors, segments, steps, shots };
+}
 
 async function drawControlPointsOn3DScene(steps, viewPoint, scene) {
     await draw3DPoint({ x: viewPoint.x, y: 0 }, 0x00ffff, scene);
@@ -47,24 +100,8 @@ async function ShitIn3D(steps, viewPoint) {
     return [overviewImage, shots]
 }
 
-doWork(new StunningCurve(50, 100, 100, 20), new Point(0, 20), 7, 20);
-
 async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
-    const pointTriples = getPointTriples(curve, viewPoint, 1);
-    const shootingErrors = getShootingErrorsForTriples(pointTriples);
-    const segments = divideTriplesIntoSegmentsByErrors(pointTriples, shootingErrors);
-    const shots = divideSegmentsIntoShots(segments, maxViewAngle, maxDistortionAngle);
-    drawShots(shots, viewPoint);
-
-    const steps = convertShotsIntoSteps(shots);
-
-    const [preview, images] = await ShitIn3D(steps, viewPoint);
-
-    const previewImage = new Image(400, 300);
-    previewImage.src = preview;
-    (<any>document.body).prepend(previewImage);
-
-    await processImages(steps, images, 45, <any>document.getElementById('preview-output'));
+    const { shots, steps } = calcModel(curve, viewPoint, 7, 20);
 
     let startPoint = {
         lat: 37.770680,
@@ -117,11 +154,11 @@ async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
         figures = drawOnMap(map, steps, geoSteps, startPoint);
     });
 
-    makeLitchi(geoSteps);
+    // makeLitchi(geoSteps);
 
     (<any>document.getElementById('preview')).onclick = async function () {
         const imageDataUrls = await getFiles();
-        await processImages(steps, imageDataUrls, 46.8, <any>document.getElementById('real-output'));
+        await processImages(steps, imageDataUrls, 46.8, <any>document.getElementById('real-output'), <any>document.getElementById('real-output'));
     }
 }
 
@@ -214,7 +251,7 @@ function getPointsForViewport(step, hFov) {
     }
 }
 
-async function processImages(steps, images, vFov, output) {
+async function processImages(steps, images, vFov, output, outputDebug) {
     for (let i = 0; i < images.length; i++) {
         const step = steps[i];
         const stepDataUrl = step.backwards ? (await updownImage(images[i])) : images[i];
@@ -227,7 +264,7 @@ async function processImages(steps, images, vFov, output) {
 
         const previewStepImage = new Image(400, 300);
         previewStepImage.src = previewStepDataUrl;
-        (<any>document.body).appendChild(previewStepImage);
+        outputDebug.appendChild(previewStepImage);
 
         const viewportStepDataUrl = await cutViewport(stepDataUrl, srcY, activeImageArea);
 
@@ -469,10 +506,10 @@ function drawShots(shots, viewPoint) {
     const bottom_rightCanvas: any = document.getElementById("bottom_rightCanvas");
     const bottom_rightCanvasContext = bottom_rightCanvas.getContext("2d");
 
-    // top_leftCanvasContext.clearRect(0, 0, top_leftCanvas.width, top_leftCanvas.height);
-    // top_rightCanvasContext.clearRect(0, 0, top_rightCanvas.width, top_rightCanvas.height);
-    // bottom_leftCanvasContext.clearRect(0, 0, bottom_leftCanvas.width, bottom_leftCanvas.height);
-    // bottom_rightCanvasContext.clearRect(0, 0, bottom_rightCanvas.width, bottom_rightCanvas.height);
+    top_leftCanvasContext.clearRect(0, 0, top_leftCanvas.width, top_leftCanvas.height);
+    top_rightCanvasContext.clearRect(0, 0, top_rightCanvas.width, top_rightCanvas.height);
+    bottom_leftCanvasContext.clearRect(0, 0, bottom_leftCanvas.width, bottom_leftCanvas.height);
+    bottom_rightCanvasContext.clearRect(0, 0, bottom_rightCanvas.width, bottom_rightCanvas.height);
 
     for (const shot of shots) {
         const firstElement = shot.triples[0];
