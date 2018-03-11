@@ -4,7 +4,7 @@ import {
     divideSegmentsIntoShots,
     divideTriplesIntoSegmentsByErrors,
     convertShotsIntoSteps
-} from "./lib/calculations";
+} from "./lib/model";
 import { SimpleCurve } from "./lib/curves/SimpleCurve";
 import { makeLitchiMission } from "./lib/litchi";
 import { getBearingBetween2GeoPoints, getGeoPointFromStartPointDistanceBearing } from "./lib/math_geo";
@@ -16,6 +16,8 @@ import { simple } from "./lib/3d/planes/simple";
 import { StunningCurve } from "./lib/curves/StunningCurve";
 import * as $ from 'jquery';
 import { drawShots } from "./lib/2d/drawShots";
+import { cutImage, generateCutPreviewImage, waitForImage } from "./lib/2d/images";
+import { ShitIn3D } from "./lib/3d/generating";
 
 declare const google: any;
 
@@ -160,41 +162,17 @@ async function setupRealUI(steps) {
 
 function calcModel(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
     const pointTriples = getPointTriples(curve, viewPoint, 1);
+    console.log(pointTriples);
     const shootingErrors = getShootingErrorsForTriples(pointTriples);
+    console.log(shootingErrors);
     const segments = divideTriplesIntoSegmentsByErrors(pointTriples, shootingErrors);
+    console.log(segments);
     const shots = divideSegmentsIntoShots(segments, maxViewAngle, maxDistortionAngle);
+    console.log(shots);
     const steps = convertShotsIntoSteps(shots);
+    console.log(steps);
 
     return { pointTriples, shootingErrors, segments, steps, shots };
-}
-
-async function drawControlPointsOn3DScene(steps, viewPoint, scene) {
-    await draw3DPoint({ x: viewPoint.x, y: 0 }, 0x00ffff, scene);
-    for (const step of steps) {
-        await draw3DPoint(step.firstElement.pointOnTheGround, 0xff0000, scene);
-        await draw3DPoint(step.lastElement.pointOnTheGround, 0xff0000, scene);
-        await draw3DPoint(step.shootedPoint, 0xffff00, scene);
-    }
-}
-
-async function ShitIn3D(steps, viewPoint) {
-    const { scene, camera, renderer } = await setup3DScene();
-    await simple(scene);
-    await addShapes(scene);
-    await drawControlPointsOn3DScene(steps, viewPoint, scene);
-
-    const overviewImage = await imageFrom3DScene({
-        x: -100, y: 200, z: 200
-    }, {
-        x: 200, y: 0, z: 0
-    }, false, scene, camera, renderer);
-
-    const shots = [];
-    for (const step of steps) {
-        shots.push(await imageFrom3DScene(step.shootingPoint, step.shootedPoint, step.backwards, scene, camera, renderer));
-    }
-
-    return [overviewImage, shots]
 }
 
 async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
@@ -342,39 +320,6 @@ function getPointsForViewport(step, hFov) {
     }
 }
 
-async function cutImage(step, image, vFov, doNotCutUp, doNotCutDown) {
-    const stepDataUrl = step.backwards ? (await updownImage(image)) : image;
-    const stepImage = await waitForImage(stepDataUrl);
-    const { srcY, activeImageArea } = calcViewport(step.angleOfView, step.shotOn, stepImage.height, vFov, doNotCutUp, doNotCutDown);
-    const viewportStepDataUrl = await cutViewport(stepDataUrl, srcY, activeImageArea);
-
-    return viewportStepDataUrl;
-}
-
-async function generateCutPreviewImage(step, image, vFov, doNotCutUp, doNotCutDown) {
-    const stepDataUrl = step.backwards ? (await updownImage(image)) : image;
-    const stepImage = await waitForImage(stepDataUrl);
-    const { srcY, activeImageArea } = calcViewport(step.angleOfView, step.shotOn, stepImage.height, vFov, doNotCutUp, doNotCutDown);
-    const previewStepDataUrl = await drawViewport(stepDataUrl, srcY, activeImageArea);
-
-    return previewStepDataUrl;
-}
-
-async function updownImage(imageDataUrl) {
-    const image = await waitForImage(imageDataUrl);
-
-    const canvas = document.createElement('canvas');
-    const canvasContext = canvas.getContext('2d');
-    canvas.height = image.height;
-    canvas.width = image.width;
-
-    canvasContext.translate(canvas.width / 2, canvas.height / 2);
-    canvasContext.rotate(toRadians(180));
-    canvasContext.drawImage(image, -canvas.width / 2, -canvas.height / 2);
-
-    return canvas.toDataURL();
-}
-
 async function getFiles() {
     const photos = (<any>document.getElementById('filesReal')).files;
     const imageDataUrls = [];
@@ -435,72 +380,6 @@ function getGeoSteps(startPoint, directionPoint, steps) {
     }
 
     return geoSteps;
-}
-
-async function waitForImage(src: string): Promise<HTMLImageElement> {
-    return await new Promise<HTMLImageElement>(resolve => {
-        const image = new Image();
-        image.src = src;
-        image.onload = () => {
-            resolve(image);
-        }
-    })
-}
-
-function calcViewport(angleOfView, shotOn, height, vFOV, fullUp = false, fullDown = false) {
-    let activeImageArea = ((angleOfView / vFOV) * height);
-
-    let srcY;
-    if (shotOn === 'start') {
-        srcY = (height / 2) - activeImageArea
-    }
-    if (shotOn === 'center') {
-        srcY = (height - activeImageArea) / 2
-    }
-    if (shotOn === 'end') {
-        srcY = (height / 2)
-    }
-
-    if (fullUp) {
-        activeImageArea = srcY + activeImageArea;
-        srcY = 0;
-    }
-    if (fullDown) {
-        activeImageArea = height - srcY;
-    }
-
-    return { srcY, activeImageArea }
-}
-
-async function drawViewport(imageDataUrl, srcY, activeImageArea) {
-    const image = await waitForImage(imageDataUrl);
-
-    const canvas = document.createElement('canvas');
-    const canvasContext = canvas.getContext('2d');
-    canvas.height = image.height;
-    canvas.width = image.width;
-
-    canvasContext.drawImage(image, 0, 0);
-    canvasContext.strokeStyle = "#FF0000";
-    canvasContext.strokeRect(0, srcY, image.width, activeImageArea);
-    canvasContext.strokeStyle = "#1eff36";
-    canvasContext.strokeRect(0, image.height / 2, image.width, 1);
-    canvasContext.strokeRect(image.width / 2, 0, 1, image.height);
-
-    return canvas.toDataURL();
-}
-
-async function cutViewport(imageDataUrl, srcY, activeImageArea) {
-    const image = await waitForImage(imageDataUrl);
-
-    const canvas = document.createElement('canvas');
-    const canvasContext = canvas.getContext('2d');
-    canvas.height = activeImageArea;
-    canvas.width = image.width;
-
-    canvasContext.drawImage(image, 0, srcY, image.width, activeImageArea, 0, 0, image.width, activeImageArea);
-
-    return canvas.toDataURL();
 }
 
 function makeLitchi(geoSteps) {

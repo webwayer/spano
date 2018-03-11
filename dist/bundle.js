@@ -46210,18 +46210,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var calculations_1 = __webpack_require__(4);
+var model_1 = __webpack_require__(15);
 var SimpleCurve_1 = __webpack_require__(5);
 var litchi_1 = __webpack_require__(6);
 var math_geo_1 = __webpack_require__(7);
-var scene_1 = __webpack_require__(8);
-var draw_1 = __webpack_require__(2);
-var shapes_1 = __webpack_require__(9);
 var math_1 = __webpack_require__(0);
-var simple_1 = __webpack_require__(11);
 var StunningCurve_1 = __webpack_require__(12);
 var $ = __webpack_require__(13);
 var drawShots_1 = __webpack_require__(14);
+var images_1 = __webpack_require__(16);
+var generating_1 = __webpack_require__(17);
 function setupUI() {
     $('#generateButton').on('click', function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -46271,12 +46269,12 @@ function setup3DUI(steps, viewPoint) {
         var _a, preview, images, previewImage;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, ShitIn3D(steps, viewPoint)];
+                case 0: return [4 /*yield*/, generating_1.ShitIn3D(steps, viewPoint)];
                 case 1:
                     _a = _b.sent(), preview = _a[0], images = _a[1];
                     $('#generateButton3D').attr('disabled', false);
                     $('#generateDebug3D').attr('disabled', false);
-                    return [4 /*yield*/, waitForImage(preview)];
+                    return [4 /*yield*/, images_1.waitForImage(preview)];
                 case 2:
                     previewImage = _b.sent();
                     previewImage.width = 500;
@@ -46304,10 +46302,10 @@ function setup3DUI(steps, viewPoint) {
                                         if (!(i < steps.length)) return [3 /*break*/, 5];
                                         step = steps[i];
                                         image = images[i];
-                                        return [4 /*yield*/, cutImage(step, image, 45, i === images.length - 1, i === 0)];
+                                        return [4 /*yield*/, images_1.cutImage(step, image, 45, i === images.length - 1, i === 0)];
                                     case 2:
                                         cutedImage = _a.sent();
-                                        return [4 /*yield*/, waitForImage(cutedImage)];
+                                        return [4 /*yield*/, images_1.waitForImage(cutedImage)];
                                     case 3:
                                         imageObject = _a.sent();
                                         if (imageObject.width > 1000) {
@@ -46337,10 +46335,10 @@ function setup3DUI(steps, viewPoint) {
                                         if (!(i < steps.length)) return [3 /*break*/, 5];
                                         step = steps[i];
                                         image = images[i];
-                                        return [4 /*yield*/, generateCutPreviewImage(step, image, 45, i === images.length - 1, i === 0)];
+                                        return [4 /*yield*/, images_1.generateCutPreviewImage(step, image, 45, i === images.length - 1, i === 0)];
                                     case 2:
                                         debugImage = _a.sent();
-                                        return [4 /*yield*/, waitForImage(debugImage)];
+                                        return [4 /*yield*/, images_1.waitForImage(debugImage)];
                                     case 3:
                                         imageObject = _a.sent();
                                         imageObject.width = 500;
@@ -46390,10 +46388,10 @@ function setupRealUI(steps) {
                                 if (!(i < steps.length)) return [3 /*break*/, 6];
                                 step = steps[i];
                                 image = images[i];
-                                return [4 /*yield*/, cutImage(step, image, 46.8, i === images.length - 1, i === 0)];
+                                return [4 /*yield*/, images_1.cutImage(step, image, 46.8, i === images.length - 1, i === 0)];
                             case 3:
                                 cutedImage = _a.sent();
-                                return [4 /*yield*/, waitForImage(cutedImage)];
+                                return [4 /*yield*/, images_1.waitForImage(cutedImage)];
                             case 4:
                                 imageObject = _a.sent();
                                 if (imageObject.width > 1000) {
@@ -46426,10 +46424,10 @@ function setupRealUI(steps) {
                                 if (!(i < steps.length)) return [3 /*break*/, 6];
                                 step = steps[i];
                                 image = images[i];
-                                return [4 /*yield*/, generateCutPreviewImage(step, image, 46.8, i === images.length - 1, i === 0)];
+                                return [4 /*yield*/, images_1.generateCutPreviewImage(step, image, 46.8, i === images.length - 1, i === 0)];
                             case 3:
                                 debugImage = _a.sent();
-                                return [4 /*yield*/, waitForImage(debugImage)];
+                                return [4 /*yield*/, images_1.waitForImage(debugImage)];
                             case 4:
                                 imageObject = _a.sent();
                                 imageObject.width = 500;
@@ -46448,86 +46446,17 @@ function setupRealUI(steps) {
     });
 }
 function calcModel(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
-    var pointTriples = calculations_1.getPointTriples(curve, viewPoint, 1);
-    var shootingErrors = calculations_1.getShootingErrorsForTriples(pointTriples);
-    var segments = calculations_1.divideTriplesIntoSegmentsByErrors(pointTriples, shootingErrors);
-    var shots = calculations_1.divideSegmentsIntoShots(segments, maxViewAngle, maxDistortionAngle);
-    var steps = calculations_1.convertShotsIntoSteps(shots);
+    var pointTriples = model_1.getPointTriples(curve, viewPoint, 1);
+    console.log(pointTriples);
+    var shootingErrors = model_1.getShootingErrorsForTriples(pointTriples);
+    console.log(shootingErrors);
+    var segments = model_1.divideTriplesIntoSegmentsByErrors(pointTriples, shootingErrors);
+    console.log(segments);
+    var shots = model_1.divideSegmentsIntoShots(segments, maxViewAngle, maxDistortionAngle);
+    console.log(shots);
+    var steps = model_1.convertShotsIntoSteps(shots);
+    console.log(steps);
     return { pointTriples: pointTriples, shootingErrors: shootingErrors, segments: segments, steps: steps, shots: shots };
-}
-function drawControlPointsOn3DScene(steps, viewPoint, scene) {
-    return __awaiter(this, void 0, void 0, function () {
-        var _i, steps_1, step;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, draw_1.draw3DPoint({ x: viewPoint.x, y: 0 }, 0x00ffff, scene)];
-                case 1:
-                    _a.sent();
-                    _i = 0, steps_1 = steps;
-                    _a.label = 2;
-                case 2:
-                    if (!(_i < steps_1.length)) return [3 /*break*/, 7];
-                    step = steps_1[_i];
-                    return [4 /*yield*/, draw_1.draw3DPoint(step.firstElement.pointOnTheGround, 0xff0000, scene)];
-                case 3:
-                    _a.sent();
-                    return [4 /*yield*/, draw_1.draw3DPoint(step.lastElement.pointOnTheGround, 0xff0000, scene)];
-                case 4:
-                    _a.sent();
-                    return [4 /*yield*/, draw_1.draw3DPoint(step.shootedPoint, 0xffff00, scene)];
-                case 5:
-                    _a.sent();
-                    _a.label = 6;
-                case 6:
-                    _i++;
-                    return [3 /*break*/, 2];
-                case 7: return [2 /*return*/];
-            }
-        });
-    });
-}
-function ShitIn3D(steps, viewPoint) {
-    return __awaiter(this, void 0, void 0, function () {
-        var _a, scene, camera, renderer, overviewImage, shots, _i, steps_2, step, _b, _c;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
-                case 0: return [4 /*yield*/, scene_1.setup3DScene()];
-                case 1:
-                    _a = _d.sent(), scene = _a.scene, camera = _a.camera, renderer = _a.renderer;
-                    return [4 /*yield*/, simple_1.simple(scene)];
-                case 2:
-                    _d.sent();
-                    return [4 /*yield*/, shapes_1.addShapes(scene)];
-                case 3:
-                    _d.sent();
-                    return [4 /*yield*/, drawControlPointsOn3DScene(steps, viewPoint, scene)];
-                case 4:
-                    _d.sent();
-                    return [4 /*yield*/, scene_1.imageFrom3DScene({
-                            x: -100, y: 200, z: 200
-                        }, {
-                            x: 200, y: 0, z: 0
-                        }, false, scene, camera, renderer)];
-                case 5:
-                    overviewImage = _d.sent();
-                    shots = [];
-                    _i = 0, steps_2 = steps;
-                    _d.label = 6;
-                case 6:
-                    if (!(_i < steps_2.length)) return [3 /*break*/, 9];
-                    step = steps_2[_i];
-                    _c = (_b = shots).push;
-                    return [4 /*yield*/, scene_1.imageFrom3DScene(step.shootingPoint, step.shootedPoint, step.backwards, scene, camera, renderer)];
-                case 7:
-                    _c.apply(_b, [_d.sent()]);
-                    _d.label = 8;
-                case 8:
-                    _i++;
-                    return [3 /*break*/, 6];
-                case 9: return [2 /*return*/, [overviewImage, shots]];
-            }
-        });
-    });
 }
 function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
     return __awaiter(this, void 0, void 0, function () {
@@ -46669,82 +46598,6 @@ function getPointsForViewport(step, hFov) {
         return { bottomViewportOffset: bottomViewSideTriangle.B.x, topViewportOffset: topViewSideTriangle.B.x };
     }
 }
-function cutImage(step, image, vFov, doNotCutUp, doNotCutDown) {
-    return __awaiter(this, void 0, void 0, function () {
-        var stepDataUrl, _a, stepImage, _b, srcY, activeImageArea, viewportStepDataUrl;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
-                case 0:
-                    if (!step.backwards) return [3 /*break*/, 2];
-                    return [4 /*yield*/, updownImage(image)];
-                case 1:
-                    _a = (_c.sent());
-                    return [3 /*break*/, 3];
-                case 2:
-                    _a = image;
-                    _c.label = 3;
-                case 3:
-                    stepDataUrl = _a;
-                    return [4 /*yield*/, waitForImage(stepDataUrl)];
-                case 4:
-                    stepImage = _c.sent();
-                    _b = calcViewport(step.angleOfView, step.shotOn, stepImage.height, vFov, doNotCutUp, doNotCutDown), srcY = _b.srcY, activeImageArea = _b.activeImageArea;
-                    return [4 /*yield*/, cutViewport(stepDataUrl, srcY, activeImageArea)];
-                case 5:
-                    viewportStepDataUrl = _c.sent();
-                    return [2 /*return*/, viewportStepDataUrl];
-            }
-        });
-    });
-}
-function generateCutPreviewImage(step, image, vFov, doNotCutUp, doNotCutDown) {
-    return __awaiter(this, void 0, void 0, function () {
-        var stepDataUrl, _a, stepImage, _b, srcY, activeImageArea, previewStepDataUrl;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
-                case 0:
-                    if (!step.backwards) return [3 /*break*/, 2];
-                    return [4 /*yield*/, updownImage(image)];
-                case 1:
-                    _a = (_c.sent());
-                    return [3 /*break*/, 3];
-                case 2:
-                    _a = image;
-                    _c.label = 3;
-                case 3:
-                    stepDataUrl = _a;
-                    return [4 /*yield*/, waitForImage(stepDataUrl)];
-                case 4:
-                    stepImage = _c.sent();
-                    _b = calcViewport(step.angleOfView, step.shotOn, stepImage.height, vFov, doNotCutUp, doNotCutDown), srcY = _b.srcY, activeImageArea = _b.activeImageArea;
-                    return [4 /*yield*/, drawViewport(stepDataUrl, srcY, activeImageArea)];
-                case 5:
-                    previewStepDataUrl = _c.sent();
-                    return [2 /*return*/, previewStepDataUrl];
-            }
-        });
-    });
-}
-function updownImage(imageDataUrl) {
-    return __awaiter(this, void 0, void 0, function () {
-        var image, canvas, canvasContext;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, waitForImage(imageDataUrl)];
-                case 1:
-                    image = _a.sent();
-                    canvas = document.createElement('canvas');
-                    canvasContext = canvas.getContext('2d');
-                    canvas.height = image.height;
-                    canvas.width = image.width;
-                    canvasContext.translate(canvas.width / 2, canvas.height / 2);
-                    canvasContext.rotate(math_1.toRadians(180));
-                    canvasContext.drawImage(image, -canvas.width / 2, -canvas.height / 2);
-                    return [2 /*return*/, canvas.toDataURL()];
-            }
-        });
-    });
-}
 function getFiles() {
     return __awaiter(this, void 0, void 0, function () {
         var photos, imageDataUrls, _loop_1, i;
@@ -46817,86 +46670,6 @@ function getGeoSteps(startPoint, directionPoint, steps) {
     }
     return geoSteps;
 }
-function waitForImage(src) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, new Promise(function (resolve) {
-                        var image = new Image();
-                        image.src = src;
-                        image.onload = function () {
-                            resolve(image);
-                        };
-                    })];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
-    });
-}
-function calcViewport(angleOfView, shotOn, height, vFOV, fullUp, fullDown) {
-    if (fullUp === void 0) { fullUp = false; }
-    if (fullDown === void 0) { fullDown = false; }
-    var activeImageArea = ((angleOfView / vFOV) * height);
-    var srcY;
-    if (shotOn === 'start') {
-        srcY = (height / 2) - activeImageArea;
-    }
-    if (shotOn === 'center') {
-        srcY = (height - activeImageArea) / 2;
-    }
-    if (shotOn === 'end') {
-        srcY = (height / 2);
-    }
-    if (fullUp) {
-        activeImageArea = srcY + activeImageArea;
-        srcY = 0;
-    }
-    if (fullDown) {
-        activeImageArea = height - srcY;
-    }
-    return { srcY: srcY, activeImageArea: activeImageArea };
-}
-function drawViewport(imageDataUrl, srcY, activeImageArea) {
-    return __awaiter(this, void 0, void 0, function () {
-        var image, canvas, canvasContext;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, waitForImage(imageDataUrl)];
-                case 1:
-                    image = _a.sent();
-                    canvas = document.createElement('canvas');
-                    canvasContext = canvas.getContext('2d');
-                    canvas.height = image.height;
-                    canvas.width = image.width;
-                    canvasContext.drawImage(image, 0, 0);
-                    canvasContext.strokeStyle = "#FF0000";
-                    canvasContext.strokeRect(0, srcY, image.width, activeImageArea);
-                    canvasContext.strokeStyle = "#1eff36";
-                    canvasContext.strokeRect(0, image.height / 2, image.width, 1);
-                    canvasContext.strokeRect(image.width / 2, 0, 1, image.height);
-                    return [2 /*return*/, canvas.toDataURL()];
-            }
-        });
-    });
-}
-function cutViewport(imageDataUrl, srcY, activeImageArea) {
-    return __awaiter(this, void 0, void 0, function () {
-        var image, canvas, canvasContext;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, waitForImage(imageDataUrl)];
-                case 1:
-                    image = _a.sent();
-                    canvas = document.createElement('canvas');
-                    canvasContext = canvas.getContext('2d');
-                    canvas.height = activeImageArea;
-                    canvas.width = image.width;
-                    canvasContext.drawImage(image, 0, srcY, image.width, activeImageArea, 0, 0, image.width, activeImageArea);
-                    return [2 /*return*/, canvas.toDataURL()];
-            }
-        });
-    });
-}
 function makeLitchi(geoSteps) {
     var invertedHeading = (geoSteps[0].heading + 540) % 360;
     var initialStep = {
@@ -46961,215 +46734,7 @@ function createLitchiMissionDownloadLink(title, missionName, mission) {
 
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var math_1 = __webpack_require__(0);
-function getPointTriples(curve, viewPoint, stepLength) {
-    if (stepLength === void 0) { stepLength = 1; }
-    var totalCurveLength = curve.getTotalLength();
-    var pointTriples = [];
-    for (var i = 0; i <= totalCurveLength; i += stepLength) {
-        var pointOnTheCurve = curve.getPointOnTheCurve(i);
-        var pointOnTheGround = curve.getPointOnTheGround(i);
-        var shootingPoint = curve.getShootingPoint(i, viewPoint);
-        pointTriples.push({
-            pointOnTheCurve: pointOnTheCurve,
-            pointOnTheGround: pointOnTheGround,
-            shootingPoint: shootingPoint
-        });
-    }
-    return pointTriples;
-}
-exports.getPointTriples = getPointTriples;
-function getShootingErrorsForTriples(pointTriples) {
-    var shootingErrors = [];
-    for (var i = 1; i < pointTriples.length; i++) {
-        var triple = pointTriples[i];
-        var prevTriple = pointTriples[i - 1];
-        var perfectAngleForTriple = math_1.getTopAngle(triple.pointOnTheGround, {
-            x: 0,
-            y: 0
-        }, triple.shootingPoint);
-        var angleToTheNextPointOnTheGround = math_1.getTopAngle(triple.pointOnTheGround, {
-            x: 0,
-            y: 0
-        }, prevTriple.shootingPoint);
-        var deltaAngle = Math.abs(perfectAngleForTriple - angleToTheNextPointOnTheGround);
-        shootingErrors.push(deltaAngle);
-    }
-    return shootingErrors;
-}
-exports.getShootingErrorsForTriples = getShootingErrorsForTriples;
-function divideTriplesIntoSegmentsByErrors(pointTriples, shootingErrors) {
-    var segments = [];
-    var currentSegment = { triples: [pointTriples[0], pointTriples[1]], errors: [shootingErrors[0]] };
-    for (var i = 1; i < shootingErrors.length; i++) {
-        var deltaError = Math.abs(shootingErrors[i] - shootingErrors[i - 1]);
-        if (deltaError > 0.1 && currentSegment.triples.length > 1) {
-            segments.push({
-                triples: currentSegment.triples,
-                avgError: currentSegment.errors.reduce(function (acc, err) { return acc + err; }, 0) / currentSegment.errors.length
-            });
-            currentSegment = { triples: [pointTriples[i + 1]], errors: [] };
-        }
-        else {
-            currentSegment.triples.push(pointTriples[i + 1]);
-            currentSegment.errors.push(shootingErrors[i]);
-        }
-    }
-    segments.push({
-        triples: currentSegment.triples,
-        avgError: currentSegment.errors.reduce(function (acc, err) { return acc + err; }, 0) / currentSegment.errors.length
-    });
-    return segments;
-}
-exports.divideTriplesIntoSegmentsByErrors = divideTriplesIntoSegmentsByErrors;
-function divideSegmentsIntoShots(segments, maxViewAngle, maxDistortionAngle) {
-    var shots = [];
-    var lastSegment;
-    var _loop_1 = function (segment) {
-        if (segment.avgError < 0.01) {
-            var flatShots = splitBy(segment.triples, function (triplesForShot) {
-                var firstElement = triplesForShot[0];
-                var lastElement = triplesForShot[triplesForShot.length - 1];
-                var currentShotViewAngle = math_1.getTopAngle(firstElement.shootingPoint, firstElement.pointOnTheGround, lastElement.pointOnTheGround);
-                if (currentShotViewAngle > maxViewAngle) {
-                    return false;
-                }
-                return true;
-            });
-            for (var _i = 0, flatShots_1 = flatShots; _i < flatShots_1.length; _i++) {
-                var flatShot = flatShots_1[_i];
-                shots.push({
-                    shotOn: 'center',
-                    triples: flatShot
-                });
-            }
-        }
-        else {
-            var curvedShots = splitBy(segment.triples, function (triplesForShot) {
-                var firstElement = triplesForShot[0];
-                var lastElement = triplesForShot[triplesForShot.length - 1];
-                var currentShotViewAngle = math_1.getTopAngle(firstElement.shootingPoint, firstElement.pointOnTheGround, lastElement.pointOnTheGround);
-                if (currentShotViewAngle > maxViewAngle) {
-                    return false;
-                }
-                if ((segment.avgError * (triplesForShot.length - 1)) > maxDistortionAngle) {
-                    return false;
-                }
-                return true;
-            });
-            shots.push({
-                shotOn: 'start',
-                triples: curvedShots[0]
-            });
-            var middleShots = curvedShots.slice(1, curvedShots.length % 2 ? curvedShots.length - 2 : curvedShots.length - 3);
-            for (var i = 0; i < middleShots.length; i += 2) {
-                shots.push({
-                    shotOn: 'center',
-                    triples: [].concat(middleShots[i], middleShots[i + 1])
-                });
-            }
-            var restShots = curvedShots.slice(curvedShots.length % 2 ? curvedShots.length - 2 : curvedShots.length - 3);
-            shots.push({
-                shotOn: 'end',
-                triples: restShots[0]
-            });
-            var lastShotTriples = restShots.slice(1).length === 1 ? restShots[1] : [].concat(restShots[1], restShots[2]);
-            shots.push({
-                shotOn: 'start',
-                triples: lastShotTriples.slice(0, parseInt((lastShotTriples.length / 2).toFixed()))
-            });
-            shots.push({
-                shotOn: 'end',
-                triples: lastShotTriples.slice(parseInt((lastShotTriples.length / 2).toFixed()))
-            });
-        }
-        lastSegment = segment;
-    };
-    for (var _i = 0, segments_1 = segments; _i < segments_1.length; _i++) {
-        var segment = segments_1[_i];
-        _loop_1(segment);
-    }
-    for (var i = 1; i < shots.length; i++) {
-        shots[i].triples.unshift(shots[i - 1].triples[shots[i - 1].triples.length - 1]);
-    }
-    return shots;
-}
-exports.divideSegmentsIntoShots = divideSegmentsIntoShots;
-function convertShotsIntoSteps(shots) {
-    return shots.map(function (shot) {
-        var firstElement = shot.triples[0];
-        var centerElement = shot.triples[parseInt((shot.triples.length / 2).toFixed())];
-        var lastElement = shot.triples[shot.triples.length - 1];
-        var shootingPoint;
-        var shootedPoint;
-        if (shot.shotOn === 'start') {
-            shootingPoint = firstElement.shootingPoint;
-            shootedPoint = firstElement.pointOnTheGround;
-        }
-        if (shot.shotOn === 'center') {
-            shootingPoint = centerElement.shootingPoint;
-            var angleOfView_1 = math_1.getTopAngle(shootingPoint, firstElement.pointOnTheGround, lastElement.pointOnTheGround);
-            var triangle = math_1.calculateTriangleCustom2(shootingPoint, angleOfView_1 / 2, firstElement.pointOnTheGround, math_1.getTopAngle(firstElement.pointOnTheGround, shootingPoint, lastElement.pointOnTheGround));
-            shootedPoint = triangle.B;
-        }
-        if (shot.shotOn === 'end') {
-            shootingPoint = lastElement.shootingPoint;
-            shootedPoint = lastElement.pointOnTheGround;
-        }
-        var angleOfView = math_1.getTopAngle(shootingPoint, firstElement.pointOnTheGround, lastElement.pointOnTheGround);
-        var viewAngleToTheGround = math_1.getTopAngle(shootingPoint, {
-            x: shootingPoint.x,
-            y: 0
-        }, shootedPoint) - 90;
-        return {
-            angleOfView: angleOfView,
-            shootingPoint: shootingPoint,
-            shootedPoint: shootedPoint,
-            firstElement: firstElement,
-            lastElement: lastElement,
-            centerElement: centerElement,
-            viewAngleToTheGround: viewAngleToTheGround,
-            shotOn: shot.shotOn,
-            backwards: shootingPoint.x > shootedPoint.x,
-        };
-    });
-}
-exports.convertShotsIntoSteps = convertShotsIntoSteps;
-function splitBy(array, isCurrentSubArrayIsGoodFn) {
-    var subArrays = [];
-    var currentSubArray = [];
-    for (var i = 0; i < array.length; i++) {
-        var item = array[i];
-        if (!currentSubArray[0]) {
-            currentSubArray.push(item);
-            continue;
-        }
-        if (item === array[array.length - 1]) {
-            currentSubArray.push(item);
-            subArrays.push(currentSubArray);
-            break;
-        }
-        var currentSubArrayTry = [].concat(currentSubArray, [item]);
-        if (isCurrentSubArrayIsGoodFn(currentSubArrayTry, i)) {
-            currentSubArray.push(item);
-        }
-        else {
-            subArrays.push(currentSubArray);
-            currentSubArray = [];
-            currentSubArray.push(item);
-        }
-    }
-    return subArrays;
-}
-
-
-/***/ }),
+/* 4 */,
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -58315,6 +57880,546 @@ function drawShots(shots, viewPoint, topCanvas, bottomCanvas) {
     }
 }
 exports.drawShots = drawShots;
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var math_1 = __webpack_require__(0);
+function getPointTriples(curve, viewPoint, stepLength) {
+    if (stepLength === void 0) { stepLength = 1; }
+    var totalCurveLength = curve.getTotalLength();
+    var pointTriples = [];
+    for (var i = 0; i <= totalCurveLength; i += stepLength) {
+        var pointOnTheCurve = curve.getPointOnTheCurve(i);
+        var pointOnTheGround = curve.getPointOnTheGround(i);
+        var shootingPoint = curve.getShootingPoint(i, viewPoint);
+        pointTriples.push({
+            pointOnTheCurve: pointOnTheCurve,
+            pointOnTheGround: pointOnTheGround,
+            shootingPoint: shootingPoint
+        });
+    }
+    return pointTriples;
+}
+exports.getPointTriples = getPointTriples;
+function getShootingErrorsForTriples(pointTriples) {
+    var shootingErrors = [];
+    for (var i = 1; i < pointTriples.length; i++) {
+        var triple = pointTriples[i];
+        var prevTriple = pointTriples[i - 1];
+        var perfectAngleForTriple = math_1.getTopAngle(triple.pointOnTheGround, {
+            x: 0,
+            y: 0
+        }, triple.shootingPoint);
+        var angleToTheNextPointOnTheGround = math_1.getTopAngle(triple.pointOnTheGround, {
+            x: 0,
+            y: 0
+        }, prevTriple.shootingPoint);
+        var deltaAngle = Math.abs(perfectAngleForTriple - angleToTheNextPointOnTheGround);
+        shootingErrors.push(deltaAngle);
+    }
+    return shootingErrors;
+}
+exports.getShootingErrorsForTriples = getShootingErrorsForTriples;
+function divideTriplesIntoSegmentsByErrors(pointTriples, shootingErrors) {
+    var segments = [];
+    var currentSegment = { triples: [pointTriples[0], pointTriples[1]], errors: [shootingErrors[0]] };
+    for (var i = 1; i < shootingErrors.length; i++) {
+        var deltaError = Math.abs(shootingErrors[i] - shootingErrors[i - 1]);
+        if (deltaError > 0.1 && currentSegment.triples.length > 1) {
+            segments.push({
+                triples: currentSegment.triples,
+                avgError: currentSegment.errors.reduce(function (acc, err) { return acc + err; }, 0) / currentSegment.errors.length
+            });
+            currentSegment = { triples: [pointTriples[i + 1]], errors: [] };
+        }
+        else {
+            currentSegment.triples.push(pointTriples[i + 1]);
+            currentSegment.errors.push(shootingErrors[i]);
+        }
+    }
+    segments.push({
+        triples: currentSegment.triples,
+        avgError: currentSegment.errors.reduce(function (acc, err) { return acc + err; }, 0) / currentSegment.errors.length
+    });
+    return segments;
+}
+exports.divideTriplesIntoSegmentsByErrors = divideTriplesIntoSegmentsByErrors;
+function divideSegmentsIntoShots(segments, maxViewAngle, maxDistortionAngle) {
+    var shots = [];
+    var lastSegment;
+    var _loop_1 = function (segment) {
+        if (segment.avgError < 0.01) {
+            var flatShots = splitBy(segment.triples, function (triplesForShot) {
+                var firstElement = triplesForShot[0];
+                var lastElement = triplesForShot[triplesForShot.length - 1];
+                var currentShotViewAngle = math_1.getTopAngle(firstElement.shootingPoint, firstElement.pointOnTheGround, lastElement.pointOnTheGround);
+                if (currentShotViewAngle > maxViewAngle) {
+                    return false;
+                }
+                return true;
+            });
+            for (var _i = 0, flatShots_1 = flatShots; _i < flatShots_1.length; _i++) {
+                var flatShot = flatShots_1[_i];
+                shots.push({
+                    shotOn: 'center',
+                    triples: flatShot
+                });
+            }
+        }
+        else {
+            var curvedShots = splitBy(segment.triples, function (triplesForShot) {
+                var firstElement = triplesForShot[0];
+                var lastElement = triplesForShot[triplesForShot.length - 1];
+                var currentShotViewAngle = math_1.getTopAngle(firstElement.shootingPoint, firstElement.pointOnTheGround, lastElement.pointOnTheGround);
+                if (currentShotViewAngle > maxViewAngle) {
+                    return false;
+                }
+                if ((segment.avgError * (triplesForShot.length - 1)) > maxDistortionAngle) {
+                    return false;
+                }
+                return true;
+            });
+            shots.push({
+                shotOn: 'start',
+                triples: curvedShots[0]
+            });
+            var middleShots = curvedShots.slice(1, curvedShots.length % 2 ? curvedShots.length - 2 : curvedShots.length - 3);
+            for (var i = 0; i < middleShots.length; i += 2) {
+                shots.push({
+                    shotOn: 'center',
+                    triples: [].concat(middleShots[i], middleShots[i + 1])
+                });
+            }
+            var restShots = curvedShots.slice(curvedShots.length % 2 ? curvedShots.length - 2 : curvedShots.length - 3);
+            shots.push({
+                shotOn: 'end',
+                triples: restShots[0]
+            });
+            var lastShotTriples = restShots.slice(1).length === 1 ? restShots[1] : [].concat(restShots[1], restShots[2]);
+            shots.push({
+                shotOn: 'start',
+                triples: lastShotTriples.slice(0, parseInt((lastShotTriples.length / 2).toFixed()))
+            });
+            shots.push({
+                shotOn: 'end',
+                triples: lastShotTriples.slice(parseInt((lastShotTriples.length / 2).toFixed()))
+            });
+        }
+        lastSegment = segment;
+    };
+    for (var _i = 0, segments_1 = segments; _i < segments_1.length; _i++) {
+        var segment = segments_1[_i];
+        _loop_1(segment);
+    }
+    for (var i = 1; i < shots.length; i++) {
+        shots[i].triples.unshift(shots[i - 1].triples[shots[i - 1].triples.length - 1]);
+    }
+    return shots;
+}
+exports.divideSegmentsIntoShots = divideSegmentsIntoShots;
+function convertShotsIntoSteps(shots) {
+    return shots.map(function (shot) {
+        var firstElement = shot.triples[0];
+        var centerElement = shot.triples[parseInt((shot.triples.length / 2).toFixed())];
+        var lastElement = shot.triples[shot.triples.length - 1];
+        var shootingPoint;
+        var shootedPoint;
+        if (shot.shotOn === 'start') {
+            shootingPoint = firstElement.shootingPoint;
+            shootedPoint = firstElement.pointOnTheGround;
+        }
+        if (shot.shotOn === 'center') {
+            shootingPoint = centerElement.shootingPoint;
+            var angleOfView_1 = math_1.getTopAngle(shootingPoint, firstElement.pointOnTheGround, lastElement.pointOnTheGround);
+            var triangle = math_1.calculateTriangleCustom2(shootingPoint, angleOfView_1 / 2, firstElement.pointOnTheGround, math_1.getTopAngle(firstElement.pointOnTheGround, shootingPoint, lastElement.pointOnTheGround));
+            shootedPoint = triangle.B;
+        }
+        if (shot.shotOn === 'end') {
+            shootingPoint = lastElement.shootingPoint;
+            shootedPoint = lastElement.pointOnTheGround;
+        }
+        var angleOfView = math_1.getTopAngle(shootingPoint, firstElement.pointOnTheGround, lastElement.pointOnTheGround);
+        var viewAngleToTheGround = math_1.getTopAngle(shootingPoint, {
+            x: shootingPoint.x,
+            y: 0
+        }, shootedPoint) - 90;
+        return {
+            angleOfView: angleOfView,
+            shootingPoint: shootingPoint,
+            shootedPoint: shootedPoint,
+            firstElement: firstElement,
+            lastElement: lastElement,
+            centerElement: centerElement,
+            viewAngleToTheGround: viewAngleToTheGround,
+            shotOn: shot.shotOn,
+            backwards: shootingPoint.x > shootedPoint.x,
+        };
+    });
+}
+exports.convertShotsIntoSteps = convertShotsIntoSteps;
+function splitBy(array, isCurrentSubArrayIsGoodFn) {
+    var subArrays = [];
+    var currentSubArray = [];
+    for (var i = 0; i < array.length; i++) {
+        var item = array[i];
+        if (!currentSubArray[0]) {
+            currentSubArray.push(item);
+            continue;
+        }
+        if (item === array[array.length - 1]) {
+            currentSubArray.push(item);
+            subArrays.push(currentSubArray);
+            break;
+        }
+        var currentSubArrayTry = [].concat(currentSubArray, [item]);
+        if (isCurrentSubArrayIsGoodFn(currentSubArrayTry, i)) {
+            currentSubArray.push(item);
+        }
+        else {
+            subArrays.push(currentSubArray);
+            currentSubArray = [];
+            currentSubArray.push(item);
+        }
+    }
+    return subArrays;
+}
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var math_1 = __webpack_require__(0);
+function cutViewport(imageDataUrl, srcY, activeImageArea) {
+    return __awaiter(this, void 0, void 0, function () {
+        var image, canvas, canvasContext;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, waitForImage(imageDataUrl)];
+                case 1:
+                    image = _a.sent();
+                    canvas = document.createElement('canvas');
+                    canvasContext = canvas.getContext('2d');
+                    canvas.height = activeImageArea;
+                    canvas.width = image.width;
+                    canvasContext.drawImage(image, 0, srcY, image.width, activeImageArea, 0, 0, image.width, activeImageArea);
+                    return [2 /*return*/, canvas.toDataURL()];
+            }
+        });
+    });
+}
+exports.cutViewport = cutViewport;
+function drawViewport(imageDataUrl, srcY, activeImageArea) {
+    return __awaiter(this, void 0, void 0, function () {
+        var image, canvas, canvasContext;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, waitForImage(imageDataUrl)];
+                case 1:
+                    image = _a.sent();
+                    canvas = document.createElement('canvas');
+                    canvasContext = canvas.getContext('2d');
+                    canvas.height = image.height;
+                    canvas.width = image.width;
+                    canvasContext.drawImage(image, 0, 0);
+                    canvasContext.strokeStyle = "#FF0000";
+                    canvasContext.strokeRect(0, srcY, image.width, activeImageArea);
+                    canvasContext.strokeStyle = "#1eff36";
+                    canvasContext.strokeRect(0, image.height / 2, image.width, 1);
+                    canvasContext.strokeRect(image.width / 2, 0, 1, image.height);
+                    return [2 /*return*/, canvas.toDataURL()];
+            }
+        });
+    });
+}
+exports.drawViewport = drawViewport;
+function calcViewport(angleOfView, shotOn, height, vFOV, fullUp, fullDown) {
+    if (fullUp === void 0) { fullUp = false; }
+    if (fullDown === void 0) { fullDown = false; }
+    var activeImageArea = ((angleOfView / vFOV) * height);
+    var srcY;
+    if (shotOn === 'start') {
+        srcY = (height / 2) - activeImageArea;
+    }
+    if (shotOn === 'center') {
+        srcY = (height - activeImageArea) / 2;
+    }
+    if (shotOn === 'end') {
+        srcY = (height / 2);
+    }
+    if (fullUp) {
+        activeImageArea = srcY + activeImageArea;
+        srcY = 0;
+    }
+    if (fullDown) {
+        activeImageArea = height - srcY;
+    }
+    return { srcY: srcY, activeImageArea: activeImageArea };
+}
+exports.calcViewport = calcViewport;
+function waitForImage(src) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, new Promise(function (resolve) {
+                        var image = new Image();
+                        image.src = src;
+                        image.onload = function () {
+                            resolve(image);
+                        };
+                    })];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+exports.waitForImage = waitForImage;
+function updownImage(imageDataUrl) {
+    return __awaiter(this, void 0, void 0, function () {
+        var image, canvas, canvasContext;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, waitForImage(imageDataUrl)];
+                case 1:
+                    image = _a.sent();
+                    canvas = document.createElement('canvas');
+                    canvasContext = canvas.getContext('2d');
+                    canvas.height = image.height;
+                    canvas.width = image.width;
+                    canvasContext.translate(canvas.width / 2, canvas.height / 2);
+                    canvasContext.rotate(math_1.toRadians(180));
+                    canvasContext.drawImage(image, -canvas.width / 2, -canvas.height / 2);
+                    return [2 /*return*/, canvas.toDataURL()];
+            }
+        });
+    });
+}
+exports.updownImage = updownImage;
+function cutImage(step, image, vFov, doNotCutUp, doNotCutDown) {
+    return __awaiter(this, void 0, void 0, function () {
+        var stepDataUrl, _a, stepImage, _b, srcY, activeImageArea, viewportStepDataUrl;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    if (!step.backwards) return [3 /*break*/, 2];
+                    return [4 /*yield*/, updownImage(image)];
+                case 1:
+                    _a = (_c.sent());
+                    return [3 /*break*/, 3];
+                case 2:
+                    _a = image;
+                    _c.label = 3;
+                case 3:
+                    stepDataUrl = _a;
+                    return [4 /*yield*/, waitForImage(stepDataUrl)];
+                case 4:
+                    stepImage = _c.sent();
+                    _b = calcViewport(step.angleOfView, step.shotOn, stepImage.height, vFov, doNotCutUp, doNotCutDown), srcY = _b.srcY, activeImageArea = _b.activeImageArea;
+                    return [4 /*yield*/, cutViewport(stepDataUrl, srcY, activeImageArea)];
+                case 5:
+                    viewportStepDataUrl = _c.sent();
+                    return [2 /*return*/, viewportStepDataUrl];
+            }
+        });
+    });
+}
+exports.cutImage = cutImage;
+function generateCutPreviewImage(step, image, vFov, doNotCutUp, doNotCutDown) {
+    return __awaiter(this, void 0, void 0, function () {
+        var stepDataUrl, _a, stepImage, _b, srcY, activeImageArea, previewStepDataUrl;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    if (!step.backwards) return [3 /*break*/, 2];
+                    return [4 /*yield*/, updownImage(image)];
+                case 1:
+                    _a = (_c.sent());
+                    return [3 /*break*/, 3];
+                case 2:
+                    _a = image;
+                    _c.label = 3;
+                case 3:
+                    stepDataUrl = _a;
+                    return [4 /*yield*/, waitForImage(stepDataUrl)];
+                case 4:
+                    stepImage = _c.sent();
+                    _b = calcViewport(step.angleOfView, step.shotOn, stepImage.height, vFov, doNotCutUp, doNotCutDown), srcY = _b.srcY, activeImageArea = _b.activeImageArea;
+                    return [4 /*yield*/, drawViewport(stepDataUrl, srcY, activeImageArea)];
+                case 5:
+                    previewStepDataUrl = _c.sent();
+                    return [2 /*return*/, previewStepDataUrl];
+            }
+        });
+    });
+}
+exports.generateCutPreviewImage = generateCutPreviewImage;
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var simple_1 = __webpack_require__(11);
+var draw_1 = __webpack_require__(2);
+var scene_1 = __webpack_require__(8);
+var shapes_1 = __webpack_require__(9);
+function drawControlPointsOn3DScene(steps, viewPoint, scene) {
+    return __awaiter(this, void 0, void 0, function () {
+        var _i, steps_1, step;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, draw_1.draw3DPoint({ x: viewPoint.x, y: 0 }, 0x00ffff, scene)];
+                case 1:
+                    _a.sent();
+                    _i = 0, steps_1 = steps;
+                    _a.label = 2;
+                case 2:
+                    if (!(_i < steps_1.length)) return [3 /*break*/, 7];
+                    step = steps_1[_i];
+                    return [4 /*yield*/, draw_1.draw3DPoint(step.firstElement.pointOnTheGround, 0xff0000, scene)];
+                case 3:
+                    _a.sent();
+                    return [4 /*yield*/, draw_1.draw3DPoint(step.lastElement.pointOnTheGround, 0xff0000, scene)];
+                case 4:
+                    _a.sent();
+                    return [4 /*yield*/, draw_1.draw3DPoint(step.shootedPoint, 0xffff00, scene)];
+                case 5:
+                    _a.sent();
+                    _a.label = 6;
+                case 6:
+                    _i++;
+                    return [3 /*break*/, 2];
+                case 7: return [2 /*return*/];
+            }
+        });
+    });
+}
+function ShitIn3D(steps, viewPoint) {
+    return __awaiter(this, void 0, void 0, function () {
+        var _a, scene, camera, renderer, overviewImage, shots, _i, steps_2, step, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0: return [4 /*yield*/, scene_1.setup3DScene()];
+                case 1:
+                    _a = _d.sent(), scene = _a.scene, camera = _a.camera, renderer = _a.renderer;
+                    return [4 /*yield*/, simple_1.simple(scene)];
+                case 2:
+                    _d.sent();
+                    return [4 /*yield*/, shapes_1.addShapes(scene)];
+                case 3:
+                    _d.sent();
+                    return [4 /*yield*/, drawControlPointsOn3DScene(steps, viewPoint, scene)];
+                case 4:
+                    _d.sent();
+                    return [4 /*yield*/, scene_1.imageFrom3DScene({
+                            x: -100, y: 200, z: 200
+                        }, {
+                            x: 200, y: 0, z: 0
+                        }, false, scene, camera, renderer)];
+                case 5:
+                    overviewImage = _d.sent();
+                    shots = [];
+                    _i = 0, steps_2 = steps;
+                    _d.label = 6;
+                case 6:
+                    if (!(_i < steps_2.length)) return [3 /*break*/, 9];
+                    step = steps_2[_i];
+                    _c = (_b = shots).push;
+                    return [4 /*yield*/, scene_1.imageFrom3DScene(step.shootingPoint, step.shootedPoint, step.backwards, scene, camera, renderer)];
+                case 7:
+                    _c.apply(_b, [_d.sent()]);
+                    _d.label = 8;
+                case 8:
+                    _i++;
+                    return [3 /*break*/, 6];
+                case 9: return [2 /*return*/, [overviewImage, shots]];
+            }
+        });
+    });
+}
+exports.ShitIn3D = ShitIn3D;
 
 
 /***/ })
