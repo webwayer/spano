@@ -45,34 +45,104 @@ async function setup3DUI(steps, viewPoint) {
     const [preview, images] = await ShitIn3D(steps, viewPoint);
 
     $('#generateButton3D').attr('disabled', false);
+    $('#generateDebug3D').attr('disabled', false);
     const previewImage = await waitForImage(preview);
     previewImage.width = 500;
 
     $('#preview3D').empty();
     $('#debug3D').empty();
     $('#scene3D').empty();
+    $('#preview3D').hide();
+    $('#debug3D').hide();
     $('#generateButton3D').off('click');
+    $('#generateDebug3D').off('click');
+    $('#generateDebug3D').hide();
 
     $('#scene3D').append(previewImage);
     $('#generateButton3D').on('click', async function () {
         $('#generateButton3D').attr('disabled', true);
-        $('#generateButton3D').off('click');
-        await processImages(steps, images, 45, <any>document.getElementById('preview3D'), <any>document.getElementById('debug3D'));
-    })
+        $('#preview3D').show();
+        $('#generateDebug3D').show();
+
+        for (let i = 0; i < steps.length; i++) {
+            const step = steps[i];
+            const image = images[i];
+
+            const cutedImage = await cutImage(step, image, 45, i === images.length - 1, i === 0);
+            const imageObject = await waitForImage(cutedImage);
+            if (imageObject.width > 1000) {
+                imageObject.width = 1000
+            }
+            $('#preview3D').prepend(imageObject)
+        }
+    });
+
+    $('#generateDebug3D').on('click', async function () {
+        $('#generateDebug3D').attr('disabled', true);
+        $('#debug3D').show();
+
+        for (let i = 0; i < steps.length; i++) {
+            const step = steps[i];
+            const image = images[i];
+
+            const debugImage = await generateCutPreviewImage(step, image, 45, i === images.length - 1, i === 0);
+            const imageObject = await waitForImage(debugImage);
+            imageObject.width = 500;
+            $('#debug3D').append(imageObject)
+        }
+    });
 }
 
 async function setupRealUI(steps) {
+    $('#generateDebugReal').attr('disabled', false);
+
     $('#previewReal').empty();
     $('#debugReal').empty();
+    $('#previewReal').hide();
+    $('#debugReal').hide();
     $('#generateButtonReal').off('click');
+    $('#generateDebugReal').off('click');
+    $('#generateDebugReal').hide();
 
-    $('#generateButtonReal').on('click', async function() {
+    $('#generateButtonReal').on('click', async function () {
         $('#previewReal').empty();
         $('#debugReal').empty();
+        $('#generateDebugReal').attr('disabled', false);
+
+        $('#previewReal').show();
+        $('#generateDebugReal').show();
 
         const images = await getFiles();
-        await processImages(steps, images, 46.8, <any>document.getElementById('previewReal'), <any>document.getElementById('debugReal'));
-    })
+
+        for (let i = 0; i < steps.length; i++) {
+            const step = steps[i];
+            const image = images[i];
+
+            const cutedImage = await cutImage(step, image, 46.8, i === images.length - 1, i === 0);
+            const imageObject = await waitForImage(cutedImage);
+            if (imageObject.width > 1000) {
+                imageObject.width = 1000
+            }
+            $('#previewReal').prepend(imageObject)
+        }
+    });
+
+    $('#generateDebugReal').on('click', async function () {
+        $('#generateDebugReal').attr('disabled', true);
+        $('#debugReal').show();
+
+        const images = await getFiles();
+
+        for (let i = 0; i < steps.length; i++) {
+            const step = steps[i];
+            const image = images[i];
+
+            const debugImage = await generateCutPreviewImage(step, image, 46.8, i === images.length - 1, i === 0);
+            const imageObject = await waitForImage(debugImage);
+            imageObject.width = 500;
+            $('#debugReal').append(imageObject)
+        }
+    });
 }
 
 function calcModel(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
@@ -265,6 +335,24 @@ function getPointsForViewport(step, hFov) {
     }
 }
 
+async function cutImage(step, image, vFov, doNotCutUp, doNotCutDown) {
+    const stepDataUrl = step.backwards ? (await updownImage(image)) : image;
+    const stepImage = await waitForImage(stepDataUrl);
+    const { srcY, activeImageArea } = calcViewport(step.angleOfView, step.shotOn, stepImage.height, vFov, doNotCutUp, doNotCutDown);
+    const viewportStepDataUrl = await cutViewport(image, srcY, activeImageArea);
+
+    return viewportStepDataUrl;
+}
+
+async function generateCutPreviewImage(step, image, vFov, doNotCutUp, doNotCutDown) {
+    const stepDataUrl = step.backwards ? (await updownImage(image)) : image;
+    const stepImage = await waitForImage(stepDataUrl);
+    const { srcY, activeImageArea } = calcViewport(step.angleOfView, step.shotOn, stepImage.height, vFov, doNotCutUp, doNotCutDown);
+    const previewStepDataUrl = await drawViewport(image, srcY, activeImageArea);
+
+    return previewStepDataUrl;
+}
+
 async function processImages(steps, images, vFov, output, outputDebug) {
     for (let i = 0; i < images.length; i++) {
         const step = steps[i];
@@ -415,6 +503,7 @@ async function drawViewport(imageDataUrl, srcY, activeImageArea) {
     canvasContext.strokeRect(0, srcY, image.width, activeImageArea);
     canvasContext.strokeStyle = "#1eff36";
     canvasContext.strokeRect(0, image.height / 2, image.width, 1);
+    canvasContext.strokeRect(image.width / 2, 0, 1, image.height);
 
     return canvas.toDataURL();
 }

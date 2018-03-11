@@ -46237,6 +46237,9 @@ function setupUI() {
                         return [4 /*yield*/, setup3DUI(steps, viewPoint)];
                     case 1:
                         _b.sent();
+                        return [4 /*yield*/, setupRealUI(steps)];
+                    case 2:
+                        _b.sent();
                         return [2 /*return*/];
                 }
             });
@@ -46247,21 +46250,6 @@ setupUI();
 $('#generateButton').click();
 function setup3DUI(steps, viewPoint) {
     return __awaiter(this, void 0, void 0, function () {
-        function generate3DHandler() {
-            return __awaiter(this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            $('#generateButton3D').attr('disabled', true);
-                            $('#generateButton3D').off('click', generate3DHandler);
-                            return [4 /*yield*/, processImages(steps, images, 45, document.getElementById('preview3D'), document.getElementById('debug3D'))];
-                        case 1:
-                            _a.sent();
-                            return [2 /*return*/];
-                    }
-                });
-            });
-        }
         var _a, preview, images, previewImage;
         return __generator(this, function (_b) {
             switch (_b.label) {
@@ -46269,6 +46257,7 @@ function setup3DUI(steps, viewPoint) {
                 case 1:
                     _a = _b.sent(), preview = _a[0], images = _a[1];
                     $('#generateButton3D').attr('disabled', false);
+                    $('#generateDebug3D').attr('disabled', false);
                     return [4 /*yield*/, waitForImage(preview)];
                 case 2:
                     previewImage = _b.sent();
@@ -46276,10 +46265,167 @@ function setup3DUI(steps, viewPoint) {
                     $('#preview3D').empty();
                     $('#debug3D').empty();
                     $('#scene3D').empty();
+                    $('#preview3D').hide();
+                    $('#debug3D').hide();
+                    $('#generateButton3D').off('click');
+                    $('#generateDebug3D').off('click');
+                    $('#generateDebug3D').hide();
                     $('#scene3D').append(previewImage);
-                    $('#generateButton3D').on('click', generate3DHandler);
+                    $('#generateButton3D').on('click', function () {
+                        return __awaiter(this, void 0, void 0, function () {
+                            var i, step, image, cutedImage, imageObject;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        $('#generateButton3D').attr('disabled', true);
+                                        $('#preview3D').show();
+                                        $('#generateDebug3D').show();
+                                        i = 0;
+                                        _a.label = 1;
+                                    case 1:
+                                        if (!(i < steps.length)) return [3 /*break*/, 5];
+                                        step = steps[i];
+                                        image = images[i];
+                                        return [4 /*yield*/, cutImage(step, image, 45, i === images.length - 1, i === 0)];
+                                    case 2:
+                                        cutedImage = _a.sent();
+                                        return [4 /*yield*/, waitForImage(cutedImage)];
+                                    case 3:
+                                        imageObject = _a.sent();
+                                        if (imageObject.width > 1000) {
+                                            imageObject.width = 1000;
+                                        }
+                                        $('#preview3D').prepend(imageObject);
+                                        _a.label = 4;
+                                    case 4:
+                                        i++;
+                                        return [3 /*break*/, 1];
+                                    case 5: return [2 /*return*/];
+                                }
+                            });
+                        });
+                    });
+                    $('#generateDebug3D').on('click', function () {
+                        return __awaiter(this, void 0, void 0, function () {
+                            var i, step, image, debugImage, imageObject;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        $('#generateDebug3D').attr('disabled', true);
+                                        $('#debug3D').show();
+                                        i = 0;
+                                        _a.label = 1;
+                                    case 1:
+                                        if (!(i < steps.length)) return [3 /*break*/, 5];
+                                        step = steps[i];
+                                        image = images[i];
+                                        return [4 /*yield*/, generateCutPreviewImage(step, image, 45, i === images.length - 1, i === 0)];
+                                    case 2:
+                                        debugImage = _a.sent();
+                                        return [4 /*yield*/, waitForImage(debugImage)];
+                                    case 3:
+                                        imageObject = _a.sent();
+                                        imageObject.width = 500;
+                                        $('#debug3D').append(imageObject);
+                                        _a.label = 4;
+                                    case 4:
+                                        i++;
+                                        return [3 /*break*/, 1];
+                                    case 5: return [2 /*return*/];
+                                }
+                            });
+                        });
+                    });
                     return [2 /*return*/];
             }
+        });
+    });
+}
+function setupRealUI(steps) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            $('#generateDebugReal').attr('disabled', false);
+            $('#previewReal').empty();
+            $('#debugReal').empty();
+            $('#previewReal').hide();
+            $('#debugReal').hide();
+            $('#generateButtonReal').off('click');
+            $('#generateDebugReal').off('click');
+            $('#generateDebugReal').hide();
+            $('#generateButtonReal').on('click', function () {
+                return __awaiter(this, void 0, void 0, function () {
+                    var images, i, step, image, cutedImage, imageObject;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                $('#previewReal').empty();
+                                $('#debugReal').empty();
+                                $('#generateDebugReal').attr('disabled', false);
+                                $('#previewReal').show();
+                                $('#generateDebugReal').show();
+                                return [4 /*yield*/, getFiles()];
+                            case 1:
+                                images = _a.sent();
+                                i = 0;
+                                _a.label = 2;
+                            case 2:
+                                if (!(i < steps.length)) return [3 /*break*/, 6];
+                                step = steps[i];
+                                image = images[i];
+                                return [4 /*yield*/, cutImage(step, image, 46.8, i === images.length - 1, i === 0)];
+                            case 3:
+                                cutedImage = _a.sent();
+                                return [4 /*yield*/, waitForImage(cutedImage)];
+                            case 4:
+                                imageObject = _a.sent();
+                                if (imageObject.width > 1000) {
+                                    imageObject.width = 1000;
+                                }
+                                $('#previewReal').prepend(imageObject);
+                                _a.label = 5;
+                            case 5:
+                                i++;
+                                return [3 /*break*/, 2];
+                            case 6: return [2 /*return*/];
+                        }
+                    });
+                });
+            });
+            $('#generateDebugReal').on('click', function () {
+                return __awaiter(this, void 0, void 0, function () {
+                    var images, i, step, image, debugImage, imageObject;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                $('#generateDebugReal').attr('disabled', true);
+                                $('#debugReal').show();
+                                return [4 /*yield*/, getFiles()];
+                            case 1:
+                                images = _a.sent();
+                                i = 0;
+                                _a.label = 2;
+                            case 2:
+                                if (!(i < steps.length)) return [3 /*break*/, 6];
+                                step = steps[i];
+                                image = images[i];
+                                return [4 /*yield*/, generateCutPreviewImage(step, image, 46.8, i === images.length - 1, i === 0)];
+                            case 3:
+                                debugImage = _a.sent();
+                                return [4 /*yield*/, waitForImage(debugImage)];
+                            case 4:
+                                imageObject = _a.sent();
+                                imageObject.width = 500;
+                                $('#debugReal').append(imageObject);
+                                _a.label = 5;
+                            case 5:
+                                i++;
+                                return [3 /*break*/, 2];
+                            case 6: return [2 /*return*/];
+                        }
+                    });
+                });
+            });
+            return [2 /*return*/];
         });
     });
 }
@@ -46522,6 +46668,62 @@ function getPointsForViewport(step, hFov) {
         return { bottomViewportOffset: bottomViewSideTriangle.B.x, topViewportOffset: topViewSideTriangle.B.x };
     }
 }
+function cutImage(step, image, vFov, doNotCutUp, doNotCutDown) {
+    return __awaiter(this, void 0, void 0, function () {
+        var stepDataUrl, _a, stepImage, _b, srcY, activeImageArea, viewportStepDataUrl;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    if (!step.backwards) return [3 /*break*/, 2];
+                    return [4 /*yield*/, updownImage(image)];
+                case 1:
+                    _a = (_c.sent());
+                    return [3 /*break*/, 3];
+                case 2:
+                    _a = image;
+                    _c.label = 3;
+                case 3:
+                    stepDataUrl = _a;
+                    return [4 /*yield*/, waitForImage(stepDataUrl)];
+                case 4:
+                    stepImage = _c.sent();
+                    _b = calcViewport(step.angleOfView, step.shotOn, stepImage.height, vFov, doNotCutUp, doNotCutDown), srcY = _b.srcY, activeImageArea = _b.activeImageArea;
+                    return [4 /*yield*/, cutViewport(image, srcY, activeImageArea)];
+                case 5:
+                    viewportStepDataUrl = _c.sent();
+                    return [2 /*return*/, viewportStepDataUrl];
+            }
+        });
+    });
+}
+function generateCutPreviewImage(step, image, vFov, doNotCutUp, doNotCutDown) {
+    return __awaiter(this, void 0, void 0, function () {
+        var stepDataUrl, _a, stepImage, _b, srcY, activeImageArea, previewStepDataUrl;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    if (!step.backwards) return [3 /*break*/, 2];
+                    return [4 /*yield*/, updownImage(image)];
+                case 1:
+                    _a = (_c.sent());
+                    return [3 /*break*/, 3];
+                case 2:
+                    _a = image;
+                    _c.label = 3;
+                case 3:
+                    stepDataUrl = _a;
+                    return [4 /*yield*/, waitForImage(stepDataUrl)];
+                case 4:
+                    stepImage = _c.sent();
+                    _b = calcViewport(step.angleOfView, step.shotOn, stepImage.height, vFov, doNotCutUp, doNotCutDown), srcY = _b.srcY, activeImageArea = _b.activeImageArea;
+                    return [4 /*yield*/, drawViewport(image, srcY, activeImageArea)];
+                case 5:
+                    previewStepDataUrl = _c.sent();
+                    return [2 /*return*/, previewStepDataUrl];
+            }
+        });
+    });
+}
 function processImages(steps, images, vFov, output, outputDebug) {
     return __awaiter(this, void 0, void 0, function () {
         var i, step, stepDataUrl, _a, stepImage, _b, srcY, activeImageArea, previewStepDataUrl, previewStepImage, viewportStepDataUrl, viewportStepImage;
@@ -46598,7 +46800,7 @@ function getFiles() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    photos = document.getElementById('photos').files;
+                    photos = document.getElementById('filesReal').files;
                     imageDataUrls = [];
                     _loop_1 = function (i) {
                         var photo, reader, imageDataUrl;
@@ -46720,6 +46922,7 @@ function drawViewport(imageDataUrl, srcY, activeImageArea) {
                     canvasContext.strokeRect(0, srcY, image.width, activeImageArea);
                     canvasContext.strokeStyle = "#1eff36";
                     canvasContext.strokeRect(0, image.height / 2, image.width, 1);
+                    canvasContext.strokeRect(image.width / 2, 0, 1, image.height);
                     return [2 /*return*/, canvas.toDataURL()];
             }
         });

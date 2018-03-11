@@ -6,7 +6,7 @@
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkC7o5fGKTjKB3jQj_9E6ypQ44ZIMAXW0">
 </script>
 
-<div class="container" style="min-width: 1200px">
+<div class="container" style="min-width: 1200px; text-align: center">
     <div class="jumbotron">
         <form>
             <div class="row">
@@ -84,8 +84,8 @@
         <button type="button" class="btn btn-danger btn-lg" id="generateButton3D" disabled>Generate in 3D</button>
         <div style="margin-top: 10px" id="scene3D"></div>
     </div>
-    <div class="jumbotron" style="text-align: center" id="preview3D">
-    </div>
+    <div class="jumbotron" style="text-align: center" id="preview3D"></div>
+    <button type="button" class="btn btn-danger btn-sm" style="margin-bottom: 50px" id="generateDebug3D" disabled>Generate Debug Images</button>
     <div class="jumbotron" style="text-align: center" id="debug3D">
     </div>
 
@@ -95,6 +95,7 @@
     </div>
     <div class="jumbotron" style="text-align: center" id="previewReal">
     </div>
+    <button type="button" class="btn btn-success btn-sm" style="margin-bottom: 50px" id="generateDebugReal" disabled>Generate Debug Images</button>
     <div class="jumbotron" style="text-align: center" id="debugReal">
     </div>
 
