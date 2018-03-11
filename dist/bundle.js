@@ -46565,23 +46565,6 @@ function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
                         geoSteps = getGeoSteps(startPoint, directionPoint, steps);
                         figures = drawOnMap(map, steps, geoSteps, startPoint);
                     });
-                    // makeLitchi(geoSteps);
-                    document.getElementById('preview').onclick = function () {
-                        return __awaiter(this, void 0, void 0, function () {
-                            var imageDataUrls;
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0: return [4 /*yield*/, getFiles()];
-                                    case 1:
-                                        imageDataUrls = _a.sent();
-                                        return [4 /*yield*/, processImages(steps, imageDataUrls, 46.8, document.getElementById('real-output'), document.getElementById('real-output'))];
-                                    case 2:
-                                        _a.sent();
-                                        return [2 /*return*/];
-                                }
-                            });
-                        });
-                    };
                     return [2 /*return*/];
             }
         });
@@ -46688,7 +46671,7 @@ function cutImage(step, image, vFov, doNotCutUp, doNotCutDown) {
                 case 4:
                     stepImage = _c.sent();
                     _b = calcViewport(step.angleOfView, step.shotOn, stepImage.height, vFov, doNotCutUp, doNotCutDown), srcY = _b.srcY, activeImageArea = _b.activeImageArea;
-                    return [4 /*yield*/, cutViewport(image, srcY, activeImageArea)];
+                    return [4 /*yield*/, cutViewport(stepDataUrl, srcY, activeImageArea)];
                 case 5:
                     viewportStepDataUrl = _c.sent();
                     return [2 /*return*/, viewportStepDataUrl];
@@ -46716,60 +46699,10 @@ function generateCutPreviewImage(step, image, vFov, doNotCutUp, doNotCutDown) {
                 case 4:
                     stepImage = _c.sent();
                     _b = calcViewport(step.angleOfView, step.shotOn, stepImage.height, vFov, doNotCutUp, doNotCutDown), srcY = _b.srcY, activeImageArea = _b.activeImageArea;
-                    return [4 /*yield*/, drawViewport(image, srcY, activeImageArea)];
+                    return [4 /*yield*/, drawViewport(stepDataUrl, srcY, activeImageArea)];
                 case 5:
                     previewStepDataUrl = _c.sent();
                     return [2 /*return*/, previewStepDataUrl];
-            }
-        });
-    });
-}
-function processImages(steps, images, vFov, output, outputDebug) {
-    return __awaiter(this, void 0, void 0, function () {
-        var i, step, stepDataUrl, _a, stepImage, _b, srcY, activeImageArea, previewStepDataUrl, previewStepImage, viewportStepDataUrl, viewportStepImage;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
-                case 0:
-                    i = 0;
-                    _c.label = 1;
-                case 1:
-                    if (!(i < images.length)) return [3 /*break*/, 10];
-                    step = steps[i];
-                    if (!step.backwards) return [3 /*break*/, 3];
-                    return [4 /*yield*/, updownImage(images[i])];
-                case 2:
-                    _a = (_c.sent());
-                    return [3 /*break*/, 4];
-                case 3:
-                    _a = images[i];
-                    _c.label = 4;
-                case 4:
-                    stepDataUrl = _a;
-                    return [4 /*yield*/, waitForImage(stepDataUrl)];
-                case 5:
-                    stepImage = _c.sent();
-                    _b = calcViewport(step.angleOfView, step.shotOn, stepImage.height, vFov, i === images.length - 1, i === 0), srcY = _b.srcY, activeImageArea = _b.activeImageArea;
-                    return [4 /*yield*/, drawViewport(stepDataUrl, srcY, activeImageArea)];
-                case 6:
-                    previewStepDataUrl = _c.sent();
-                    previewStepImage = new Image(400, 300);
-                    previewStepImage.src = previewStepDataUrl;
-                    outputDebug.appendChild(previewStepImage);
-                    return [4 /*yield*/, cutViewport(stepDataUrl, srcY, activeImageArea)];
-                case 7:
-                    viewportStepDataUrl = _c.sent();
-                    return [4 /*yield*/, waitForImage(viewportStepDataUrl)];
-                case 8:
-                    viewportStepImage = _c.sent();
-                    if (viewportStepImage.width > 1000) {
-                        viewportStepImage.width = 1000;
-                    }
-                    output.prepend(viewportStepImage);
-                    _c.label = 9;
-                case 9:
-                    i++;
-                    return [3 /*break*/, 1];
-                case 10: return [2 /*return*/];
             }
         });
     });

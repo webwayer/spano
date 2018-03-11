@@ -206,7 +206,6 @@ async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
         mapTypeId: google.maps.MapTypeId.ROADMAP
     });
 
-
     let figures = drawOnMap(map, steps, geoSteps, startPoint);
 
     const startPointMaker = new google.maps.Marker({
@@ -239,11 +238,6 @@ async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
     });
 
     // makeLitchi(geoSteps);
-
-    (<any>document.getElementById('preview')).onclick = async function () {
-        const imageDataUrls = await getFiles();
-        await processImages(steps, imageDataUrls, 46.8, <any>document.getElementById('real-output'), <any>document.getElementById('real-output'));
-    }
 }
 
 function drawOnMap(map, steps, geoSteps, startPoint) {
@@ -339,7 +333,7 @@ async function cutImage(step, image, vFov, doNotCutUp, doNotCutDown) {
     const stepDataUrl = step.backwards ? (await updownImage(image)) : image;
     const stepImage = await waitForImage(stepDataUrl);
     const { srcY, activeImageArea } = calcViewport(step.angleOfView, step.shotOn, stepImage.height, vFov, doNotCutUp, doNotCutDown);
-    const viewportStepDataUrl = await cutViewport(image, srcY, activeImageArea);
+    const viewportStepDataUrl = await cutViewport(stepDataUrl, srcY, activeImageArea);
 
     return viewportStepDataUrl;
 }
@@ -348,34 +342,9 @@ async function generateCutPreviewImage(step, image, vFov, doNotCutUp, doNotCutDo
     const stepDataUrl = step.backwards ? (await updownImage(image)) : image;
     const stepImage = await waitForImage(stepDataUrl);
     const { srcY, activeImageArea } = calcViewport(step.angleOfView, step.shotOn, stepImage.height, vFov, doNotCutUp, doNotCutDown);
-    const previewStepDataUrl = await drawViewport(image, srcY, activeImageArea);
+    const previewStepDataUrl = await drawViewport(stepDataUrl, srcY, activeImageArea);
 
     return previewStepDataUrl;
-}
-
-async function processImages(steps, images, vFov, output, outputDebug) {
-    for (let i = 0; i < images.length; i++) {
-        const step = steps[i];
-        const stepDataUrl = step.backwards ? (await updownImage(images[i])) : images[i];
-
-        const stepImage = await waitForImage(stepDataUrl);
-
-        const { srcY, activeImageArea } = calcViewport(step.angleOfView, step.shotOn, stepImage.height, vFov, i === images.length - 1, i === 0);
-
-        const previewStepDataUrl = await drawViewport(stepDataUrl, srcY, activeImageArea);
-
-        const previewStepImage = new Image(400, 300);
-        previewStepImage.src = previewStepDataUrl;
-        outputDebug.appendChild(previewStepImage);
-
-        const viewportStepDataUrl = await cutViewport(stepDataUrl, srcY, activeImageArea);
-
-        const viewportStepImage = await waitForImage(viewportStepDataUrl);
-        if (viewportStepImage.width > 1000) {
-            viewportStepImage.width = 1000;
-        }
-        output.prepend(viewportStepImage);
-    }
 }
 
 async function updownImage(imageDataUrl) {
