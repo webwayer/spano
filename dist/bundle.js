@@ -46211,17 +46211,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var calculations_1 = __webpack_require__(4);
-var SimpleCurve_1 = __webpack_require__(13);
-var litchi_1 = __webpack_require__(5);
-var math_geo_1 = __webpack_require__(6);
-var scene_1 = __webpack_require__(7);
+var SimpleCurve_1 = __webpack_require__(5);
+var litchi_1 = __webpack_require__(6);
+var math_geo_1 = __webpack_require__(7);
+var scene_1 = __webpack_require__(8);
 var draw_1 = __webpack_require__(2);
-var shapes_1 = __webpack_require__(8);
-var draw_2 = __webpack_require__(9);
+var shapes_1 = __webpack_require__(9);
 var math_1 = __webpack_require__(0);
-var simple_1 = __webpack_require__(10);
-var StunningCurve_1 = __webpack_require__(11);
-var $ = __webpack_require__(12);
+var simple_1 = __webpack_require__(11);
+var StunningCurve_1 = __webpack_require__(12);
+var $ = __webpack_require__(13);
+var drawShots_1 = __webpack_require__(14);
 function setupUI() {
     $('#generateButton').on('click', function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -46233,12 +46233,14 @@ function setupUI() {
                         curve = new Curve(parseInt($('#offset').val()), parseInt($('#firstLineLength').val()), parseInt($('#curvedLineLength').val()), parseInt($('#secondLineLength').val()));
                         viewPoint = { x: 0, y: parseInt($('#viewPointHeight').val()) };
                         _a = calcModel(curve, viewPoint, 7, 20), shots = _a.shots, steps = _a.steps;
-                        drawShots(shots, viewPoint);
-                        return [4 /*yield*/, setup3DUI(steps, viewPoint)];
+                        return [4 /*yield*/, drawBasic(shots, steps, viewPoint)];
                     case 1:
                         _b.sent();
-                        return [4 /*yield*/, setupRealUI(steps)];
+                        return [4 /*yield*/, setup3DUI(steps, viewPoint)];
                     case 2:
+                        _b.sent();
+                        return [4 /*yield*/, setupRealUI(steps)];
+                    case 3:
                         _b.sent();
                         return [2 /*return*/];
                 }
@@ -46248,6 +46250,22 @@ function setupUI() {
 }
 setupUI();
 $('#generateButton').click();
+function drawBasic(shots, steps, viewPoint) {
+    return __awaiter(this, void 0, void 0, function () {
+        var topCanvas, bottomCanvas, i, step;
+        return __generator(this, function (_a) {
+            topCanvas = document.getElementById("topCanvas");
+            bottomCanvas = document.getElementById("bottomCanvas");
+            drawShots_1.drawShots(shots, viewPoint, topCanvas, bottomCanvas);
+            $('#asText').empty();
+            for (i = 0; i < steps.length; i++) {
+                step = steps[i];
+                $('#asText').append("<li><b style=\"color: #0c15ff\">Step #" + (i + 1) + ":</b> Shot <b>" + step.shootingPoint.x.toFixed() + "m</b> from Start point on <b>" + step.shootingPoint.y.toFixed() + "m</b> height.<br />Angle to the ground <b>" + (-1 * step.viewAngleToTheGround).toFixed() + "\u00B0</b> with active angle of view <b>" + step.angleOfView.toFixed() + "\u00B0</b> from <b>" + step.shotOn + "</b></li>");
+            }
+            return [2 /*return*/];
+        });
+    });
+}
 function setup3DUI(steps, viewPoint) {
     return __awaiter(this, void 0, void 0, function () {
         var _a, preview, images, previewImage;
@@ -46940,46 +46958,6 @@ function createLitchiMissionDownloadLink(title, missionName, mission) {
     document.body.appendChild(link);
     document.body.appendChild(document.createElement('br'));
 }
-function drawShots(shots, viewPoint) {
-    var top_leftCanvas = document.getElementById("top_leftCanvas");
-    var top_leftCanvasContext = top_leftCanvas.getContext("2d");
-    var top_rightCanvas = document.getElementById("top_rightCanvas");
-    var top_rightCanvasContext = top_rightCanvas.getContext("2d");
-    var bottom_leftCanvas = document.getElementById("bottom_leftCanvas");
-    var bottom_leftCanvasContext = bottom_leftCanvas.getContext("2d");
-    var bottom_rightCanvas = document.getElementById("bottom_rightCanvas");
-    var bottom_rightCanvasContext = bottom_rightCanvas.getContext("2d");
-    top_leftCanvasContext.clearRect(0, 0, top_leftCanvas.width, top_leftCanvas.height);
-    top_rightCanvasContext.clearRect(0, 0, top_rightCanvas.width, top_rightCanvas.height);
-    bottom_leftCanvasContext.clearRect(0, 0, bottom_leftCanvas.width, bottom_leftCanvas.height);
-    bottom_rightCanvasContext.clearRect(0, 0, bottom_rightCanvas.width, bottom_rightCanvas.height);
-    for (var _i = 0, shots_1 = shots; _i < shots_1.length; _i++) {
-        var shot = shots_1[_i];
-        var firstElement = shot.triples[0];
-        var centerElement = shot.triples[parseInt((shot.triples.length / 2).toFixed())];
-        var lastElement = shot.triples[shot.triples.length - 1];
-        var shootingTriple = void 0;
-        if (shot.shotOn === 'start') {
-            shootingTriple = firstElement;
-        }
-        if (shot.shotOn === 'center') {
-            shootingTriple = centerElement;
-        }
-        if (shot.shotOn === 'end') {
-            shootingTriple = lastElement;
-        }
-        for (var _a = 0, _b = shot.triples; _a < _b.length; _a++) {
-            var _c = _b[_a], pointOnTheCurve = _c.pointOnTheCurve, pointOnTheGround = _c.pointOnTheGround, shootingPoint = _c.shootingPoint;
-            draw_2.drawLine(top_leftCanvasContext, pointOnTheGround, shootingPoint, '#b6b9ff');
-            draw_2.drawLine(bottom_leftCanvasContext, viewPoint, pointOnTheCurve, '#ffc2fc');
-            draw_2.drawPoint(bottom_leftCanvasContext, pointOnTheCurve, '#ff00f1');
-        }
-        draw_2.drawLine(top_rightCanvasContext, firstElement.pointOnTheGround, shootingTriple.shootingPoint, '#0e13ff');
-        draw_2.drawLine(top_rightCanvasContext, lastElement.pointOnTheGround, shootingTriple.shootingPoint, '#0e13ff');
-        draw_2.drawLine(bottom_rightCanvasContext, viewPoint, shootingTriple.pointOnTheCurve, '#ff6071');
-        draw_2.drawLine(bottom_rightCanvasContext, firstElement.pointOnTheCurve, lastElement.pointOnTheCurve, '#ff6071');
-    }
-}
 
 
 /***/ }),
@@ -47198,6 +47176,90 @@ function splitBy(array, isCurrentSubArrayIsGoodFn) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var math_1 = __webpack_require__(0);
+var SimpleCurve = /** @class */ (function () {
+    function SimpleCurve(offset, firstLegLength, curvedSegmentRadius, secondLegLength) {
+        this.offset = offset;
+        this.firstLegLength = firstLegLength;
+        this.curvedSegmentRadius = curvedSegmentRadius;
+        this.secondLegLength = secondLegLength;
+        this.curvedSegmentLength = (Math.PI * this.curvedSegmentRadius) / 2;
+    }
+    SimpleCurve.prototype.getTotalLength = function () {
+        return this.firstLegLength + this.curvedSegmentLength + this.secondLegLength;
+    };
+    SimpleCurve.prototype.getPointOnTheGround = function (length) {
+        return { x: this.offset + length, y: 0 };
+    };
+    SimpleCurve.prototype.getPointOnTheCurve = function (length) {
+        if (length <= this.firstLegLength) {
+            return {
+                x: this.offset + length,
+                y: 0
+            };
+        }
+        if (length > this.firstLegLength && length < this.firstLegLength + this.curvedSegmentLength) {
+            var angleToCurvedSegment = 270 + (90 * (length - this.firstLegLength)) / this.curvedSegmentLength;
+            var pointOnTheCurvedSegment_x = (this.offset + this.firstLegLength) + this.curvedSegmentRadius * Math.cos(math_1.toRadians(angleToCurvedSegment));
+            var pointOnTheCurvedSegment_y = (this.curvedSegmentRadius) + this.curvedSegmentRadius * Math.sin(math_1.toRadians(angleToCurvedSegment));
+            return {
+                x: pointOnTheCurvedSegment_x,
+                y: pointOnTheCurvedSegment_y
+            };
+        }
+        if (length <= this.firstLegLength + this.curvedSegmentLength + this.secondLegLength) {
+            return {
+                x: this.offset + this.firstLegLength + this.curvedSegmentRadius,
+                y: this.curvedSegmentRadius + length - this.firstLegLength - this.curvedSegmentLength
+            };
+        }
+    };
+    SimpleCurve.prototype.getShootingPoint = function (length, viewPoint) {
+        var pointOnTheGround = this.getPointOnTheGround(length);
+        var _a = this.getCorrectedViewAngle(length, viewPoint), angle = _a.angle, distance = _a.distance;
+        var shootingPoint = SimpleCurve.viewPointFromGroundAngleDistance(pointOnTheGround, angle, distance);
+        return shootingPoint;
+    };
+    SimpleCurve.viewPointFromGroundAngleDistance = function (point, angle, distance) {
+        var B = math_1.calculateTriangleCustom(point, angle, distance).B;
+        return B;
+    };
+    SimpleCurve.prototype.getCorrectedViewAngle = function (length, viewPoint) {
+        var point = this.getPointOnTheCurve(length);
+        if (length <= this.firstLegLength) {
+            var _a = math_1.calculateTriangleFromCoordinates(point, viewPoint, { x: 0, y: 0 }), alpha = _a.alpha, c = _a.c;
+            return { angle: alpha, distance: c };
+        }
+        if (length > this.firstLegLength && length < this.firstLegLength + this.curvedSegmentLength) {
+            var _b = math_1.calculateTriangleFromCoordinates(point, viewPoint, {
+                x: this.offset + this.firstLegLength,
+                y: this.curvedSegmentRadius
+            }), alpha = _b.alpha, c = _b.c;
+            var lineEquation_c = math_1.lineEquationFrom2PointsByX(point, viewPoint);
+            var lineEquation_c_result_y = lineEquation_c(this.offset + this.firstLegLength);
+            var angle = lineEquation_c_result_y <= this.curvedSegmentRadius ? 90 - alpha : 90 + alpha;
+            return { angle: angle, distance: c };
+        }
+        if (length <= this.firstLegLength + this.curvedSegmentLength + this.secondLegLength) {
+            var _c = math_1.calculateTriangleFromCoordinates(point, viewPoint, {
+                x: this.offset + this.firstLegLength + this.curvedSegmentRadius,
+                y: 0
+            }), alpha = _c.alpha, c = _c.c;
+            return { angle: alpha, distance: c };
+        }
+    };
+    return SimpleCurve;
+}());
+exports.SimpleCurve = SimpleCurve;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 function makeLitchiMission(steps, actions) {
     var header = 'latitude,longitude,altitude(m),heading(deg),curvesize(m),rotationdir,gimbalmode,gimbalpitchangle,actiontype1,actionparam1,actiontype2,actionparam2,actiontype3,actionparam3,actiontype4,actionparam4,actiontype5,actionparam5,actiontype6,actionparam6,actiontype7,actionparam7,actiontype8,actionparam8,actiontype9,actionparam9,actiontype10,actionparam10,actiontype11,actionparam11,actiontype12,actionparam12,actiontype13,actionparam13,actiontype14,actionparam14,actiontype15,actionparam15';
     var missionSteps = steps.map(function (step) {
@@ -47237,7 +47299,7 @@ exports.makeLitchiMission = makeLitchiMission;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47280,7 +47342,7 @@ exports.getBearingBetween2GeoPoints = getBearingBetween2GeoPoints;
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47355,7 +47417,7 @@ exports.imageFrom3DScene = imageFrom3DScene;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47468,7 +47530,7 @@ exports.addShapes = addShapes;
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47489,7 +47551,7 @@ exports.drawPoint = drawPoint;
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47751,7 +47813,7 @@ exports.simple = simple;
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47844,7 +47906,7 @@ exports.StunningCurve = StunningCurve;
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -58215,87 +58277,44 @@ return jQuery;
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var math_1 = __webpack_require__(0);
-var SimpleCurve = /** @class */ (function () {
-    function SimpleCurve(offset, firstLegLength, curvedSegmentRadius, secondLegLength) {
-        this.offset = offset;
-        this.firstLegLength = firstLegLength;
-        this.curvedSegmentRadius = curvedSegmentRadius;
-        this.secondLegLength = secondLegLength;
-        this.curvedSegmentLength = (Math.PI * this.curvedSegmentRadius) / 2;
+var draw_1 = __webpack_require__(10);
+function drawShots(shots, viewPoint, topCanvas, bottomCanvas) {
+    var topCanvasContext = topCanvas.getContext("2d");
+    var bottomCanvasContext = bottomCanvas.getContext("2d");
+    topCanvasContext.clearRect(0, 0, topCanvas.width, topCanvas.height);
+    bottomCanvasContext.clearRect(0, 0, bottomCanvas.width, bottomCanvas.height);
+    for (var _i = 0, shots_1 = shots; _i < shots_1.length; _i++) {
+        var shot = shots_1[_i];
+        var firstElement = shot.triples[0];
+        var centerElement = shot.triples[parseInt((shot.triples.length / 2).toFixed())];
+        var lastElement = shot.triples[shot.triples.length - 1];
+        var shootingTriple = void 0;
+        if (shot.shotOn === 'start') {
+            shootingTriple = firstElement;
+        }
+        if (shot.shotOn === 'center') {
+            shootingTriple = centerElement;
+        }
+        if (shot.shotOn === 'end') {
+            shootingTriple = lastElement;
+        }
+        for (var _a = 0, _b = shot.triples; _a < _b.length; _a++) {
+            var _c = _b[_a], pointOnTheCurve = _c.pointOnTheCurve, pointOnTheGround = _c.pointOnTheGround, shootingPoint = _c.shootingPoint;
+            draw_1.drawLine(topCanvasContext, pointOnTheGround, shootingPoint, '#b6b9ff');
+            draw_1.drawLine(bottomCanvasContext, viewPoint, pointOnTheCurve, '#ffc2fc');
+            draw_1.drawPoint(bottomCanvasContext, pointOnTheCurve, '#ff00f1');
+        }
+        draw_1.drawLine(topCanvasContext, firstElement.pointOnTheGround, shootingTriple.shootingPoint, '#3c3fff');
+        draw_1.drawLine(topCanvasContext, lastElement.pointOnTheGround, shootingTriple.shootingPoint, '#3c3fff');
     }
-    SimpleCurve.prototype.getTotalLength = function () {
-        return this.firstLegLength + this.curvedSegmentLength + this.secondLegLength;
-    };
-    SimpleCurve.prototype.getPointOnTheGround = function (length) {
-        return { x: this.offset + length, y: 0 };
-    };
-    SimpleCurve.prototype.getPointOnTheCurve = function (length) {
-        if (length <= this.firstLegLength) {
-            return {
-                x: this.offset + length,
-                y: 0
-            };
-        }
-        if (length > this.firstLegLength && length < this.firstLegLength + this.curvedSegmentLength) {
-            var angleToCurvedSegment = 270 + (90 * (length - this.firstLegLength)) / this.curvedSegmentLength;
-            var pointOnTheCurvedSegment_x = (this.offset + this.firstLegLength) + this.curvedSegmentRadius * Math.cos(math_1.toRadians(angleToCurvedSegment));
-            var pointOnTheCurvedSegment_y = (this.curvedSegmentRadius) + this.curvedSegmentRadius * Math.sin(math_1.toRadians(angleToCurvedSegment));
-            return {
-                x: pointOnTheCurvedSegment_x,
-                y: pointOnTheCurvedSegment_y
-            };
-        }
-        if (length <= this.firstLegLength + this.curvedSegmentLength + this.secondLegLength) {
-            return {
-                x: this.offset + this.firstLegLength + this.curvedSegmentRadius,
-                y: this.curvedSegmentRadius + length - this.firstLegLength - this.curvedSegmentLength
-            };
-        }
-    };
-    SimpleCurve.prototype.getShootingPoint = function (length, viewPoint) {
-        var pointOnTheGround = this.getPointOnTheGround(length);
-        var _a = this.getCorrectedViewAngle(length, viewPoint), angle = _a.angle, distance = _a.distance;
-        var shootingPoint = SimpleCurve.viewPointFromGroundAngleDistance(pointOnTheGround, angle, distance);
-        return shootingPoint;
-    };
-    SimpleCurve.viewPointFromGroundAngleDistance = function (point, angle, distance) {
-        var B = math_1.calculateTriangleCustom(point, angle, distance).B;
-        return B;
-    };
-    SimpleCurve.prototype.getCorrectedViewAngle = function (length, viewPoint) {
-        var point = this.getPointOnTheCurve(length);
-        if (length <= this.firstLegLength) {
-            var _a = math_1.calculateTriangleFromCoordinates(point, viewPoint, { x: 0, y: 0 }), alpha = _a.alpha, c = _a.c;
-            return { angle: alpha, distance: c };
-        }
-        if (length > this.firstLegLength && length < this.firstLegLength + this.curvedSegmentLength) {
-            var _b = math_1.calculateTriangleFromCoordinates(point, viewPoint, {
-                x: this.offset + this.firstLegLength,
-                y: this.curvedSegmentRadius
-            }), alpha = _b.alpha, c = _b.c;
-            var lineEquation_c = math_1.lineEquationFrom2PointsByX(point, viewPoint);
-            var lineEquation_c_result_y = lineEquation_c(this.offset + this.firstLegLength);
-            var angle = lineEquation_c_result_y <= this.curvedSegmentRadius ? 90 - alpha : 90 + alpha;
-            return { angle: angle, distance: c };
-        }
-        if (length <= this.firstLegLength + this.curvedSegmentLength + this.secondLegLength) {
-            var _c = math_1.calculateTriangleFromCoordinates(point, viewPoint, {
-                x: this.offset + this.firstLegLength + this.curvedSegmentRadius,
-                y: 0
-            }), alpha = _c.alpha, c = _c.c;
-            return { angle: alpha, distance: c };
-        }
-    };
-    return SimpleCurve;
-}());
-exports.SimpleCurve = SimpleCurve;
+}
+exports.drawShots = drawShots;
 
 
 /***/ })

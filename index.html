@@ -74,18 +74,26 @@
         </form>
     </div>
 
-    <canvas id="top_leftCanvas" width="580" height="300"></canvas>
-    <canvas id="top_rightCanvas" width="580" height="300"></canvas>
-    <br/>
-    <canvas id="bottom_leftCanvas" width="580" height="300"></canvas>
-    <canvas id="bottom_rightCanvas" width="580" height="300"></canvas>
+    <div class="row">
+        <div class="col-md">
+            <canvas id="topCanvas" width="580" height="300"></canvas>
+            <br/>
+            <canvas id="bottomCanvas" width="580" height="300"></canvas>
+        </div>
+        <div class="col-md" style="text-align: left">
+            <ul id="asText">
+            </ul>
+        </div>
+    </div>
 
     <div class="jumbotron" style="text-align: center">
         <button type="button" class="btn btn-danger btn-lg" id="generateButton3D" disabled>Generate in 3D</button>
         <div style="margin-top: 10px" id="scene3D"></div>
     </div>
     <div class="jumbotron" style="text-align: center" id="preview3D"></div>
-    <button type="button" class="btn btn-danger btn-sm" style="margin-bottom: 50px" id="generateDebug3D" disabled>Generate Debug Images</button>
+    <button type="button" class="btn btn-danger btn-sm" style="margin-bottom: 50px" id="generateDebug3D" disabled>
+        Generate Debug Images
+    </button>
     <div class="jumbotron" style="text-align: center" id="debug3D">
     </div>
 
@@ -95,7 +103,9 @@
     </div>
     <div class="jumbotron" style="text-align: center" id="previewReal">
     </div>
-    <button type="button" class="btn btn-success btn-sm" style="margin-bottom: 50px" id="generateDebugReal" disabled>Generate Debug Images</button>
+    <button type="button" class="btn btn-success btn-sm" style="margin-bottom: 50px" id="generateDebugReal" disabled>
+        Generate Debug Images
+    </button>
     <div class="jumbotron" style="text-align: center" id="debugReal">
     </div>
 
@@ -119,28 +129,14 @@
 </script>
 
 <style type="text/css">
-    #top_leftCanvas {
-        -moz-transform: scale(-1, -1);
-        -webkit-transform: scale(-1, -1);
-        -o-transform: scale(-1, -1);
-        transform: scale(-1, -1);
-    }
-
-    #bottom_leftCanvas {
-        -moz-transform: scale(-1, 1);
-        -webkit-transform: scale(-1, 1);
-        -o-transform: scale(-1, 1);
-        transform: scale(-1, 1);
-    }
-
-    #top_rightCanvas {
+    #topCanvas {
         -moz-transform: scale(1, -1);
         -webkit-transform: scale(1, -1);
         -o-transform: scale(1, -1);
         transform: scale(1, -1);
     }
 
-    #bottom_rightCanvas {
+    #bottomCanvas {
         -moz-transform: scale(1, 1);
         -webkit-transform: scale(1, 1);
         -o-transform: scale(1, 1);

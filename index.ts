@@ -11,11 +11,11 @@ import { getBearingBetween2GeoPoints, getGeoPointFromStartPointDistanceBearing }
 import { setup3DScene, imageFrom3DScene } from "./lib/3d/scene";
 import { draw3DPoint } from "./lib/3d/draw";
 import { addShapes } from "./lib/3d/worlds/shapes";
-import { drawPoint, drawLine } from "./lib/2d/draw";
 import { calculateTriangleCustom2, lengthFromCoordinates, toRadians } from "./lib/math";
 import { simple } from "./lib/3d/planes/simple";
 import { StunningCurve } from "./lib/curves/StunningCurve";
 import * as $ from 'jquery';
+import { drawShots } from "./lib/2d/drawShots";
 
 declare const google: any;
 
@@ -31,8 +31,8 @@ function setupUI() {
         const viewPoint = { x: 0, y: parseInt($('#viewPointHeight').val()) };
 
         const { shots, steps } = calcModel(curve, viewPoint, 7, 20);
-        drawShots(shots, viewPoint);
 
+        await drawBasic(shots, steps, viewPoint);
         await setup3DUI(steps, viewPoint);
         await setupRealUI(steps);
     })
@@ -40,6 +40,19 @@ function setupUI() {
 
 setupUI();
 $('#generateButton').click();
+
+async function drawBasic(shots, steps, viewPoint) {
+    const topCanvas: any = document.getElementById("topCanvas");
+    const bottomCanvas: any = document.getElementById("bottomCanvas");
+    drawShots(shots, viewPoint, topCanvas, bottomCanvas);
+
+    $('#asText').empty();
+    for (let i = 0; i < steps.length; i++) {
+        const step = steps[i];
+
+        $('#asText').append(`<li><b style="color: #0c15ff">Step #${i + 1}:</b> Shot <b>${step.shootingPoint.x.toFixed()}m</b> from Start point on <b>${step.shootingPoint.y.toFixed()}m</b> height.<br />Angle to the ground <b>${(-1 * step.viewAngleToTheGround).toFixed()}°</b> with active angle of view <b>${step.angleOfView.toFixed()}°</b> from <b>${step.shotOn}</b></li>`)
+    }
+}
 
 async function setup3DUI(steps, viewPoint) {
     const [preview, images] = await ShitIn3D(steps, viewPoint);
@@ -563,52 +576,4 @@ function createLitchiMissionDownloadLink(title, missionName, mission) {
 
     document.body.appendChild(link);
     document.body.appendChild(document.createElement('br'));
-}
-
-function drawShots(shots, viewPoint) {
-    const top_leftCanvas: any = document.getElementById("top_leftCanvas");
-    const top_leftCanvasContext = top_leftCanvas.getContext("2d");
-
-    const top_rightCanvas: any = document.getElementById("top_rightCanvas");
-    const top_rightCanvasContext = top_rightCanvas.getContext("2d");
-
-    const bottom_leftCanvas: any = document.getElementById("bottom_leftCanvas");
-    const bottom_leftCanvasContext = bottom_leftCanvas.getContext("2d");
-
-    const bottom_rightCanvas: any = document.getElementById("bottom_rightCanvas");
-    const bottom_rightCanvasContext = bottom_rightCanvas.getContext("2d");
-
-    top_leftCanvasContext.clearRect(0, 0, top_leftCanvas.width, top_leftCanvas.height);
-    top_rightCanvasContext.clearRect(0, 0, top_rightCanvas.width, top_rightCanvas.height);
-    bottom_leftCanvasContext.clearRect(0, 0, bottom_leftCanvas.width, bottom_leftCanvas.height);
-    bottom_rightCanvasContext.clearRect(0, 0, bottom_rightCanvas.width, bottom_rightCanvas.height);
-
-    for (const shot of shots) {
-        const firstElement = shot.triples[0];
-        const centerElement = shot.triples[parseInt((shot.triples.length / 2).toFixed())];
-        const lastElement = shot.triples[shot.triples.length - 1];
-
-        let shootingTriple;
-        if (shot.shotOn === 'start') {
-            shootingTriple = firstElement
-        }
-        if (shot.shotOn === 'center') {
-            shootingTriple = centerElement
-        }
-        if (shot.shotOn === 'end') {
-            shootingTriple = lastElement
-        }
-
-        for (const { pointOnTheCurve, pointOnTheGround, shootingPoint } of shot.triples) {
-            drawLine(top_leftCanvasContext, pointOnTheGround, shootingPoint, '#b6b9ff');
-            drawLine(bottom_leftCanvasContext, viewPoint, pointOnTheCurve, '#ffc2fc');
-            drawPoint(bottom_leftCanvasContext, pointOnTheCurve, '#ff00f1');
-        }
-
-        drawLine(top_rightCanvasContext, firstElement.pointOnTheGround, shootingTriple.shootingPoint, '#0e13ff');
-        drawLine(top_rightCanvasContext, lastElement.pointOnTheGround, shootingTriple.shootingPoint, '#0e13ff');
-
-        drawLine(bottom_rightCanvasContext, viewPoint, shootingTriple.pointOnTheCurve, '#ff6071');
-        drawLine(bottom_rightCanvasContext, firstElement.pointOnTheCurve, lastElement.pointOnTheCurve, '#ff6071');
-    }
 }
