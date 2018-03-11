@@ -46212,7 +46212,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var model_1 = __webpack_require__(15);
 var SimpleCurve_1 = __webpack_require__(5);
-var litchi_1 = __webpack_require__(6);
 var math_geo_1 = __webpack_require__(7);
 var math_1 = __webpack_require__(0);
 var StunningCurve_1 = __webpack_require__(12);
@@ -46598,6 +46597,34 @@ function getPointsForViewport(step, hFov) {
         return { bottomViewportOffset: bottomViewSideTriangle.B.x, topViewportOffset: topViewSideTriangle.B.x };
     }
 }
+function getGeoSteps(startPoint, directionPoint, steps) {
+    var bearing = Math.round(math_geo_1.getBearingBetween2GeoPoints(startPoint, directionPoint));
+    var invertedBearing = (bearing + 540) % 360;
+    var geoSteps = steps.map(function (step) {
+        var distance = step.shootingPoint.x;
+        var geoPoint = math_geo_1.getGeoPointFromStartPointDistanceBearing(startPoint, distance, bearing);
+        return {
+            geoPoint: geoPoint,
+            heading: step.backwards ? invertedBearing : bearing,
+            shootingPoint: step.shootingPoint,
+            viewAngleToTheGround: step.viewAngleToTheGround
+        };
+    });
+    // minimum distance between points should be more than 0.5m (took 0.6 to be sure)
+    for (var i = 0; i < geoSteps.length; i++) {
+        var step = geoSteps[i];
+        var prevStep = geoSteps[i - 1];
+        if (prevStep) {
+            var deltaX = step.shootingPoint.x - prevStep.shootingPoint.x;
+            var deltaY = step.shootingPoint.y - prevStep.shootingPoint.y;
+            var distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+            if (distance < 0.6) {
+                step.geoPoint = math_geo_1.getGeoPointFromStartPointDistanceBearing(startPoint, prevStep.shootingPoint.x + 0.6, bearing);
+            }
+        }
+    }
+    return geoSteps;
+}
 function getFiles() {
     return __awaiter(this, void 0, void 0, function () {
         var photos, imageDataUrls, _loop_1, i;
@@ -46641,95 +46668,6 @@ function getFiles() {
             }
         });
     });
-}
-function getGeoSteps(startPoint, directionPoint, steps) {
-    var bearing = Math.round(math_geo_1.getBearingBetween2GeoPoints(startPoint, directionPoint));
-    var invertedBearing = (bearing + 540) % 360;
-    var geoSteps = steps.map(function (step) {
-        var distance = step.shootingPoint.x;
-        var geoPoint = math_geo_1.getGeoPointFromStartPointDistanceBearing(startPoint, distance, bearing);
-        return {
-            geoPoint: geoPoint,
-            heading: step.backwards ? invertedBearing : bearing,
-            shootingPoint: step.shootingPoint,
-            viewAngleToTheGround: step.viewAngleToTheGround
-        };
-    });
-    // minimum distance between points should be more than 0.5m (took 0.6 to be sure)
-    for (var i = 0; i < geoSteps.length; i++) {
-        var step = geoSteps[i];
-        var prevStep = geoSteps[i - 1];
-        if (prevStep) {
-            var deltaX = step.shootingPoint.x - prevStep.shootingPoint.x;
-            var deltaY = step.shootingPoint.y - prevStep.shootingPoint.y;
-            var distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-            if (distance < 0.6) {
-                step.geoPoint = math_geo_1.getGeoPointFromStartPointDistanceBearing(startPoint, prevStep.shootingPoint.x + 0.6, bearing);
-            }
-        }
-    }
-    return geoSteps;
-}
-function makeLitchi(geoSteps) {
-    var invertedHeading = (geoSteps[0].heading + 540) % 360;
-    var initialStep = {
-        shootingPoint: geoSteps[0].shootingPoint,
-        viewAngleToTheGround: geoSteps[0].viewAngleToTheGround,
-        geoPoint: math_geo_1.getGeoPointFromStartPointDistanceBearing(geoSteps[0].geoPoint, 10, invertedHeading),
-        heading: geoSteps[0].heading
-    };
-    var mission = litchi_1.makeLitchiMission([].concat([initialStep], geoSteps), [
-        {
-            type: 'wait',
-            param: 1000
-        },
-        {
-            type: 'photo'
-        },
-        {
-            type: 'wait',
-            param: 1000
-        },
-        {
-            type: 'photo'
-        },
-        {
-            type: 'wait',
-            param: 1000
-        },
-        {
-            type: 'photo'
-        },
-        {
-            type: 'wait',
-            param: 1000
-        }
-    ]);
-    createLitchiMissionDownloadLink('Download litchiMission', 'litchiMission', mission);
-    var n = 1;
-    for (var _i = 0, geoSteps_1 = geoSteps; _i < geoSteps_1.length; _i++) {
-        var step = geoSteps_1[_i];
-        var invertedHeading_1 = (step.heading + 540) % 360;
-        var initialStep_1 = {
-            shootingPoint: step.shootingPoint,
-            viewAngleToTheGround: step.viewAngleToTheGround,
-            geoPoint: math_geo_1.getGeoPointFromStartPointDistanceBearing(step.geoPoint, 2, invertedHeading_1),
-            heading: step.heading
-        };
-        var mission_1 = litchi_1.makeLitchiMission([initialStep_1, step], []);
-        createLitchiMissionDownloadLink('Download step #' + n, 'litchiMissionStep' + n, mission_1);
-        n++;
-    }
-}
-function createLitchiMissionDownloadLink(title, missionName, mission) {
-    var link = document.createElement('a');
-    var blob = new Blob([mission], { type: "text/plain;charset=utf-8" });
-    var textToSaveAsURL = window.URL.createObjectURL(blob);
-    link.innerText = title;
-    link.download = missionName + '.csv';
-    link.href = textToSaveAsURL;
-    document.body.appendChild(link);
-    document.body.appendChild(document.createElement('br'));
 }
 
 
@@ -46819,51 +46757,7 @@ exports.SimpleCurve = SimpleCurve;
 
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-function makeLitchiMission(steps, actions) {
-    var header = 'latitude,longitude,altitude(m),heading(deg),curvesize(m),rotationdir,gimbalmode,gimbalpitchangle,actiontype1,actionparam1,actiontype2,actionparam2,actiontype3,actionparam3,actiontype4,actionparam4,actiontype5,actionparam5,actiontype6,actionparam6,actiontype7,actionparam7,actiontype8,actionparam8,actiontype9,actionparam9,actiontype10,actionparam10,actiontype11,actionparam11,actiontype12,actionparam12,actiontype13,actionparam13,actiontype14,actionparam14,actiontype15,actionparam15';
-    var missionSteps = steps.map(function (step) {
-        var missionStep = [
-            step.geoPoint.lat,
-            step.geoPoint.lon,
-            step.shootingPoint.y,
-            step.heading,
-            0,
-            0,
-            2,
-            step.viewAngleToTheGround // gimbal angle (-90:30)
-        ];
-        for (var _i = 0, actions_1 = actions; _i < actions_1.length; _i++) {
-            var action = actions_1[_i];
-            switch (action.type) {
-                case 'wait':
-                    missionStep.push(0);
-                    break;
-                case 'photo':
-                    missionStep.push(1);
-                    break;
-                default:
-                    missionStep.push(-1);
-            }
-            missionStep.push(action.param || 0);
-        }
-        var emptyActionsCount = 15 - ((missionStep.length - 8) / 2);
-        for (var i = 0; i < emptyActionsCount; i++) {
-            missionStep.push(-1, 0);
-        }
-        return missionStep;
-    });
-    return header + '\n' + missionSteps.map(function (missionStep) { return missionStep.join(','); }).join('\n');
-}
-exports.makeLitchiMission = makeLitchiMission;
-
-
-/***/ }),
+/* 6 */,
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 

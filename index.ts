@@ -227,8 +227,6 @@ async function doWork(curve, viewPoint, maxDistortionAngle, maxViewAngle) {
         geoSteps = getGeoSteps(startPoint, directionPoint, steps);
         figures = drawOnMap(map, steps, geoSteps, startPoint);
     });
-
-    // makeLitchi(geoSteps);
 }
 
 function drawOnMap(map, steps, geoSteps, startPoint) {
@@ -320,25 +318,6 @@ function getPointsForViewport(step, hFov) {
     }
 }
 
-async function getFiles() {
-    const photos = (<any>document.getElementById('filesReal')).files;
-    const imageDataUrls = [];
-    for (let i = 0; i < photos.length; i++) {
-        const photo = photos[i];
-        const reader = new FileReader();
-
-        const imageDataUrl = await new Promise<string>((resolve, reject) => {
-            reader.addEventListener("load", function () {
-                resolve(reader.result);
-            }, false);
-            reader.readAsDataURL(photo)
-        });
-
-        imageDataUrls.push(imageDataUrl)
-    }
-    return imageDataUrls;
-}
-
 function getGeoSteps(startPoint, directionPoint, steps) {
     const bearing = Math.round(getBearingBetween2GeoPoints(startPoint, directionPoint));
     const invertedBearing = (bearing + 540) % 360;
@@ -382,77 +361,21 @@ function getGeoSteps(startPoint, directionPoint, steps) {
     return geoSteps;
 }
 
-function makeLitchi(geoSteps) {
-    const invertedHeading = (geoSteps[0].heading + 540) % 360;
-    const initialStep = {
-        shootingPoint: geoSteps[0].shootingPoint,
-        viewAngleToTheGround: geoSteps[0].viewAngleToTheGround,
-        geoPoint: getGeoPointFromStartPointDistanceBearing(
-            geoSteps[0].geoPoint,
-            10,
-            invertedHeading
-        ),
-        heading: geoSteps[0].heading
-    };
+async function getFiles() {
+    const photos = (<any>document.getElementById('filesReal')).files;
+    const imageDataUrls = [];
+    for (let i = 0; i < photos.length; i++) {
+        const photo = photos[i];
+        const reader = new FileReader();
 
-    const mission = makeLitchiMission([].concat([initialStep], geoSteps), [
-        {
-            type: 'wait',
-            param: 1000
-        },
-        {
-            type: 'photo'
-        },
-        {
-            type: 'wait',
-            param: 1000
-        },
-        {
-            type: 'photo'
-        },
-        {
-            type: 'wait',
-            param: 1000
-        },
-        {
-            type: 'photo'
-        },
-        {
-            type: 'wait',
-            param: 1000
-        }
-    ]);
-    createLitchiMissionDownloadLink('Download litchiMission', 'litchiMission', mission);
+        const imageDataUrl = await new Promise<string>((resolve, reject) => {
+            reader.addEventListener("load", function () {
+                resolve(reader.result);
+            }, false);
+            reader.readAsDataURL(photo)
+        });
 
-    let n = 1;
-    for (const step of geoSteps) {
-        const invertedHeading = (step.heading + 540) % 360;
-        const initialStep = {
-            shootingPoint: step.shootingPoint,
-            viewAngleToTheGround: step.viewAngleToTheGround,
-            geoPoint: getGeoPointFromStartPointDistanceBearing(
-                step.geoPoint,
-                2,
-                invertedHeading
-            ),
-            heading: step.heading
-        };
-        const mission = makeLitchiMission([initialStep, step], []);
-        createLitchiMissionDownloadLink('Download step #' + n, 'litchiMissionStep' + n, mission);
-        n++
+        imageDataUrls.push(imageDataUrl)
     }
-}
-
-function createLitchiMissionDownloadLink(title, missionName, mission) {
-    const link = document.createElement('a');
-
-    const blob = new Blob([mission], { type: "text/plain;charset=utf-8" });
-    const textToSaveAsURL = window.URL.createObjectURL(blob);
-
-    (<any> link.innerText) = title;
-    (<any> link.download) = missionName + '.csv';
-    (<any> link.href) = textToSaveAsURL;
-
-    document.body.appendChild(link);
-    document.body.appendChild(document.createElement('br'));
+    return imageDataUrls;
 }
