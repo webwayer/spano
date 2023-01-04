@@ -13,7 +13,7 @@
     "ts-loader": "^3.2.0",
     "typescript": "^2.7.0-dev.20171130",
     "typings": "^2.1.1",
-    "webpack": "^3.8.1"
+    "webpack": "^5.75.0"
   },
   "dependencies": {
     "jquery": "^3.3.1",
