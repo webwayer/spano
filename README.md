@@ -2,7 +2,7 @@
 
 ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) There is a technical problem I can't solve mathematicaly, probably next generation of deep neural networks will help.  See below for detailed explanation. 
 
-DEMO: https://webwayer.github.com/spano
+DEMO: https://webwayer.github.io/spano/
 
 This repository contains proof-of-concept (code and explanation) for software that automate process of creating vertical curved panorama using drone.  
 Like this:
@@ -12,8 +12,8 @@ Like this:
 # Overview
 
 Stuff used:
-- JQuery (don't judge me haha, enough for proof-of-concept with couple of buttons, *simple is better*)
-- Typescript (love it!)
+- JQuery
+- Typescript
 - three.js (3D stuff, see magic below)
 
 **Assume that vertical curved panorama (panorama) just combined set of photos of ground surface from different position (longitude&latitude and altitude) and different angle of shooting.**  
