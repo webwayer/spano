@@ -14,7 +14,7 @@ import { addShapes } from "./lib/3d/worlds/shapes";
 import { calculateTriangleCustom2, lengthFromCoordinates, toRadians } from "./lib/math";
 import { simple } from "./lib/3d/planes/simple";
 import { StunningCurve } from "./lib/curves/StunningCurve";
-import * as $ from 'jquery';
+import $ from 'jquery';
 import { drawShots } from "./lib/2d/drawShots";
 import { cutImage, generateCutPreviewImage, waitForImage } from "./lib/2d/images";
 import { ShitIn3D } from "./lib/3d/generating";
@@ -24,13 +24,15 @@ declare const google: any;
 function setupUI() {
     $('#generateButton').on('click', async function () {
         const Curve = $("#curveType").val() === 'simpleCurve' ? SimpleCurve : StunningCurve;
+        // jQuery's .val() is string | number | string[]; parseInt also needs an
+        // explicit radix. Real validation of these values is Phase 4.
         const curve = new Curve(
-            parseInt($('#offset').val()),
-            parseInt($('#firstLineLength').val()),
-            parseInt($('#curvedLineLength').val()),
-            parseInt($('#secondLineLength').val())
+            parseInt(String($('#offset').val()), 10),
+            parseInt(String($('#firstLineLength').val()), 10),
+            parseInt(String($('#curvedLineLength').val()), 10),
+            parseInt(String($('#secondLineLength').val()), 10)
         );
-        const viewPoint = { x: 0, y: parseInt($('#viewPointHeight').val()) };
+        const viewPoint = { x: 0, y: parseInt(String($('#viewPointHeight').val()), 10) };
 
         const { shots, steps } = calcModel(curve, viewPoint, 7, 20);
 
@@ -59,8 +61,8 @@ async function drawBasic(shots, steps, viewPoint) {
 async function setup3DUI(steps, viewPoint) {
     const [preview, images] = await ShitIn3D(steps, viewPoint);
 
-    $('#generateButton3D').attr('disabled', false);
-    $('#generateDebug3D').attr('disabled', false);
+    $('#generateButton3D').prop('disabled',false);
+    $('#generateDebug3D').prop('disabled',false);
     const previewImage = await waitForImage(preview);
     previewImage.width = 500;
 
@@ -75,7 +77,7 @@ async function setup3DUI(steps, viewPoint) {
 
     $('#scene3D').append(previewImage);
     $('#generateButton3D').on('click', async function () {
-        $('#generateButton3D').attr('disabled', true);
+        $('#generateButton3D').prop('disabled',true);
         $('#preview3D').show();
         $('#generateDebug3D').show();
 
@@ -93,7 +95,7 @@ async function setup3DUI(steps, viewPoint) {
     });
 
     $('#generateDebug3D').on('click', async function () {
-        $('#generateDebug3D').attr('disabled', true);
+        $('#generateDebug3D').prop('disabled',true);
         $('#debug3D').show();
 
         for (let i = 0; i < steps.length; i++) {
@@ -109,7 +111,7 @@ async function setup3DUI(steps, viewPoint) {
 }
 
 async function setupRealUI(steps) {
-    $('#generateDebugReal').attr('disabled', false);
+    $('#generateDebugReal').prop('disabled',false);
 
     $('#previewReal').empty();
     $('#debugReal').empty();
@@ -122,7 +124,7 @@ async function setupRealUI(steps) {
     $('#generateButtonReal').on('click', async function () {
         $('#previewReal').empty();
         $('#debugReal').empty();
-        $('#generateDebugReal').attr('disabled', false);
+        $('#generateDebugReal').prop('disabled',false);
 
         $('#previewReal').show();
         $('#generateDebugReal').show();
@@ -143,7 +145,7 @@ async function setupRealUI(steps) {
     });
 
     $('#generateDebugReal').on('click', async function () {
-        $('#generateDebugReal').attr('disabled', true);
+        $('#generateDebugReal').prop('disabled',true);
         $('#debugReal').show();
 
         const images = await getFiles();
@@ -370,7 +372,14 @@ async function getFiles() {
 
         const imageDataUrl = await new Promise<string>((resolve, reject) => {
             reader.addEventListener("load", function () {
-                resolve(reader.result);
+                // readAsDataURL always produces a string, but FileReader.result
+                // is typed string | ArrayBuffer | null for the other read modes.
+                const result = reader.result;
+                if (typeof result === 'string') {
+                    resolve(result);
+                } else {
+                    reject(new Error('FileReader did not return a data URL'));
+                }
             }, false);
             reader.readAsDataURL(photo)
         });

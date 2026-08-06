@@ -1,11 +1,13 @@
 import * as THREE from 'three';
 
 export async function addShapes(scene) {
-    const smallCubeGeometry = new THREE.CubeGeometry(5, 10, 5);
-    const cubeGeometry = new THREE.CubeGeometry(10, 20, 10);
-    const bigCubeGeometry = new THREE.CubeGeometry(20, 80, 10);
-    const bigbigCubeGeometry = new THREE.CubeGeometry(30, 100, 30);
-    const tallCubeGeometry = new THREE.CubeGeometry(10, 120, 10);
+    // CubeGeometry was removed from three.js in r125 along with the rest of the
+    // pre-BufferGeometry API. BoxGeometry is the direct replacement.
+    const smallCubeGeometry = new THREE.BoxGeometry(5, 10, 5);
+    const cubeGeometry = new THREE.BoxGeometry(10, 20, 10);
+    const bigCubeGeometry = new THREE.BoxGeometry(20, 80, 10);
+    const bigbigCubeGeometry = new THREE.BoxGeometry(30, 100, 30);
+    const tallCubeGeometry = new THREE.BoxGeometry(10, 120, 10);
     const sphereGeometry = new THREE.SphereGeometry(10);
 
     const materialRed = new THREE.MeshLambertMaterial(

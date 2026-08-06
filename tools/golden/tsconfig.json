@@ -1,0 +1,20 @@
+{
+  // The golden harness runs in Node, not the browser. Keeping it in its own
+  // project stops Node globals (process, node:fs) from leaking into the type
+  // environment of the app code, which is browser-only.
+  //
+  // Phase 3 adds src/core/tsconfig.json on the same principle, in the other
+  // direction: no DOM.
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    // "DOM" is here under protest. The harness imports makeLitchiMission from
+    // lib/litchi.ts, which also contains dataUrlFromText() using window.URL and
+    // Blob — so the file cannot currently be typechecked without DOM. Dropping
+    // ES2022-only here surfaced that immediately, which is the signal, not a
+    // problem to hide: Phase 3 splits litchi.ts into a pure CSV formatter and a
+    // separate download adapter, and this line comes out then.
+    "lib": ["ES2022", "DOM"],
+    "types": ["node"]
+  },
+  "include": ["."]
+}

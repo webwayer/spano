@@ -1,15 +1,27 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
-    "sourceMap": true,
-    "lib": [
-      "ES2015",
-      "DOM"
-    ]
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "types": ["vite/client"],
+
+    // Phase 2 is a toolchain swap, nothing else. Strict mode is Phase 4, so that
+    // a failure here has exactly one candidate cause.
+    "strict": false,
+
+    // NOT enabled yet, deliberately: lib/curves/SimpleCurve.ts:1 and
+    // StunningCurve.ts:1 import the `Curve` *interface* without a `type`
+    // keyword, which verbatimModuleSyntax rejects (TS1484). These land in
+    // Phase 4 alongside the `import type` conversions.
+    //   "verbatimModuleSyntax": true,
+    //   "isolatedModules": true,
+
+    "forceConsistentCasingInFileNames": true
   },
-  "exclude": [
-    "node_modules"
-  ],
-  "compileOnSave": false
+  // tools/ has its own project (Node environment) — see tools/golden/tsconfig.json
+  "include": ["index.ts", "lib/**/*.ts", "vite.config.ts"]
 }

@@ -3,10 +3,20 @@ import { draw3DPlane } from "../draw";
 
 export async function simple(scene) {
     const texture = await new Promise<any>((resolve, reject) => {
-        new THREE.TextureLoader().load("resources/road.jpg", function (texture) {
-            resolve(texture)
-        });
+        // A bare relative path resolves against the page URL and breaks under
+        // Vite's base: '/spano/'. BASE_URL is rewritten at build time.
+        // The fourth argument is onError — without it a failed load left this
+        // promise pending forever.
+        new THREE.TextureLoader().load(
+            `${import.meta.env.BASE_URL}textures/road.jpg`,
+            resolve,
+            undefined,
+            reject
+        );
     });
+    // r152 turned on the linear colour workflow by default; without this the
+    // texture renders washed out.
+    texture.colorSpace = THREE.SRGBColorSpace;
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(5, 5);

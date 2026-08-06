@@ -3,10 +3,14 @@ import { draw3DPlane } from "../draw";
 
 export async function curved(scene) {
     const texture = await new Promise<any>((resolve, reject) => {
-        new THREE.TextureLoader().load("resources/road.jpg", function (texture) {
-            resolve(texture)
-        });
+        new THREE.TextureLoader().load(
+            `${import.meta.env.BASE_URL}textures/road.jpg`,
+            resolve,
+            undefined,
+            reject
+        );
     });
+    texture.colorSpace = THREE.SRGBColorSpace;
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(5, 5);

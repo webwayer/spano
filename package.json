@@ -1,22 +1,46 @@
 {
   "name": "spano",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "Rodion Balandin",
+  "version": "2.0.0",
+  "description": "Flight-plan generator for vertical curved drone panoramas",
+  "type": "module",
   "license": "MIT",
-  "devDependencies": {
-    "ts-loader": "^3.2.0",
-    "typescript": "^2.7.0-dev.20171130",
-    "typings": "^2.1.1",
-    "webpack": "^3.8.1"
+  "author": "Rodion Balandin",
+  "homepage": "https://webwayer.github.io/spano/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webwayer/spano.git"
+  },
+  "bugs": {
+    "url": "https://github.com/webwayer/spano/issues"
+  },
+  "keywords": [
+    "drone",
+    "panorama",
+    "photogrammetry",
+    "dji",
+    "flight-planning"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run typecheck && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -p tsconfig.json && tsc -p tools/golden/tsconfig.json",
+    "golden": "tsx tools/golden/verify.ts",
+    "golden:capture": "tsx tools/golden/capture.ts"
   },
   "dependencies": {
-    "jquery": "^3.3.1",
-    "three": "^0.90.0"
+    "jquery": "^3.7.1",
+    "three": "^0.185.1"
+  },
+  "devDependencies": {
+    "@types/jquery": "^4.0.1",
+    "@types/node": "^24.13.3",
+    "@types/three": "^0.185.4",
+    "tsx": "^4.23.9",
+    "typescript": "~6.0.3",
+    "vite": "^8.2.1"
   }
 }

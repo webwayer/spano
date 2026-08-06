@@ -1,7 +1,24 @@
 <!doctype html>
 <html lang="en">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>spano — drone panorama flight planner</title>
+    <meta name="description"
+          content="Plan the drone flight for a vertical curved panorama: where to hover, at what altitude and gimbal angle, and which slice of each frame to keep.">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style type="text/css">
+        #topCanvas {
+            transform: scale(1, -1);
+        }
+
+        #bottomCanvas {
+            transform: scale(1, 1);
+        }
+    </style>
+</head>
+<body>
 
 <div class="container" style="min-width: 1200px; text-align: center">
     <div class="jumbotron">
@@ -113,31 +130,6 @@
     <!--</div>-->
 </div>
 
-<script>
-    function getScript(src) {
-        const script = document.createElement('script');
-        script.src = src;
-        document.body.appendChild(script);
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-        getScript('dist/bundle.js?' + Math.random())
-    });
-</script>
-
-<style type="text/css">
-    #topCanvas {
-        -moz-transform: scale(1, -1);
-        -webkit-transform: scale(1, -1);
-        -o-transform: scale(1, -1);
-        transform: scale(1, -1);
-    }
-
-    #bottomCanvas {
-        -moz-transform: scale(1, 1);
-        -webkit-transform: scale(1, 1);
-        -o-transform: scale(1, 1);
-        transform: scale(1, 1);
-    }
-</style>
+<script type="module" src="/index.ts"></script>
+</body>
 </html>
