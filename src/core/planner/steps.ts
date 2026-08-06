@@ -1,5 +1,5 @@
 import { calculateTriangleCustom2, getTopAngle } from '../geometry/triangle';
-import type { Point, Shot, Step } from '../types';
+import type { Point, Shot, Step, Triple } from '../types';
 
 /**
  * Stage 5 — turn each shot into a pilot instruction: hover position, gimbal
@@ -11,55 +11,91 @@ import type { Point, Shot, Step } from '../types';
  * and aim at that endpoint's ground patch, putting the strip against one edge.
  */
 export function convertShotsIntoSteps(shots: Shot[]): Step[] {
-    return shots.map(shot => {
-        const firstElement = shot.triples[0];
-        const centerElement = shot.triples[parseInt((shot.triples.length / 2).toFixed(), 10)];
-        const lastElement = shot.triples[shot.triples.length - 1];
+    return shots.map(toStep);
+}
 
-        let shootingPoint: Point;
-        let shootedPoint: Point;
-        if (shot.shotOn === 'start') {
-            shootingPoint = firstElement.shootingPoint;
-            shootedPoint = firstElement.pointOnTheGround;
-        }
-        if (shot.shotOn === 'center') {
-            shootingPoint = centerElement.shootingPoint;
+function toStep(shot: Shot): Step {
+    const firstElement = at(shot.triples, 0, shot);
+    const centerElement = at(shot.triples, parseInt((shot.triples.length / 2).toFixed(), 10), shot);
+    const lastElement = at(shot.triples, shot.triples.length - 1, shot);
 
-            const angleOfView = getTopAngle(
-                shootingPoint,
-                firstElement.pointOnTheGround,
-                lastElement.pointOnTheGround
-            );
+    const { shootingPoint, shootedPoint } = anchor(shot.shotOn, firstElement, centerElement, lastElement);
+
+    const angleOfView = getTopAngle(shootingPoint, firstElement.pointOnTheGround, lastElement.pointOnTheGround);
+
+    // getTopAngle measures from straight down, so subtracting 90 gives pitch
+    // relative to horizontal: negative points the gimbal down.
+    const viewAngleToTheGround = getTopAngle(shootingPoint, { x: shootingPoint.x, y: 0 }, shootedPoint) - 90;
+
+    return {
+        angleOfView,
+        shootingPoint,
+        shootedPoint,
+        firstElement,
+        lastElement,
+        centerElement,
+        viewAngleToTheGround,
+        shotOn: shot.shotOn,
+        // The aircraft has overflown the ground point it is imaging, so it must
+        // turn around and shoot back down the track.
+        backwards: shootingPoint.x > shootedPoint.x,
+    };
+}
+
+/**
+ * A switch rather than three independent `if`s.
+ *
+ * The 2018 version assigned shootingPoint inside three separate ifs with no
+ * else, so an unrecognised anchor left both variables undefined and the failure
+ * surfaced several frames later. Exhaustiveness is now checked at compile time.
+ */
+function anchor(
+    shotOn: Shot['shotOn'],
+    first: Triple,
+    center: Triple,
+    last: Triple
+): { shootingPoint: Point; shootedPoint: Point } {
+    switch (shotOn) {
+        case 'start':
+            return { shootingPoint: first.shootingPoint, shootedPoint: first.pointOnTheGround };
+
+        case 'end':
+            return { shootingPoint: last.shootingPoint, shootedPoint: last.pointOnTheGround };
+
+        case 'center': {
+            const shootingPoint = center.shootingPoint;
+            const angleOfView = getTopAngle(shootingPoint, first.pointOnTheGround, last.pointOnTheGround);
             const triangle = calculateTriangleCustom2(
                 shootingPoint,
                 angleOfView / 2,
-                firstElement.pointOnTheGround,
-                getTopAngle(firstElement.pointOnTheGround, shootingPoint, lastElement.pointOnTheGround)
+                first.pointOnTheGround,
+                getTopAngle(first.pointOnTheGround, shootingPoint, last.pointOnTheGround)
             );
-            shootedPoint = triangle.B;
-        }
-        if (shot.shotOn === 'end') {
-            shootingPoint = lastElement.shootingPoint;
-            shootedPoint = lastElement.pointOnTheGround;
+            return { shootingPoint, shootedPoint: triangle.B };
         }
 
-        const angleOfView = getTopAngle(shootingPoint, firstElement.pointOnTheGround, lastElement.pointOnTheGround);
+        default: {
+            const unreachable: never = shotOn;
+            throw new Error(`Unknown shot anchor: ${String(unreachable)}`);
+        }
+    }
+}
 
-        const viewAngleToTheGround =
-            getTopAngle(shootingPoint, { x: shootingPoint.x, y: 0 }, shootedPoint) - 90;
-
-        return {
-            angleOfView,
-            shootingPoint,
-            shootedPoint,
-            firstElement,
-            lastElement,
-            centerElement,
-            viewAngleToTheGround,
-            shotOn: shot.shotOn,
-            // The aircraft has overflown the ground point it is imaging, so it
-            // must turn around and shoot back down the track.
-            backwards: shootingPoint.x > shootedPoint.x,
-        };
-    });
+/**
+ * Indexed access that says what went wrong.
+ *
+ * Under noUncheckedIndexedAccess every triples[i] is possibly undefined. It
+ * genuinely can be — see the allocation defect this phase fixes — and the old
+ * symptom was "Cannot read properties of undefined (reading 'pointOnTheGround')"
+ * four stack frames from the cause.
+ */
+function at(triples: Triple[], index: number, shot: Shot): Triple {
+    const triple = triples[index];
+    if (!triple) {
+        throw new Error(
+            `Shot anchored on "${shot.shotOn}" has no sample at index ${index} ` +
+                `(it holds ${triples.length}). This is a planner bug, not bad input.`
+        );
+    }
+    return triple;
 }

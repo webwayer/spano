@@ -31,10 +31,12 @@ function approachWaypoint(step: GeoStep, distance: number): GeoStep {
  * for the lifetime of the document otherwise.
  */
 export function makeLitchi(geoSteps: GeoStep[]): [string, string[]] {
-    const fullMission = makeLitchiMission(
-        [approachWaypoint(geoSteps[0], RUN_IN_DISTANCE), ...geoSteps],
-        THREE_SHOT_BRACKET
-    );
+    const first = geoSteps[0];
+    if (!first) {
+        throw new Error('Cannot export an empty mission.');
+    }
+
+    const fullMission = makeLitchiMission([approachWaypoint(first, RUN_IN_DISTANCE), ...geoSteps], THREE_SHOT_BRACKET);
 
     const perStepMissions = geoSteps.map(step =>
         dataUrlFromText(makeLitchiMission([approachWaypoint(step, STEP_RUN_IN_DISTANCE), step], []))

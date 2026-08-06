@@ -1,4 +1,4 @@
-import { toDegrees, toRadians } from '../geometry/angles';
+import { asin, atan2, cos, radiansOf, sin, toDegrees, toRadians } from '../geometry/angles';
 import type { GeoPoint } from '../types';
 
 /** Mean Earth radius, metres. */
@@ -19,10 +19,17 @@ export function getGeoPointFromStartPointDistanceBearing(
     const f1 = toRadians(startPoint.lat);
     const l1 = toRadians(startPoint.lon);
 
-    const f2 = Math.asin(Math.sin(f1) * Math.cos(d / R) + Math.cos(f1) * Math.sin(d / R) * Math.cos(brng));
-    const l2 =
+    // d / R is an arc length over a radius, which is already an angle in radians.
+    const angularDistance = radiansOf(d / R);
+
+    const f2 = asin(sin(f1) * cos(angularDistance) + cos(f1) * sin(angularDistance) * cos(brng));
+    const l2 = radiansOf(
         l1 +
-        Math.atan2(Math.sin(brng) * Math.sin(d / R) * Math.cos(f1), Math.cos(d / R) - Math.sin(f1) * Math.sin(f2));
+            atan2(
+                sin(brng) * sin(angularDistance) * cos(f1),
+                cos(angularDistance) - sin(f1) * sin(f2)
+            )
+    );
 
     return { lat: toDegrees(f2), lon: toDegrees(l2) };
 }
@@ -34,9 +41,11 @@ export function getBearingBetween2GeoPoints(point1: GeoPoint, point2: GeoPoint):
     const l1 = toRadians(point1.lon);
     const l2 = toRadians(point2.lon);
 
-    const y = Math.sin(l2 - l1) * Math.cos(f2);
-    const x = Math.cos(f1) * Math.sin(f2) - Math.sin(f1) * Math.cos(f2) * Math.cos(l2 - l1);
-    const brng = toDegrees(Math.atan2(y, x));
+    const deltaLon = radiansOf(l2 - l1);
+
+    const y = sin(deltaLon) * cos(f2);
+    const x = cos(f1) * sin(f2) - sin(f1) * cos(f2) * cos(deltaLon);
+    const brng = toDegrees(atan2(y, x));
 
     return (brng + 360) % 360;
 }

@@ -5,7 +5,7 @@ import {
     calculateTriangleFromCoordinates,
     lineEquationFrom2PointsByX,
 } from '../geometry/triangle';
-import { toRadians } from '../geometry/angles';
+import { cos, sin, toRadians } from '../geometry/angles';
 
 /**
  * Flat leg, then a 90 degree arc, then a flat leg.
@@ -47,9 +47,9 @@ export class Arc90Curve implements Curve {
         if (length > this.firstLegLength && length < this.firstLegLength + this.curvedSegmentLength) {
             const angleToCurvedSegment = 270 + (90 * (length - this.firstLegLength)) / this.curvedSegmentLength;
             const pointOnTheCurvedSegment_x =
-                this.offset + this.firstLegLength + this.curvedSegmentRadius * Math.cos(toRadians(angleToCurvedSegment));
+                this.offset + this.firstLegLength + this.curvedSegmentRadius * cos(toRadians(angleToCurvedSegment));
             const pointOnTheCurvedSegment_y =
-                this.curvedSegmentRadius + this.curvedSegmentRadius * Math.sin(toRadians(angleToCurvedSegment));
+                this.curvedSegmentRadius + this.curvedSegmentRadius * sin(toRadians(angleToCurvedSegment));
 
             return {
                 x: pointOnTheCurvedSegment_x,
@@ -57,12 +57,14 @@ export class Arc90Curve implements Curve {
             };
         }
 
-        if (length <= this.firstLegLength + this.curvedSegmentLength + this.secondLegLength) {
+        if (length <= this.getTotalLength()) {
             return {
                 x: this.offset + this.firstLegLength + this.curvedSegmentRadius,
                 y: this.curvedSegmentRadius + length - this.firstLegLength - this.curvedSegmentLength,
             };
         }
+
+        throw new RangeError(outOfRange(length, this.getTotalLength()));
     }
 
     getShootingPoint(length: number, viewPoint: Point): Point {
@@ -94,12 +96,23 @@ export class Arc90Curve implements Curve {
             return { angle, distance: c };
         }
 
-        if (length <= this.firstLegLength + this.curvedSegmentLength + this.secondLegLength) {
+        if (length <= this.getTotalLength()) {
             const { alpha, c } = calculateTriangleFromCoordinates(point, viewPoint, {
                 x: this.offset + this.firstLegLength + this.curvedSegmentRadius,
                 y: 0,
             });
             return { angle: alpha, distance: c };
         }
+
+        throw new RangeError(outOfRange(length, this.getTotalLength()));
     }
+}
+
+/**
+ * The piecewise branches above cover [0, totalLength]. Anything outside that is
+ * a caller bug, not a curve shape — the 2018 version returned `undefined` here
+ * and let it surface later as "cannot read property 'x' of undefined".
+ */
+function outOfRange(length: number, total: number): string {
+    return `Curve length ${length} is outside the curve's domain [0, ${total}].`;
 }

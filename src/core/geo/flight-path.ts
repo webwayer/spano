@@ -36,21 +36,21 @@ export function getGeoSteps(startPoint: GeoPoint, directionPoint: GeoPoint, step
         };
     });
 
-    for (let i = 0; i < geoSteps.length; i++) {
+    for (let i = 1; i < geoSteps.length; i++) {
         const step = geoSteps[i];
         const prevStep = geoSteps[i - 1];
-        if (prevStep) {
-            const deltaX = step.shootingPoint.x - prevStep.shootingPoint.x;
-            const deltaY = step.shootingPoint.y - prevStep.shootingPoint.y;
-            const distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+        if (!step || !prevStep) continue;
 
-            if (distance < MIN_WAYPOINT_SPACING) {
-                step.geoPoint = getGeoPointFromStartPointDistanceBearing(
-                    startPoint,
-                    prevStep.shootingPoint.x + MIN_WAYPOINT_SPACING,
-                    bearing
-                );
-            }
+        const deltaX = step.shootingPoint.x - prevStep.shootingPoint.x;
+        const deltaY = step.shootingPoint.y - prevStep.shootingPoint.y;
+        const distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+
+        if (distance < MIN_WAYPOINT_SPACING) {
+            step.geoPoint = getGeoPointFromStartPointDistanceBearing(
+                startPoint,
+                prevStep.shootingPoint.x + MIN_WAYPOINT_SPACING,
+                bearing
+            );
         }
     }
 

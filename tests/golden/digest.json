@@ -6136,11 +6136,301 @@
         "viewPointY": 200
       },
       "totalCurveLength": 164.2477796076938,
-      "outcome": "error",
-      "error": {
-        "name": "TypeError",
-        "message": "Cannot read properties of undefined (reading 'pointOnTheGround')"
-      }
+      "outcome": "ok",
+      "error": null,
+      "counts": {
+        "pointTriples": 165,
+        "shootingErrors": 164,
+        "segments": 4,
+        "shots": 15,
+        "steps": 15
+      },
+      "segmentAvgErrors": [
+        1.2079226507921703e-14,
+        1.433869395002515,
+        0.35661618729517386,
+        8.621251860555882e-12
+      ],
+      "segmentTripleCounts": [
+        51,
+        93,
+        2,
+        19
+      ],
+      "shotSummaries": [
+        {
+          "shotOn": "center",
+          "tripleCount": 51
+        },
+        {
+          "shotOn": "start",
+          "tripleCount": 6
+        },
+        {
+          "shotOn": "center",
+          "tripleCount": 11
+        },
+        {
+          "shotOn": "center",
+          "tripleCount": 11
+        },
+        {
+          "shotOn": "center",
+          "tripleCount": 11
+        },
+        {
+          "shotOn": "center",
+          "tripleCount": 11
+        },
+        {
+          "shotOn": "center",
+          "tripleCount": 11
+        },
+        {
+          "shotOn": "center",
+          "tripleCount": 11
+        },
+        {
+          "shotOn": "center",
+          "tripleCount": 11
+        },
+        {
+          "shotOn": "center",
+          "tripleCount": 11
+        },
+        {
+          "shotOn": "end",
+          "tripleCount": 6
+        },
+        {
+          "shotOn": "start",
+          "tripleCount": 3
+        },
+        {
+          "shotOn": "end",
+          "tripleCount": 2
+        },
+        {
+          "shotOn": "center",
+          "tripleCount": 3
+        },
+        {
+          "shotOn": "center",
+          "tripleCount": 20
+        }
+      ],
+      "steps": [
+        {
+          "shotOn": "center",
+          "backwards": false,
+          "angleOfView": 12.528807709151492,
+          "viewAngleToTheGround": -69.69935267749777,
+          "shootingPoint": {
+            "x": -4.263256414560601e-14,
+            "y": 200
+          },
+          "shootedPoint": {
+            "x": 73.98481524309622,
+            "y": 0
+          }
+        },
+        {
+          "shotOn": "start",
+          "backwards": false,
+          "angleOfView": 1.1344216309770936,
+          "viewAngleToTheGround": -63.43494882292201,
+          "shootingPoint": {
+            "x": -1.4210854715202004e-14,
+            "y": 200
+          },
+          "shootedPoint": {
+            "x": 100,
+            "y": 0
+          }
+        },
+        {
+          "shotOn": "center",
+          "backwards": false,
+          "angleOfView": 2.4558447452684122,
+          "viewAngleToTheGround": -76.82422574966289,
+          "shootingPoint": {
+            "x": 58.204990150153876,
+            "y": 221.14272531612926
+          },
+          "shootedPoint": {
+            "x": 109.97491063773549,
+            "y": 0
+          }
+        },
+        {
+          "shotOn": "center",
+          "backwards": false,
+          "angleOfView": 2.5049067539885774,
+          "viewAngleToTheGround": -88.66274261934882,
+          "shootingPoint": {
+            "x": 114.66168658551115,
+            "y": 228.57313112705032
+          },
+          "shootedPoint": {
+            "x": 119.99744818397205,
+            "y": 0
+          }
+        },
+        {
+          "shotOn": "center",
+          "backwards": true,
+          "angleOfView": 2.46970026508907,
+          "viewAngleToTheGround": -79.51855476916303,
+          "shootingPoint": {
+            "x": 171.51246864986416,
+            "y": 224.2789729836092
+          },
+          "shootedPoint": {
+            "x": 130.01993931460544,
+            "y": 0
+          }
+        },
+        {
+          "shotOn": "center",
+          "backwards": true,
+          "angleOfView": 2.34930851500896,
+          "viewAngleToTheGround": -67.63442304201257,
+          "shootingPoint": {
+            "x": 225.84438163251795,
+            "y": 208.5272408407485
+          },
+          "shootedPoint": {
+            "x": 140.04218459592352,
+            "y": 0
+          }
+        },
+        {
+          "shotOn": "center",
+          "backwards": true,
+          "angleOfView": 2.1390144116293817,
+          "viewAngleToTheGround": -55.59666346136937,
+          "shootingPoint": {
+            "x": 274.90108190234673,
+            "y": 182.29730111083614
+          },
+          "shootedPoint": {
+            "x": 150.06392123769365,
+            "y": 0
+          }
+        },
+        {
+          "shotOn": "center",
+          "backwards": true,
+          "angleOfView": 1.8305389916534665,
+          "viewAngleToTheGround": -43.31036193526999,
+          "shootingPoint": {
+            "x": 316.2542130046258,
+            "y": 147.2200044036293
+          },
+          "shootedPoint": {
+            "x": 160.08473496151242,
+            "y": 0
+          }
+        },
+        {
+          "shotOn": "center",
+          "backwards": true,
+          "angleOfView": 1.4127664655838796,
+          "viewAngleToTheGround": -30.67055652981133,
+          "shootingPoint": {
+            "x": 347.95438910383746,
+            "y": 105.47628713425715
+          },
+          "shootedPoint": {
+            "x": 170.10394650103413,
+            "y": 0
+          }
+        },
+        {
+          "shotOn": "center",
+          "backwards": true,
+          "angleOfView": 0.873650744728035,
+          "viewAngleToTheGround": -17.560152334274747,
+          "shootingPoint": {
+            "x": 368.652398353228,
+            "y": 59.661571460119816
+          },
+          "shootedPoint": {
+            "x": 180.12046305690245,
+            "y": 0
+          }
+        },
+        {
+          "shotOn": "end",
+          "backwards": true,
+          "angleOfView": 0.13645028630439276,
+          "viewAngleToTheGround": -5.276768755662616,
+          "shootingPoint": {
+            "x": 377.3090737743413,
+            "y": 17.299540053153848
+          },
+          "shootedPoint": {
+            "x": 190,
+            "y": 0
+          }
+        },
+        {
+          "shotOn": "start",
+          "backwards": true,
+          "angleOfView": 0.05662432748614521,
+          "viewAngleToTheGround": -5.276768755662616,
+          "shootingPoint": {
+            "x": 377.3090737743413,
+            "y": 17.299540053153848
+          },
+          "shootedPoint": {
+            "x": 190,
+            "y": 0
+          }
+        },
+        {
+          "shotOn": "end",
+          "backwards": true,
+          "angleOfView": 0.0055353391675418495,
+          "viewAngleToTheGround": -1.0302448809803906,
+          "shootingPoint": {
+            "x": 378.08157507995395,
+            "y": 3.328341107561439
+          },
+          "shootedPoint": {
+            "x": 193,
+            "y": 0
+          }
+        },
+        {
+          "shotOn": "center",
+          "backwards": true,
+          "angleOfView": 0.008202893650434367,
+          "viewAngleToTheGround": -0.7551455207533877,
+          "shootingPoint": {
+            "x": 378.09554271620107,
+            "y": 2.426406870823155
+          },
+          "shootedPoint": {
+            "x": 194.00543102115017,
+            "y": 0
+          }
+        },
+        {
+          "shotOn": "center",
+          "backwards": true,
+          "angleOfView": 0.0878981774470758,
+          "viewAngleToTheGround": -0.8031960563823333,
+          "shootingPoint": {
+            "x": 378.09554271619675,
+            "y": 2.4264068711480995
+          },
+          "shootedPoint": {
+            "x": 205.01978476684698,
+            "y": 0
+          }
+        }
+      ]
     },
     {
       "id": "simple/boundary-near-integer-simple",

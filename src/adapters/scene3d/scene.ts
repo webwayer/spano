@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import type { Point } from '../../core/types';
 
-/** The synthetic preview camera's vertical field of view, degrees. */
-export const PREVIEW_VFOV = 45;
+import { PREVIEW_CAMERA } from '../../core/camera/profiles';
 
 const RENDER_WIDTH = 1000;
 const RENDER_HEIGHT = 750;
@@ -33,7 +32,7 @@ function getRenderer(): THREE.WebGLRenderer {
 
 export function setup3DScene(): Scene3D {
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(PREVIEW_VFOV, 4 / 3, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(PREVIEW_CAMERA.vFov, 4 / 3, 0.1, 1000);
     const renderer = getRenderer();
 
     // three.js r155+ uses physically-correct lighting and useLegacyLights was

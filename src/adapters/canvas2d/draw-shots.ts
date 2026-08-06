@@ -32,6 +32,11 @@ export function drawShots(
         const shootingTriple =
             shot.shotOn === 'start' ? firstElement : shot.shotOn === 'end' ? lastElement : centerElement;
 
+        // A shot always has samples; this only satisfies the compiler under
+        // noUncheckedIndexedAccess, and skipping is better than throwing in a
+        // draw routine.
+        if (!firstElement || !lastElement || !shootingTriple) continue;
+
         for (const { pointOnTheCurve, pointOnTheGround, shootingPoint } of shot.triples) {
             drawLine(topCanvasContext, pointOnTheGround, shootingPoint, '#b6b9ff');
             drawLine(bottomCanvasContext, viewPoint, pointOnTheCurve, '#ffc2fc');

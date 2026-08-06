@@ -5,7 +5,7 @@ import {
     calculateTriangleFromCoordinates,
     lineEquationFrom2PointsByX,
 } from '../geometry/triangle';
-import { toRadians } from '../geometry/angles';
+import { cos, sin, toRadians } from '../geometry/angles';
 
 /**
  * Flat leg, then a 135 degree arc, then a leg rising at 45 degrees.
@@ -51,9 +51,9 @@ export class Arc135Curve implements Curve {
         if (length > this.firstLegLength && length < this.firstLegLength + this.curvedSegmentLength) {
             const angleToCurvedSegment = 270 + (135 * (length - this.firstLegLength)) / this.curvedSegmentLength;
             const pointOnTheCurvedSegment_x =
-                this.offset + this.firstLegLength + this.curvedSegmentRadius * Math.cos(toRadians(angleToCurvedSegment));
+                this.offset + this.firstLegLength + this.curvedSegmentRadius * cos(toRadians(angleToCurvedSegment));
             const pointOnTheCurvedSegment_y =
-                this.curvedSegmentRadius + this.curvedSegmentRadius * Math.sin(toRadians(angleToCurvedSegment));
+                this.curvedSegmentRadius + this.curvedSegmentRadius * sin(toRadians(angleToCurvedSegment));
 
             return {
                 x: pointOnTheCurvedSegment_x,
@@ -61,7 +61,7 @@ export class Arc135Curve implements Curve {
             };
         }
 
-        if (length <= this.firstLegLength + this.curvedSegmentLength + this.secondLegLength) {
+        if (length <= this.getTotalLength()) {
             const { x: arcEndX, y: arcEndY } = this.arcEndPoint();
 
             // The trailing leg leaves the arc tangentially at 45 degrees, so it
@@ -74,6 +74,8 @@ export class Arc135Curve implements Curve {
                 y: arcEndY + lastLegOffset,
             };
         }
+
+        throw new RangeError(outOfRange(length, this.getTotalLength()));
     }
 
     getShootingPoint(length: number, viewPoint: Point): Point {
@@ -86,8 +88,8 @@ export class Arc135Curve implements Curve {
     private arcEndPoint(): Point {
         const angle = Arc135Curve.ARC_END_ANGLE;
         return {
-            x: this.offset + this.firstLegLength + this.curvedSegmentRadius * Math.cos(toRadians(angle)),
-            y: this.curvedSegmentRadius + this.curvedSegmentRadius * Math.sin(toRadians(angle)),
+            x: this.offset + this.firstLegLength + this.curvedSegmentRadius * cos(toRadians(angle)),
+            y: this.curvedSegmentRadius + this.curvedSegmentRadius * sin(toRadians(angle)),
         };
     }
 
@@ -113,9 +115,20 @@ export class Arc135Curve implements Curve {
             return { angle, distance: c };
         }
 
-        if (length <= this.firstLegLength + this.curvedSegmentLength + this.secondLegLength) {
+        if (length <= this.getTotalLength()) {
             const { alpha, c } = calculateTriangleFromCoordinates(point, viewPoint, this.arcEndPoint());
             return { angle: alpha, distance: c };
         }
+
+        throw new RangeError(outOfRange(length, this.getTotalLength()));
     }
+}
+
+/**
+ * The piecewise branches above cover [0, totalLength]. Anything outside that is
+ * a caller bug, not a curve shape — the 2018 version returned `undefined` here
+ * and let it surface later as "cannot read property 'x' of undefined".
+ */
+function outOfRange(length: number, total: number): string {
+    return `Curve length ${length} is outside the curve's domain [0, ${total}].`;
 }

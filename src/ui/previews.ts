@@ -1,11 +1,8 @@
 import { cutImage, generateCutPreviewImage, waitForImage } from '../adapters/imaging/images';
-import { PREVIEW_VFOV } from '../adapters/scene3d/scene';
+import { MAVIC_PRO, PREVIEW_CAMERA } from '../core/camera/profiles';
 import { renderPlanIn3D } from '../adapters/scene3d/render-plan';
 import type { Point, Step } from '../core/types';
 import { clear, el, hide, input, onClick, setDisabled, show } from './dom';
-
-/** DJI Mavic Pro vertical field of view, degrees. Phase 6 makes this selectable. */
-export const MAVIC_PRO_VFOV = 46.8;
 
 const MAX_PREVIEW_WIDTH = 1000;
 const DEBUG_WIDTH = 500;
@@ -46,6 +43,7 @@ async function renderStrips(
     for (let i = 0; i < steps.length; i++) {
         const step = steps[i];
         const image = images[i];
+        if (!step || !image) continue;
         const isLast = i === steps.length - 1;
         const isFirst = i === 0;
 
@@ -95,13 +93,13 @@ export async function setup3DPreview(steps: Step[], viewPoint: Point, signal: Ab
         setDisabled(generateButton, true);
         show(preview);
         show(debugButton);
-        await renderStrips(steps, frames, PREVIEW_VFOV, preview, 'crop');
+        await renderStrips(steps, frames, PREVIEW_CAMERA.vFov, preview, 'crop');
     });
 
     onClick(debugButton, signal, async () => {
         setDisabled(debugButton, true);
         show(debug);
-        await renderStrips(steps, frames, PREVIEW_VFOV, debug, 'debug');
+        await renderStrips(steps, frames, PREVIEW_CAMERA.vFov, debug, 'debug');
     });
 }
 
@@ -125,13 +123,13 @@ export function setupRealPreview(steps: Step[], signal: AbortSignal): void {
         setDisabled(debugButton, false);
         show(preview);
         show(debugButton);
-        await renderStrips(steps, await readSelectedImages(), MAVIC_PRO_VFOV, preview, 'crop');
+        await renderStrips(steps, await readSelectedImages(), MAVIC_PRO.vFov, preview, 'crop');
     });
 
     onClick(debugButton, signal, async () => {
         setDisabled(debugButton, true);
         show(debug);
-        await renderStrips(steps, await readSelectedImages(), MAVIC_PRO_VFOV, debug, 'debug');
+        await renderStrips(steps, await readSelectedImages(), MAVIC_PRO.vFov, debug, 'debug');
     });
 }
 

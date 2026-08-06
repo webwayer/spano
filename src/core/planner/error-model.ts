@@ -17,6 +17,7 @@ export function getShootingErrorsForTriples(pointTriples: Triple[]): number[] {
     for (let i = 1; i < pointTriples.length; i++) {
         const triple = pointTriples[i];
         const prevTriple = pointTriples[i - 1];
+        if (!triple || !prevTriple) continue;
 
         const perfectAngleForTriple = getTopAngle(triple.pointOnTheGround, { x: 0, y: 0 }, triple.shootingPoint);
         const angleToTheNextPointOnTheGround = getTopAngle(

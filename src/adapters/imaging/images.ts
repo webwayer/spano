@@ -104,6 +104,18 @@ export function calcViewport(
         activeImageArea = height - srcY;
     }
 
+    // A canvas dimension is an unsigned long: assigning 59.7 truncates to 59.
+    // Flooring here just makes that explicit rather than incidental.
+    //
+    // The clamp to 1 is the load-bearing part. A plan can contain a shot whose
+    // angle of view rounds to 0 degrees — the tail of a curve where consecutive
+    // samples nearly coincide — and (0 / vFOV) * height is 0. A zero-height
+    // canvas serialises to the string "data:," which no <img> can decode, so
+    // the whole strip loop died with "Image could not be decoded". One pixel of
+    // useless strip is a far better outcome than a broken render.
+    activeImageArea = Math.max(1, Math.floor(activeImageArea));
+    srcY = Math.min(Math.max(0, Math.floor(srcY)), Math.max(0, height - activeImageArea));
+
     return { srcY, activeImageArea };
 }
 

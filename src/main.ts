@@ -10,7 +10,7 @@
 
 import { plan } from './core/planner/plan';
 import { drawShots } from './adapters/canvas2d/draw-shots';
-import { canvas, el, onClick } from './ui/dom';
+import { canvas, el } from './ui/dom';
 import { readParams } from './ui/controls';
 import { renderStepList } from './ui/step-list';
 import { resetPreviewListeners, setup3DPreview, setupRealPreview } from './ui/previews';
