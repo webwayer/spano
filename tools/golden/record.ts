@@ -158,7 +158,7 @@ export function buildFullDump(testCase: Case): unknown {
         const found = indexOfTriple.get(triple);
         // A triple that is not in pointTriples would mean the planner
         // synthesised one; nothing does today, but say so loudly if it starts.
-        return found === undefined ? { unresolved: triple } : found;
+        return found ?? { unresolved: triple };
     };
 
     return {
@@ -296,20 +296,31 @@ export function buildFlightPath(): unknown {
 // getGeoSteps gains coverage in Phase 3, when it moves into core/.
 
 const LITCHI_FIXTURE = [
-    { geoPoint: { lat: 37.77068, lon: -122.393042 }, shootingPoint: { x: 0, y: 50 }, heading: 271, viewAngleToTheGround: -30 },
-    { geoPoint: { lat: 37.770501, lon: -122.396027 }, shootingPoint: { x: 120, y: 78.5 }, heading: 271, viewAngleToTheGround: -12.5 },
-    { geoPoint: { lat: 37.7704, lon: -122.398 }, shootingPoint: { x: 240, y: 130 }, heading: 91, viewAngleToTheGround: 8 },
+    {
+        geoPoint: { lat: 37.77068, lon: -122.393042 },
+        shootingPoint: { x: 0, y: 50 },
+        heading: 271,
+        viewAngleToTheGround: -30,
+    },
+    {
+        geoPoint: { lat: 37.770501, lon: -122.396027 },
+        shootingPoint: { x: 120, y: 78.5 },
+        heading: 271,
+        viewAngleToTheGround: -12.5,
+    },
+    {
+        geoPoint: { lat: 37.7704, lon: -122.398 },
+        shootingPoint: { x: 240, y: 130 },
+        heading: 91,
+        viewAngleToTheGround: 8,
+    },
 ];
 
-const ACTION_SETS: Array<{ name: string; actions: LitchiAction[] }> = [
+const ACTION_SETS: { name: string; actions: LitchiAction[] }[] = [
     { name: 'no actions', actions: [] },
     {
         name: 'wait/photo/wait — the set index.ts uses',
-        actions: [
-            { type: 'wait', param: 1000 },
-            { type: 'photo' },
-            { type: 'wait', param: 1000 },
-        ],
+        actions: [{ type: 'wait', param: 1000 }, { type: 'photo' }, { type: 'wait', param: 1000 }],
     },
     {
         name: 'three photos, as makeLitchi builds them',
@@ -330,7 +341,7 @@ export function buildLitchi(): unknown {
         description:
             'Baseline for makeLitchiMission() — the Mission Hub CSV formatter. Fed a ' +
             'static fixture, not real geo steps. NOTE: this pins the CSV as it is ' +
-            'generated today; it does NOT verify the columns still match Litchi\'s ' +
+            "generated today; it does NOT verify the columns still match Litchi's " +
             'current format. That check is Phase 7.',
         fixture: LITCHI_FIXTURE,
         missions: ACTION_SETS.map(set => {

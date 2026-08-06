@@ -20,7 +20,9 @@ const fullDir = FULL_DIR();
 mkdirSync(fullDir, { recursive: true });
 
 // ─── digest ───────────────────────────────────────────────────────────────────
-const digest = buildDigest() as { cases: Array<{ id: string; outcome: string; error?: { name: string; message: string } }> };
+const digest = buildDigest() as {
+    cases: { id: string; outcome: string; error?: { name: string; message: string } }[];
+};
 writeFileSync(join(goldenDir, 'digest.json'), toJson(digest));
 
 const ok = digest.cases.filter(c => c.outcome === 'ok');

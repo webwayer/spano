@@ -7,7 +7,16 @@
  * and the 49 "jQuery is not callable" type errors that came with it.
  */
 
-/** Look up a required element, failing loudly rather than returning null. */
+import { runReporting } from './errors';
+
+/**
+ * Look up a required element, failing loudly rather than returning null.
+ *
+ * The cast is the point: the caller states what it expects to find, and a
+ * missing element throws with the id in the message instead of surfacing as
+ * "cannot read property of null" somewhere downstream.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export function el<T extends HTMLElement = HTMLElement>(id: string): T {
     const found = document.getElementById(id);
     if (!found) {
@@ -57,7 +66,7 @@ export function onClick(node: HTMLElement, signal: AbortSignal, handler: () => v
     node.addEventListener(
         'click',
         () => {
-            void handler();
+            runReporting(handler);
         },
         { signal }
     );

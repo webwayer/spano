@@ -11,6 +11,7 @@
 import { plan } from './core/planner/plan';
 import { drawShots } from './adapters/canvas2d/draw-shots';
 import { canvas, el } from './ui/dom';
+import { reportError } from './ui/errors';
 import { readParams } from './ui/controls';
 import { renderStepList } from './ui/step-list';
 import { resetPreviewListeners, setup3DPreview, setupRealPreview } from './ui/previews';
@@ -25,13 +26,6 @@ async function generate(): Promise<void> {
     const signal = resetPreviewListeners();
     await setup3DPreview(steps, viewPoint, signal);
     setupRealPreview(steps, signal);
-}
-
-function reportError(error: unknown): void {
-    const message = error instanceof Error ? error.message : String(error);
-    console.error(error);
-    // Phase 6 replaces this with a proper in-page error region.
-    window.alert(message);
 }
 
 const generateButton = el('generateButton');

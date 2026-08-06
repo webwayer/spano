@@ -68,7 +68,7 @@ if (missing > 0) {
 if (failures > 0) {
     console.error(
         `${failures} of ${checks.length} checks drifted from the baseline.\n` +
-        'If the change was deliberate, re-run capture.ts and review the diff before committing.'
+            'If the change was deliberate, re-run capture.ts and review the diff before committing.'
     );
 }
 if (failures === 0 && missing === 0) {

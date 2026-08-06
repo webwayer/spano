@@ -12,6 +12,7 @@ This repository contains proof-of-concept (code and explanation) for software th
 # Overview
 
 Stuff used:
+
 - JQuery
 - Typescript
 - three.js (3D stuff, see magic below)
@@ -21,13 +22,15 @@ Stuff used:
 
 **Everyhing is tested on DJI mavic pro's 46.8 degrees vertical field of view sensor**
 
-*So software can calculate everything for you. Amazing!*  
+_So software can calculate everything for you. Amazing!_
 
 There is 2 types of curves `spano` can generate (and many more with little bit additional code).
+
 - Simple curve (90 degrees curved part)
 - Even more curved curve (135 degrees curved part).
 
 You can ajust:
+
 - Altitude of the start point
 - Offset (part of the ground under a start point you don't want to see on the panorama)
 - First flat part (with normal perspective)
@@ -35,4 +38,4 @@ You can ajust:
 - Last flat part (with normal perspecrive)
 
 Then `spano` will show you how your curve looks like and how drone should fly, how many images it should take and from where.  
-Also you will see in text detailed instructions for this process.  See Demo.  
+Also you will see in text detailed instructions for this process. See Demo.

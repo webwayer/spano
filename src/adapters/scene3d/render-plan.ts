@@ -49,13 +49,7 @@ export async function renderPlanIn3D(steps: Step[], viewPoint: Point): Promise<R
 
         const overview = imageFrom3DScene(OVERVIEW_FROM, OVERVIEW_AT, scene, camera, renderer);
         const frames = steps.map(step =>
-            imageFrom3DScene(
-                sliceToScene(step.shootingPoint),
-                sliceToScene(step.shootedPoint),
-                scene,
-                camera,
-                renderer
-            )
+            imageFrom3DScene(sliceToScene(step.shootingPoint), sliceToScene(step.shootedPoint), scene, camera, renderer)
         );
 
         return { overview, frames };

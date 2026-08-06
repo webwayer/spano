@@ -131,10 +131,7 @@ function splitBy<T>(array: T[], isGood: (candidate: T[]) => boolean): T[][] {
     const groups: T[][] = [];
 
     let current: T[] = [];
-    for (let i = 0; i < array.length; i++) {
-        const item = array[i];
-        if (item === undefined) continue;
-
+    for (const item of array) {
         if (current.length === 0) {
             current.push(item);
             continue;

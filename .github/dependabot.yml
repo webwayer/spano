@@ -1,0 +1,27 @@
+version: 2
+
+# Of everything in the Phase 5 hardening list, this is the one that matters
+# most. The others protect against an attacker; this protects against the
+# passage of time, which is what actually happened to this repository between
+# 2018 and 2026.
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      # One PR for the boring bumps, so the queue does not become noise that
+      # gets ignored for six years.
+      minor-and-patch:
+        update-types: [minor, patch]
+      types:
+        patterns: ['@types/*']
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']

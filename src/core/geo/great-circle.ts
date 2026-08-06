@@ -24,11 +24,7 @@ export function getGeoPointFromStartPointDistanceBearing(
 
     const f2 = asin(sin(f1) * cos(angularDistance) + cos(f1) * sin(angularDistance) * cos(brng));
     const l2 = radiansOf(
-        l1 +
-            atan2(
-                sin(brng) * sin(angularDistance) * cos(f1),
-                cos(angularDistance) - sin(f1) * sin(f2)
-            )
+        l1 + atan2(sin(brng) * sin(angularDistance) * cos(f1), cos(angularDistance) - sin(f1) * sin(f2))
     );
 
     return { lat: toDegrees(f2), lon: toDegrees(l2) };

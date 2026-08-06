@@ -28,7 +28,8 @@ function describe(value: unknown): string {
     if (Array.isArray(value)) return `array(${value.length})`;
     if (typeof value === 'object') return `object{${Object.keys(value).join(',')}}`;
     if (typeof value === 'string') return JSON.stringify(value);
-    return String(value);
+    if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+    return JSON.stringify(value);
 }
 
 function walk(actual: unknown, expected: unknown, path: string, diffs: Diff[]): void {
@@ -67,14 +68,10 @@ function walk(actual: unknown, expected: unknown, path: string, diffs: Diff[]): 
     }
 
     const bothObjects =
-        expected !== null && typeof expected === 'object' &&
-        actual !== null && typeof actual === 'object';
+        expected !== null && typeof expected === 'object' && actual !== null && typeof actual === 'object';
 
     if (bothObjects) {
-        const keys = new Set([
-            ...Object.keys(expected as object),
-            ...Object.keys(actual as object),
-        ]);
+        const keys = new Set([...Object.keys(expected), ...Object.keys(actual)]);
         for (const key of keys) {
             walk(
                 (actual as Record<string, unknown>)[key],
@@ -100,7 +97,8 @@ export function compare(actual: unknown, expected: unknown, rootPath = ''): Diff
 export function formatDiffs(label: string, diffs: Diff[]): string {
     const shown = diffs.slice(0, MAX_DIFFS);
     const lines = shown.map(
-        d => `    ${d.path || '<root>'}\n      expected ${describe(d.expected)}\n      actual   ${describe(d.actual)}\n      (${d.reason})`
+        d =>
+            `    ${d.path || '<root>'}\n      expected ${describe(d.expected)}\n      actual   ${describe(d.actual)}\n      (${d.reason})`
     );
     if (diffs.length >= MAX_DIFFS) {
         lines.push(`    ... reporting capped at ${MAX_DIFFS} differences`);

@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+# Least privilege at the top level; widen per job only where needed.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      # NOTE: these are floating tags. Replace each with the full 40-character
+      # commit SHA and keep the version as a trailing comment — Dependabot and
+      # Renovate both understand that convention and will bump SHA and comment
+      # together. A mutable tag means whoever controls the action repository can
+      # repoint it at new code that runs with this workflow's token, which is
+      # what OpenSSF Scorecard's Pinned-Dependencies check is about.
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Formatting
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Types
+        run: npm run typecheck
+
+      - name: Unit and property tests
+        run: npm run test:coverage
+
+      - name: Golden characterisation baselines
+        # The gate that proves a refactor did not change the flight maths.
+        run: npm run golden
+
+      - name: Build
+        run: npm run build
+
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+
+      - name: End-to-end tests
+        run: npm run test:e2e
+
+      - uses: actions/upload-artifact@v5
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

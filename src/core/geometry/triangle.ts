@@ -29,8 +29,25 @@ export function calculateTriangleFromCoordinates(A: Point, B: Point, C: Point): 
     return { A, B, C, a, b, c, alpha, beta, gamma };
 }
 
-/** Gamma is fixed at 90 degrees and side b lies on the Y axis. */
+/**
+ * Gamma is fixed at 90 degrees and side b lies on the Y axis.
+ *
+ * PRECONDITION: `A` must lie on the ground (`A.y === 0`).
+ *
+ * The construction places C at `A.x - b` with `C.y = 0`, ignoring `A.y`
+ * entirely, so for any elevated A the returned triangle is not self-consistent:
+ * |AB| comes out different from the `c` that was passed in. Both call sites
+ * pass a ground point, so this has always held — but it was never written down,
+ * and a future caller reaching for "the generic right-triangle solver" would
+ * get quietly wrong answers. Surfaced by a property test in Phase 5.
+ */
 export function calculateTriangleCustom(A: Point, alpha: number, c: number): Triangle {
+    if (A.y !== 0) {
+        throw new Error(
+            `calculateTriangleCustom requires a point on the ground, got y=${A.y}. ` +
+                'Use calculateTriangleFromCoordinates for an elevated vertex.'
+        );
+    }
     const gamma = 90;
     const beta = 180 - gamma - alpha;
 

@@ -27,12 +27,9 @@ async function loadRoadTexture(): Promise<THREE.Texture> {
         // A bare relative path resolves against the page URL and breaks under
         // Vite's base. The fourth argument is onError — without it a failed load
         // left this promise pending forever.
-        new THREE.TextureLoader().load(
-            `${import.meta.env.BASE_URL}textures/road.jpg`,
-            resolve,
-            undefined,
-            () => reject(new Error('Could not load the ground texture.'))
-        );
+        new THREE.TextureLoader().load(`${import.meta.env.BASE_URL}textures/road.jpg`, resolve, undefined, () => {
+            reject(new Error('Could not load the ground texture.'));
+        });
     });
 
     // r152 turned on the linear colour workflow by default; without this the

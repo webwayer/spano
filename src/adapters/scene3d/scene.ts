@@ -10,7 +10,7 @@ export interface Scene3D {
     scene: THREE.Scene;
     camera: THREE.PerspectiveCamera;
     renderer: THREE.WebGLRenderer;
-    dispose(): void;
+    dispose: () => void;
 }
 
 /**
@@ -51,7 +51,7 @@ export function setup3DScene(): Scene3D {
         scene,
         camera,
         renderer,
-        dispose() {
+        dispose: () => {
             disposeSceneContents(scene);
         },
     };
@@ -61,12 +61,14 @@ export function setup3DScene(): Scene3D {
 export function disposeSceneContents(scene: THREE.Scene): void {
     scene.traverse(object => {
         if (!(object instanceof THREE.Mesh)) return;
-        object.geometry?.dispose();
-        const materials = Array.isArray(object.material) ? object.material : [object.material];
+        const mesh = object as THREE.Mesh;
+
+        mesh.geometry.dispose();
+        const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
         for (const material of materials) {
-            if (!material) continue;
-            const map = (material as THREE.MeshLambertMaterial).map;
-            map?.dispose();
+            if ('map' in material) {
+                (material as THREE.MeshLambertMaterial).map?.dispose();
+            }
             material.dispose();
         }
     });

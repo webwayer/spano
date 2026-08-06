@@ -11,8 +11,8 @@ export function repoRoot(): string {
     const root = resolve(process.cwd());
     if (!existsSync(join(root, 'src', 'core', 'planner', 'plan.ts'))) {
         console.error(
-            `Run this from the repository root (no lib/model.ts under ${root}).\n` +
-            '  npx --yes tsx@4 tools/golden/capture.ts'
+            `Run this from the repository root (no src/core/planner/plan.ts under ${root}).\n` +
+                '  npx --yes tsx@4 tools/golden/capture.ts'
         );
         process.exit(2);
     }

@@ -54,9 +54,10 @@ export function makeLitchiMission(steps: GeoStep[], actions: LitchiAction[]): st
         ];
 
         for (const action of actions) {
-            missionStep.push(ACTION_TYPE[action.type] ?? NO_ACTION);
-            // `||` not `??`, matching the 2018 behaviour exactly. Phase 3 is a
-            // move, not a semantics change; they differ for '' and NaN.
+            missionStep.push(ACTION_TYPE[action.type]);
+            // Deliberately `||`, not `??`: matches the 2018 behaviour exactly.
+            // They differ for '' and NaN, neither of which any caller passes.
+            // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
             missionStep.push(action.param || 0);
         }
 
@@ -68,6 +69,9 @@ export function makeLitchiMission(steps: GeoStep[], actions: LitchiAction[]): st
         return missionStep;
     });
 
+    if (missionSteps.length === 0) {
+        return HEADER;
+    }
     return HEADER + '\n' + missionSteps.map(missionStep => missionStep.join(',')).join('\n');
 }
 

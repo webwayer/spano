@@ -160,7 +160,9 @@ function readAsDataUrl(file: File): Promise<string> {
                 reject(new Error(`Could not read ${file.name}.`));
             }
         });
-        reader.addEventListener('error', () => reject(new Error(`Could not read ${file.name}.`)));
+        reader.addEventListener('error', () => {
+            reject(new Error(`Could not read ${file.name}.`));
+        });
         reader.readAsDataURL(file);
     });
 }

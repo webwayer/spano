@@ -1,135 +1,180 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>spano — drone panorama flight planner</title>
-    <meta name="description"
-          content="Plan the drone flight for a vertical curved panorama: where to hover, at what altitude and gimbal angle, and which slice of each frame to keep.">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <style type="text/css">
-        #topCanvas {
-            transform: scale(1, -1);
-        }
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>spano — drone panorama flight planner</title>
+        <meta
+            name="description"
+            content="Plan the drone flight for a vertical curved panorama: where to hover, at what altitude and gimbal angle, and which slice of each frame to keep."
+        />
+        <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous"
+        />
+        <style type="text/css">
+            #topCanvas {
+                transform: scale(1, -1);
+            }
 
-        #bottomCanvas {
-            transform: scale(1, 1);
-        }
-    </style>
-</head>
-<body>
+            #bottomCanvas {
+                transform: scale(1, 1);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container" style="min-width: 1200px; text-align: center">
+            <div class="jumbotron">
+                <form>
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Curve Type</span>
+                                </div>
+                                <select class="form-control" id="curveType">
+                                    <option value="simpleCurve">Simple Curve</option>
+                                    <option value="stunningCurve">More Curved Curve</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon2">Offset</span>
+                                </div>
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="offset"
+                                    placeholder="Offset"
+                                    min="10"
+                                    max="200"
+                                    value="50"
+                                />
+                            </div>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon3">First Line Length</span>
+                                </div>
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="firstLineLength"
+                                    placeholder="First Line Length"
+                                    min="10"
+                                    max="200"
+                                    value="50"
+                                />
+                            </div>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon4">Curved Line Radius</span>
+                                </div>
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="curvedLineLength"
+                                    placeholder="Curved Line Radius"
+                                    min="10"
+                                    max="200"
+                                    value="100"
+                                />
+                            </div>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon5">Second Line Length</span>
+                                </div>
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="secondLineLength"
+                                    placeholder="Second Segment Length"
+                                    min="10"
+                                    max="200"
+                                    value="50"
+                                />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon6">View Point Height</span>
+                                </div>
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="viewPointHeight"
+                                    placeholder="View Point Height"
+                                    min="10"
+                                    max="200"
+                                    value="50"
+                                />
+                            </div>
+                        </div>
+                        <div class="col" style="text-align: right">
+                            <button type="button" class="btn btn-primary" id="generateButton">Generate</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
 
-<div class="container" style="min-width: 1200px; text-align: center">
-    <div class="jumbotron">
-        <form>
             <div class="row">
-                <div class="col">
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon1">Curve Type</span>
-                        </div>
-                        <select class="form-control" id="curveType">
-                            <option value="simpleCurve">Simple Curve</option>
-                            <option value="stunningCurve">More Curved Curve</option>
-                        </select>
-                    </div>
+                <div class="col-md">
+                    <canvas id="topCanvas" width="580" height="300"></canvas>
+                    <br />
+                    <canvas id="bottomCanvas" width="580" height="300"></canvas>
                 </div>
-                <div class="col">
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon2">Offset</span>
-                        </div>
-                        <input type="number" class="form-control" id="offset" placeholder="Offset"
-                               min="10"
-                               max="200"
-                               value="50">
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon3">First Line Length</span>
-                        </div>
-                        <input type="number" class="form-control" id="firstLineLength"
-                               placeholder="First Line Length"
-                               min="10" max="200" value="50">
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon4">Curved Line Radius</span>
-                        </div>
-                        <input type="number" class="form-control" id="curvedLineLength"
-                               placeholder="Curved Line Radius"
-                               min="10" max="200" value="100">
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon5">Second Line Length</span>
-                        </div>
-                        <input type="number" class="form-control" id="secondLineLength"
-                               placeholder="Second Segment Length"
-                               min="10" max="200" value="50">
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon6">View Point Height</span>
-                        </div>
-                        <input type="number" class="form-control" id="viewPointHeight"
-                               placeholder="View Point Height"
-                               min="10"
-                               max="200" value="50">
-                    </div>
-                </div>
-                <div class="col" style="text-align: right">
-                    <button type="button" class="btn btn-primary" id="generateButton">Generate</button>
+                <div class="col-md" style="text-align: left">
+                    <ul id="asText"></ul>
                 </div>
             </div>
-        </form>
-    </div>
 
-    <div class="row">
-        <div class="col-md">
-            <canvas id="topCanvas" width="580" height="300"></canvas>
-            <br/>
-            <canvas id="bottomCanvas" width="580" height="300"></canvas>
+            <div class="jumbotron" style="text-align: center">
+                <button type="button" class="btn btn-danger btn-lg" id="generateButton3D" disabled>
+                    Generate in 3D
+                </button>
+                <div style="margin-top: 10px" id="scene3D"></div>
+            </div>
+            <div class="jumbotron" style="text-align: center" id="preview3D"></div>
+            <button
+                type="button"
+                class="btn btn-danger btn-sm"
+                style="margin-bottom: 50px"
+                id="generateDebug3D"
+                disabled
+            >
+                Generate Debug Images
+            </button>
+            <div class="jumbotron" style="text-align: center" id="debug3D"></div>
+
+            <div class="jumbotron" style="text-align: center">
+                <input type="file" class="form-control-file" id="filesReal" multiple />
+                <button type="button" class="btn btn-success btn-lg" id="generateButtonReal">
+                    Generate from Real Images
+                </button>
+            </div>
+            <div class="jumbotron" style="text-align: center" id="previewReal"></div>
+            <button
+                type="button"
+                class="btn btn-success btn-sm"
+                style="margin-bottom: 50px"
+                id="generateDebugReal"
+                disabled
+            >
+                Generate Debug Images
+            </button>
+            <div class="jumbotron" style="text-align: center" id="debugReal"></div>
+
+            <!--<div id="map" style="width: 1200px; height: 1000px; margin-bottom: 30px"></div>-->
+
+            <!--<div class="jumbotron" style="text-align: center">-->
+            <!--<a role="button" class="btn btn-info btn-lg" href="#">Download Litchi mission</a>-->
+            <!--</div>-->
         </div>
-        <div class="col-md" style="text-align: left">
-            <ul id="asText">
-            </ul>
-        </div>
-    </div>
 
-    <div class="jumbotron" style="text-align: center">
-        <button type="button" class="btn btn-danger btn-lg" id="generateButton3D" disabled>Generate in 3D</button>
-        <div style="margin-top: 10px" id="scene3D"></div>
-    </div>
-    <div class="jumbotron" style="text-align: center" id="preview3D"></div>
-    <button type="button" class="btn btn-danger btn-sm" style="margin-bottom: 50px" id="generateDebug3D" disabled>
-        Generate Debug Images
-    </button>
-    <div class="jumbotron" style="text-align: center" id="debug3D">
-    </div>
-
-    <div class="jumbotron" style="text-align: center">
-        <input type="file" class="form-control-file" id="filesReal" multiple>
-        <button type="button" class="btn btn-success btn-lg" id="generateButtonReal">Generate from Real Images</button>
-    </div>
-    <div class="jumbotron" style="text-align: center" id="previewReal">
-    </div>
-    <button type="button" class="btn btn-success btn-sm" style="margin-bottom: 50px" id="generateDebugReal" disabled>
-        Generate Debug Images
-    </button>
-    <div class="jumbotron" style="text-align: center" id="debugReal">
-    </div>
-
-    <!--<div id="map" style="width: 1200px; height: 1000px; margin-bottom: 30px"></div>-->
-
-    <!--<div class="jumbotron" style="text-align: center">-->
-        <!--<a role="button" class="btn btn-info btn-lg" href="#">Download Litchi mission</a>-->
-    <!--</div>-->
-</div>
-
-<script type="module" src="/src/main.ts"></script>
-</body>
+        <script type="module" src="/src/main.ts"></script>
+    </body>
 </html>
