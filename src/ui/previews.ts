@@ -1,8 +1,7 @@
 import { cutImage, generateCutPreviewImage, waitForImage } from '../adapters/imaging/images';
-import { MAVIC_PRO, PREVIEW_CAMERA } from '../core/camera/profiles';
-import { renderPlanIn3D } from '../adapters/scene3d/render-plan';
+import { PREVIEW_CAMERA, type CameraProfile } from '../core/camera/profiles';
 import type { Point, Step } from '../core/types';
-import { clear, el, hide, input, onClick, setDisabled, show } from './dom';
+import { clear, el, hide, input, onClick, setDisabled, setMessage, show } from './dom';
 
 const MAX_PREVIEW_WIDTH = 1000;
 const DEBUG_WIDTH = 500;
@@ -18,6 +17,17 @@ export function resetPreviewListeners(): AbortSignal {
     generation.abort();
     generation = new AbortController();
     return generation.signal;
+}
+
+/**
+ * three.js is the large majority of the bundle, and the 3D preview is behind a
+ * button many visitors never press. A dynamic import puts it in its own chunk,
+ * fetched on first use, so the initial page load does not pay for it.
+ *
+ * Deliberately not a static import: that is the whole mechanism.
+ */
+async function loadRenderer(): Promise<typeof import('../adapters/scene3d/render-plan')> {
+    return await import('../adapters/scene3d/render-plan');
 }
 
 /**
@@ -44,6 +54,7 @@ async function renderStrips(
         const step = steps[i];
         const image = images[i];
         if (!step || !image) continue;
+
         const isLast = i === steps.length - 1;
         const isFirst = i === 0;
 
@@ -53,6 +64,11 @@ async function renderStrips(
                 : await generateCutPreviewImage(step, image, vFov, isLast, isFirst);
 
         const imageObject = await waitForImage(dataUrl);
+        imageObject.alt =
+            mode === 'crop'
+                ? `Strip kept from frame ${i + 1} of ${steps.length}`
+                : `Frame ${i + 1} of ${steps.length}, with the kept strip outlined`;
+
         if (mode === 'crop') {
             if (imageObject.width > MAX_PREVIEW_WIDTH) {
                 imageObject.width = MAX_PREVIEW_WIDTH;
@@ -65,15 +81,19 @@ async function renderStrips(
     }
 }
 
-/** Wire up the synthetic 3D preview for a freshly computed plan. */
-export async function setup3DPreview(steps: Step[], viewPoint: Point, signal: AbortSignal): Promise<void> {
+/**
+ * Wire up the synthetic 3D preview for a freshly computed plan.
+ *
+ * Nothing is rendered — and the three.js chunk is not even fetched — until the
+ * button is pressed. Rendering eagerly would defer the download by a few
+ * hundred milliseconds and no more, which is not what "lazy" is for.
+ */
+export function setup3DPreview(steps: Step[], viewPoint: Point, signal: AbortSignal): void {
     const generateButton = el<HTMLButtonElement>('generateButton3D');
     const debugButton = el<HTMLButtonElement>('generateDebug3D');
     const scene = el('scene3D');
     const preview = el('preview3D');
     const debug = el('debug3D');
-
-    const { overview, frames } = await renderPlanIn3D(steps, viewPoint);
 
     clear(preview);
     clear(debug);
@@ -82,29 +102,52 @@ export async function setup3DPreview(steps: Step[], viewPoint: Point, signal: Ab
     hide(debug);
     hide(debugButton);
     setDisabled(generateButton, false);
-    setDisabled(debugButton, false);
 
-    const overviewImage = await waitForImage(overview);
-    overviewImage.width = OVERVIEW_WIDTH;
-    overviewImage.alt = 'Overview of the synthetic scene the plan was rendered against';
-    scene.append(overviewImage);
+    /** Rendered once per plan, then reused by the debug view. */
+    let rendered: { overview: string; frames: string[] } | undefined;
+
+    async function render(): Promise<{ overview: string; frames: string[] }> {
+        if (rendered) return rendered;
+
+        setMessage('planStatus', 'Loading the 3D renderer…');
+        const { renderPlanIn3D } = await loadRenderer();
+
+        setMessage('planStatus', `Rendering ${steps.length} synthetic frames…`);
+        rendered = await renderPlanIn3D(steps, viewPoint);
+
+        const overviewImage = await waitForImage(rendered.overview);
+        overviewImage.width = OVERVIEW_WIDTH;
+        overviewImage.alt = 'Overview of the synthetic scene the plan was rendered against';
+        clear(scene);
+        scene.append(overviewImage);
+
+        return rendered;
+    }
 
     onClick(generateButton, signal, async () => {
         setDisabled(generateButton, true);
-        show(preview);
-        show(debugButton);
-        await renderStrips(steps, frames, PREVIEW_CAMERA.vFov, preview, 'crop');
+        try {
+            const { frames } = await render();
+            show(preview);
+            show(debugButton);
+            await renderStrips(steps, frames, PREVIEW_CAMERA.vFov, preview, 'crop');
+            setMessage('planStatus', `${steps.length} shots. Fly them in order.`);
+        } catch (error) {
+            setDisabled(generateButton, false);
+            throw error;
+        }
     });
 
     onClick(debugButton, signal, async () => {
         setDisabled(debugButton, true);
+        const { frames } = await render();
         show(debug);
         await renderStrips(steps, frames, PREVIEW_CAMERA.vFov, debug, 'debug');
     });
 }
 
 /** Wire up the real-photo pipeline for a freshly computed plan. */
-export function setupRealPreview(steps: Step[], signal: AbortSignal): void {
+export function setupRealPreview(steps: Step[], camera: CameraProfile, signal: AbortSignal): void {
     const generateButton = el<HTMLButtonElement>('generateButtonReal');
     const debugButton = el<HTMLButtonElement>('generateDebugReal');
     const preview = el('previewReal');
@@ -123,13 +166,13 @@ export function setupRealPreview(steps: Step[], signal: AbortSignal): void {
         setDisabled(debugButton, false);
         show(preview);
         show(debugButton);
-        await renderStrips(steps, await readSelectedImages(), MAVIC_PRO.vFov, preview, 'crop');
+        await renderStrips(steps, await readSelectedImages(), camera.vFov, preview, 'crop');
     });
 
     onClick(debugButton, signal, async () => {
         setDisabled(debugButton, true);
         show(debug);
-        await renderStrips(steps, await readSelectedImages(), MAVIC_PRO.vFov, debug, 'debug');
+        await renderStrips(steps, await readSelectedImages(), camera.vFov, debug, 'debug');
     });
 }
 
@@ -141,9 +184,12 @@ async function readSelectedImages(): Promise<string[]> {
     }
 
     const imageDataUrls: string[] = [];
-    for (const file of Array.from(files)) {
+    const all = Array.from(files);
+    for (const [i, file] of all.entries()) {
+        setMessage('planStatus', `Reading photo ${i + 1} of ${all.length}…`);
         imageDataUrls.push(await readAsDataUrl(file));
     }
+    setMessage('planStatus', `${all.length} photos read.`);
     return imageDataUrls;
 }
 

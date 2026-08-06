@@ -1,36 +1,45 @@
 /**
  * Composition root. Wiring only — no planning, no drawing, no DOM detail.
  *
- * The layering this file sits on top of:
+ * The layering underneath:
  *   core/      pure planning. No DOM, no three.js. Enforced by
- *              src/core/tsconfig.json, whose `lib` omits "DOM".
+ *              src/core/tsconfig.json, whose `lib` omits "DOM", and by a
+ *              no-restricted-imports lint rule.
  *   adapters/  everything that touches a canvas, a GPU or a file.
  *   ui/        reading the form, rendering results, wiring events.
  */
 
+import './styles/main.css';
+
 import { plan } from './core/planner/plan';
 import { drawShots } from './adapters/canvas2d/draw-shots';
-import { canvas, el } from './ui/dom';
-import { reportError } from './ui/errors';
-import { readParams } from './ui/controls';
+import { canvas, el, setMessage } from './ui/dom';
+import { runReporting } from './ui/errors';
+import { populateCameraProfiles, readParams } from './ui/controls';
 import { renderStepList } from './ui/step-list';
 import { resetPreviewListeners, setup3DPreview, setupRealPreview } from './ui/previews';
 
-async function generate(): Promise<void> {
-    const { curve, viewPoint } = readParams();
+function generate(): void {
+    const { curve, viewPoint, camera, altitudeCeiling } = readParams();
+
+    setMessage('planStatus', 'Working out the flight…');
     const { shots, steps } = plan(curve, viewPoint);
 
     drawShots(shots, viewPoint, canvas('topCanvas'), canvas('bottomCanvas'));
-    renderStepList(steps);
+    renderStepList(steps, altitudeCeiling);
 
     const signal = resetPreviewListeners();
-    await setup3DPreview(steps, viewPoint, signal);
-    setupRealPreview(steps, signal);
+    setupRealPreview(steps, camera, signal);
+    // Registers handlers only. The three.js chunk is fetched on first press of
+    // "Build panorama from preview", not now.
+    setup3DPreview(steps, viewPoint, signal);
 }
 
-const generateButton = el('generateButton');
-generateButton.addEventListener('click', () => {
-    generate().catch(reportError);
+populateCameraProfiles();
+
+el<HTMLFormElement>('planForm').addEventListener('submit', event => {
+    event.preventDefault();
+    runReporting(generate);
 });
 
-generate().catch(reportError);
+runReporting(generate);

@@ -72,12 +72,31 @@ export function onClick(node: HTMLElement, signal: AbortSignal, handler: () => v
     );
 }
 
-/** Read a number out of a form field, rejecting anything that is not one. */
-export function numberFrom(id: string): number {
-    const raw = input(id).value;
+/**
+ * Read a number out of a form field, rejecting anything that is not one.
+ *
+ * With a fallback, an empty field falls back rather than failing — useful for
+ * optional settings like the altitude ceiling.
+ */
+export function numberFrom(id: string, fallback?: number): number {
+    const field = input(id);
+    const raw = field.value.trim();
+
+    if (raw === '' && fallback !== undefined) {
+        return fallback;
+    }
+
     const value = Number.parseFloat(raw);
     if (!Number.isFinite(value)) {
-        throw new Error(`"${raw}" is not a valid number for ${id}.`);
+        const label = document.querySelector(`label[for="${id}"]`)?.textContent.trim() ?? id;
+        throw new Error(`“${raw}” is not a number. Check the ${label} field.`);
     }
     return value;
+}
+
+/** Set the text of a status or message region, showing or hiding it. */
+export function setMessage(id: string, text: string): void {
+    const node = el(id);
+    node.textContent = text;
+    node.hidden = text === '';
 }

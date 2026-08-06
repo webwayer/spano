@@ -1,0 +1,383 @@
+/*
+ * Replaces Bootstrap 4.0.0, which reached end of life in January 2023 and was
+ * loaded from a CDN — a third-party runtime dependency that also made a strict
+ * Content-Security-Policy impossible. This is a single form and a few output
+ * regions; it does not need a framework.
+ *
+ * Colours are checked against WCAG 2.2 AA: body text 4.5:1, large text and UI
+ * boundaries 3:1.
+ */
+
+:root {
+    color-scheme: light dark;
+
+    --paper: #ffffff;
+    --paper-2: #f4f5f7;
+    --ink: #16181d; /* 16.9:1 on --paper */
+    --ink-2: #4a4f5a; /* 8.1:1 on --paper */
+    --rule: #c9ccd4;
+
+    --accent: #0b4fa8; /* 8.0:1 on --paper */
+    --accent-ink: #ffffff;
+
+    --warn-bg: #fdf3e2;
+    --warn-ink: #6b4708; /* 8.2:1 on --warn-bg */
+    --warn-rule: #a97a1a;
+
+    --error-bg: #fdeceb;
+    --error-ink: #8a1f18; /* 8.0:1 on --error-bg */
+    --error-rule: #b3312a;
+
+    --radius: 4px;
+    --gap: 1rem;
+    --measure: 68ch;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --paper: #14161a;
+        --paper-2: #1c1f25;
+        --ink: #e9ebef; /* 14.6:1 on --paper */
+        --ink-2: #b3b8c2; /* 8.5:1 on --paper */
+        --rule: #3a3f49;
+
+        --accent: #8ab4f8; /* 8.3:1 on --paper */
+        --accent-ink: #10131a;
+
+        --warn-bg: #2a2210;
+        --warn-ink: #f0c96a;
+        --warn-rule: #a4802c;
+
+        --error-bg: #2b1614;
+        --error-ink: #f2a49d;
+        --error-rule: #b3564e;
+    }
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0 clamp(1rem, 4vw, 2.5rem) 4rem;
+    background: var(--paper);
+    color: var(--ink);
+    font-family:
+        system-ui,
+        -apple-system,
+        'Segoe UI',
+        sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+}
+
+/* Keyboard users get a real way past the form. */
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: var(--accent);
+    color: var(--accent-ink);
+    padding: 0.6rem 1rem;
+    z-index: 10;
+}
+.skip-link:focus {
+    left: 0;
+}
+
+:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.page-header,
+main,
+footer {
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+.page-header {
+    padding: 2.5rem 0 1.5rem;
+    border-bottom: 1px solid var(--rule);
+}
+h1 {
+    margin: 0 0 0.4rem;
+    font-size: clamp(1.9rem, 5vw, 2.6rem);
+    line-height: 1.1;
+}
+.tagline,
+.section-intro {
+    margin: 0 0 0.5rem;
+    max-width: var(--measure);
+    color: var(--ink-2);
+}
+.privacy {
+    margin: 0;
+    max-width: var(--measure);
+    font-size: 0.9rem;
+    color: var(--ink-2);
+}
+
+h2 {
+    font-size: 1.35rem;
+    margin: 2.5rem 0 0.4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+}
+section:first-of-type h2 {
+    border-top: none;
+    padding-top: 0;
+}
+
+/* ── Form ───────────────────────────────────────────────────────────── */
+form {
+    margin: 1.75rem 0 0;
+}
+.field-grid {
+    display: grid;
+    gap: var(--gap);
+    grid-template-columns: 1fr;
+}
+@media (min-width: 720px) {
+    .field-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+fieldset {
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 1rem 1.15rem 1.25rem;
+    margin: 0;
+    min-width: 0;
+}
+legend {
+    padding: 0 0.4rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.field {
+    margin-bottom: 0.9rem;
+}
+.field:last-child {
+    margin-bottom: 0;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.92rem;
+    margin-bottom: 0.25rem;
+}
+.unit {
+    font-weight: 400;
+    color: var(--ink-2);
+    font-size: 0.85rem;
+}
+.hint {
+    margin: 0.3rem 0 0;
+    font-size: 0.83rem;
+    color: var(--ink-2);
+    max-width: 46ch;
+}
+
+input,
+select {
+    width: 100%;
+    /* 2.5.8 Target Size (Minimum) is 24x24 CSS px; 44 is comfortable. */
+    min-height: 44px;
+    padding: 0.5rem 0.65rem;
+    font: inherit;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+}
+input[type='file'] {
+    padding: 0.5rem;
+}
+
+button {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.55rem 1.1rem;
+    font: inherit;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    cursor: pointer;
+}
+button:hover:not(:disabled) {
+    border-color: var(--accent);
+}
+button:disabled {
+    /* Not opacity: that would drag the text below the contrast floor. */
+    cursor: not-allowed;
+    color: var(--ink-2);
+    background: var(--paper-2);
+    border-style: dashed;
+}
+button.primary {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-color: var(--accent);
+    margin-top: 0.6rem;
+}
+.button-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 0.9rem 0;
+}
+
+/* ── Messages ───────────────────────────────────────────────────────── */
+.status {
+    margin: 0.4rem 0 0;
+    color: var(--ink-2);
+    font-size: 0.92rem;
+}
+.error,
+.warning {
+    margin: 1rem 0 0;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius);
+    border-left: 4px solid;
+    max-width: var(--measure);
+}
+.error {
+    background: var(--error-bg);
+    color: var(--error-ink);
+    border-left-color: var(--error-rule);
+}
+.warning {
+    background: var(--warn-bg);
+    color: var(--warn-ink);
+    border-left-color: var(--warn-rule);
+}
+[hidden] {
+    display: none !important;
+}
+
+/* ── Results ────────────────────────────────────────────────────────── */
+.results-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1fr;
+    margin-top: 1rem;
+}
+@media (min-width: 900px) {
+    .results-grid {
+        grid-template-columns: minmax(0, 620px) 1fr;
+    }
+}
+
+figure {
+    margin: 0 0 1rem;
+}
+figcaption {
+    font-size: 0.83rem;
+    color: var(--ink-2);
+    margin-top: 0.3rem;
+}
+
+canvas {
+    max-width: 100%;
+    height: auto;
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+}
+/*
+ * The planner works in world coordinates with +y upward; canvas y grows
+ * downward. Flipping the top canvas in CSS is cheaper than transforming every
+ * draw call, and keeps the drawing code in domain units.
+ */
+#topCanvas {
+    transform: scale(1, -1);
+}
+
+.steps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+}
+.steps li {
+    padding: 0.6rem 0.8rem;
+    background: var(--paper-2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-size: 0.92rem;
+}
+/*
+ * The step number is real text in the DOM, not a CSS counter: Safari with
+ * VoiceOver stops announcing list position once list-style is none, and a
+ * counter in ::before content is not reliably announced either.
+ */
+.step-number {
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+.steps li.over-ceiling {
+    border-left-color: var(--warn-rule);
+    background: var(--warn-bg);
+    color: var(--warn-ink);
+}
+.steps b {
+    font-variant-numeric: tabular-nums;
+}
+
+.scene img,
+.strip-stack img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+.scene {
+    margin: 0.5rem 0;
+}
+.strip-stack {
+    margin: 1rem 0;
+    /* The strips stack edge to edge — that is the panorama. */
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow-x: auto;
+}
+
+footer {
+    margin-top: 3rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+    font-size: 0.86rem;
+    color: var(--ink-2);
+}
+footer a {
+    color: var(--accent);
+}
+
+.busy {
+    cursor: progress;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}

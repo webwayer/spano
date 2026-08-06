@@ -30,8 +30,9 @@ test.describe('flight planner', () => {
         // The default parameters have produced a ten-step plan since 2018; the
         // golden baselines pin the numbers, this pins that they reach the page.
         await expect(page.locator('#asText li')).toHaveCount(10);
-        await expect(page.locator('#asText li').first()).toContainText('Step #1');
-        await expect(page.locator('#asText li').first()).toContainText('50m height');
+        await expect(page.locator('#asText li').first()).toContainText('Step 1');
+        await expect(page.locator('#asText li').first()).toContainText('50 m altitude');
+        await expect(page.locator('#asText li').first()).toContainText('gimbal 36° down');
 
         expect(errors).toEqual([]);
     });
@@ -56,9 +57,11 @@ test.describe('flight planner', () => {
         await page.goto('/');
         await waitForPlan(page);
 
-        await expect(page.locator('#scene3D img')).toBeVisible({ timeout: 30_000 });
-        await page.click('#generateButton3D');
+        // Nothing 3D exists until asked for — that is the lazy chunk working.
+        await expect(page.locator('#scene3D img')).toHaveCount(0);
 
+        await page.click('#generateButton3D');
+        await expect(page.locator('#scene3D img')).toBeVisible({ timeout: 60_000 });
         await expect(page.locator('#preview3D img')).toHaveCount(10, { timeout: 60_000 });
 
         // Every strip must actually decode. A zero-height crop serialises to
@@ -92,11 +95,14 @@ test.describe('flight planner', () => {
         // Chrome caps live contexts around 16, so this used to break the preview
         // for the rest of the session.
         for (let i = 0; i < 20; i++) {
+            await page.click('#generateButton3D');
+            await page.waitForTimeout(200);
             await page.click('#generateButton');
             await page.waitForTimeout(150);
         }
 
-        await expect(page.locator('#scene3D img')).toBeVisible({ timeout: 30_000 });
+        await page.click('#generateButton3D');
+        await expect(page.locator('#scene3D img')).toBeVisible({ timeout: 60_000 });
         const stillRenders = await page
             .locator('#scene3D img')
             .evaluate(img => (img as HTMLImageElement).naturalWidth > 0);
@@ -107,21 +113,40 @@ test.describe('flight planner', () => {
         await page.goto('/');
         await waitForPlan(page);
 
-        let message = '';
-        page.on('dialog', async d => {
-            message = d.message();
-            await d.dismiss();
-        });
-
-        // No photos selected at all.
+        // No photos selected at all. The message goes to an in-page live
+        // region, not a blocking dialog.
         await page.click('#generateButtonReal');
-        await expect.poll(() => message, { timeout: 15_000 }).toContain('photos');
+        await expect(page.locator('#errorRegion')).toBeVisible({ timeout: 15_000 });
+        await expect(page.locator('#errorRegion')).toContainText('photos');
     });
 
-    // Currently failing on exactly the issues the audit recorded: unlabelled
-    // number inputs, a select with no accessible name, and insufficient
-    // contrast. Phase 6 rewrites the page and removes this fixme.
-    test.fixme('has no detectable accessibility violations', async ({ page }) => {
+    test('warns when the plan exceeds the altitude ceiling', async ({ page }) => {
+        await page.goto('/');
+        await waitForPlan(page);
+
+        // The default parameters top out at 200 m against a 120 m ceiling.
+        await expect(page.locator('#ceilingWarning')).toBeVisible();
+        await expect(page.locator('#ceilingWarning')).toContainText('120 m ceiling');
+        expect(await page.locator('.steps li.over-ceiling').count()).toBeGreaterThan(0);
+
+        // Raise the ceiling and the warning goes away.
+        await page.fill('#altitudeCeiling', '400');
+        await page.click('#generateButton');
+        await expect(page.locator('#ceilingWarning')).toBeHidden();
+    });
+
+    test('is usable at 320 CSS pixels without sideways scrolling', async ({ page }) => {
+        await page.setViewportSize({ width: 320, height: 800 });
+        await page.goto('/');
+        await waitForPlan(page);
+
+        const overflows = await page.evaluate(
+            () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
+        );
+        expect(overflows, 'the page must not scroll horizontally at 320px').toBe(false);
+    });
+
+    test('has no detectable accessibility violations', async ({ page }) => {
         await page.goto('/');
         await waitForPlan(page);
 
