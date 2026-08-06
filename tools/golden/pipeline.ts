@@ -1,50 +1,40 @@
 /**
  * The planner chain, isolated from the DOM.
  *
- * This reproduces calcModel() from index.ts:163-176 exactly, minus its five
- * console.log calls. It exists because index.ts also imports jQuery and
- * three.js, so the pure planner cannot be reached from there in Node.
- *
- * Nothing in the import graph below touches the DOM:
- *   lib/model.ts       imports only ./math
- *   lib/curves/*.ts    import only ./Curve and ../math
- *   lib/math.ts        imports nothing
+ * Since Phase 3 this is a thin wrapper: src/core/planner/plan.ts is itself the
+ * DOM-free entry point, and src/core/tsconfig.json guarantees it stays that way
+ * by compiling without "DOM" in lib. Before Phase 3 the chain could only be
+ * reached through index.ts, which also imported jQuery and three.js.
  */
 
-import { SimpleCurve } from '../../lib/curves/SimpleCurve';
-import { StunningCurve } from '../../lib/curves/StunningCurve';
+import { Arc90Curve } from '../../src/core/curves/arc-90';
+import { Arc135Curve } from '../../src/core/curves/arc-135';
 import {
-    getPointTriples,
-    getShootingErrorsForTriples,
-    divideTriplesIntoSegmentsByErrors,
-    divideSegmentsIntoShots,
-    convertShotsIntoSteps,
-} from '../../lib/model';
+    DEFAULT_MAX_DISTORTION_ANGLE,
+    DEFAULT_MAX_VIEW_ANGLE,
+    DEFAULT_STEP_LENGTH,
+    plan,
+    type Plan,
+} from '../../src/core/planner/plan';
+import type { Curve } from '../../src/core/curves/curve';
 import type { Case, CaseParams, CurveKind } from './cases';
 
 /**
- * index.ts:35 calls calcModel(curve, viewPoint, 7, 20) against the signature
- * (curve, viewPoint, maxDistortionAngle, maxViewAngle), which then forwards as
- * divideSegmentsIntoShots(segments, maxViewAngle, maxDistortionAngle).
- * So the values that actually reach the planner are 20 and 7, in that order.
+ * The values that reach the planner. In the 2018 code these arrived as
+ * calcModel(curve, viewPoint, 7, 20) against a signature of
+ * (curve, viewPoint, maxDistortionAngle, maxViewAngle), forwarded as
+ * divideSegmentsIntoShots(segments, maxViewAngle, maxDistortionAngle) — so 20
+ * and 7 in that order. They are now named defaults in plan.ts; re-exported here
+ * so the baseline records what it actually ran with.
  */
-export const MAX_VIEW_ANGLE = 20;
-export const MAX_DISTORTION_ANGLE = 7;
+export const MAX_VIEW_ANGLE = DEFAULT_MAX_VIEW_ANGLE;
+export const MAX_DISTORTION_ANGLE = DEFAULT_MAX_DISTORTION_ANGLE;
+export const STEP_LENGTH = DEFAULT_STEP_LENGTH;
 
-/** getPointTriples' stepLength, as passed by index.ts:164. */
-export const STEP_LENGTH = 1;
+export type PipelineResult = Plan;
 
-export interface PipelineResult {
-    totalCurveLength: number;
-    pointTriples: any[];
-    shootingErrors: number[];
-    segments: any[];
-    shots: any[];
-    steps: any[];
-}
-
-export function makeCurve(kind: CurveKind, p: CaseParams) {
-    const Ctor = kind === 'simple' ? SimpleCurve : StunningCurve;
+export function makeCurve(kind: CurveKind, p: CaseParams): Curve {
+    const Ctor = kind === 'simple' ? Arc90Curve : Arc135Curve;
     return new Ctor(p.offset, p.firstLeg, p.radius, p.secondLeg);
 }
 
@@ -52,18 +42,9 @@ export function runPipeline(testCase: Case): PipelineResult {
     const curve = makeCurve(testCase.curve, testCase.params);
     const viewPoint = { x: 0, y: testCase.params.viewPointY };
 
-    const pointTriples = getPointTriples(curve, viewPoint, STEP_LENGTH);
-    const shootingErrors = getShootingErrorsForTriples(pointTriples);
-    const segments = divideTriplesIntoSegmentsByErrors(pointTriples, shootingErrors);
-    const shots = divideSegmentsIntoShots(segments, MAX_VIEW_ANGLE, MAX_DISTORTION_ANGLE);
-    const steps = convertShotsIntoSteps(shots);
-
-    return {
-        totalCurveLength: curve.getTotalLength(),
-        pointTriples,
-        shootingErrors,
-        segments,
-        shots,
-        steps,
-    };
+    return plan(curve, viewPoint, {
+        maxViewAngle: MAX_VIEW_ANGLE,
+        maxDistortionAngle: MAX_DISTORTION_ANGLE,
+        stepLength: STEP_LENGTH,
+    });
 }

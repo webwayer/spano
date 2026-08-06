@@ -12,7 +12,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { CASES, FULL_DUMP_IDS } from './cases';
-import { buildDigest, buildFullDump, buildGeo, buildLitchi, toJson } from './record';
+import { buildDigest, buildFlightPath, buildFullDump, buildGeo, buildLitchi, toJson } from './record';
 import { FULL_DIR, GOLDEN_DIR, fullDumpFilename } from './paths';
 
 const goldenDir = GOLDEN_DIR();
@@ -45,6 +45,9 @@ writeFileSync(join(goldenDir, 'geo.json'), toJson(buildGeo()));
 console.log('geo.json       lib/math_geo.ts');
 
 // ─── litchi ───────────────────────────────────────────────────────────────────
+writeFileSync(join(goldenDir, 'flight-path.json'), toJson(buildFlightPath()));
+console.log('flight-path.json  getGeoSteps + getPointsForViewport');
+
 writeFileSync(join(goldenDir, 'litchi.json'), toJson(buildLitchi()));
 console.log('litchi.json    makeLitchiMission()');
 

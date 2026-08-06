@@ -7,13 +7,12 @@
   // direction: no DOM.
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    // "DOM" is here under protest. The harness imports makeLitchiMission from
-    // lib/litchi.ts, which also contains dataUrlFromText() using window.URL and
-    // Blob — so the file cannot currently be typechecked without DOM. Dropping
-    // ES2022-only here surfaced that immediately, which is the signal, not a
-    // problem to hide: Phase 3 splits litchi.ts into a pure CSV formatter and a
-    // separate download adapter, and this line comes out then.
-    "lib": ["ES2022", "DOM"],
+    // No "DOM". Phase 2 needed it here because the harness imported
+    // makeLitchiMission from lib/litchi.ts, which also held dataUrlFromText()
+    // using window.URL and Blob. Phase 3 split that file — the CSV formatter is
+    // now pure in src/core/export/, the Blob half is an adapter — so the
+    // compromise is gone and this project reaches only DOM-free code again.
+    "lib": ["ES2022"],
     "types": ["node"]
   },
   "include": ["."]

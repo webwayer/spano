@@ -23,5 +23,5 @@
     "forceConsistentCasingInFileNames": true
   },
   // tools/ has its own project (Node environment) — see tools/golden/tsconfig.json
-  "include": ["index.ts", "lib/**/*.ts", "vite.config.ts"]
+  "include": ["src/**/*.ts", "vite.config.ts"]
 }

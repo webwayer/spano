@@ -5,9 +5,10 @@
  * definition of "what a golden record looks like" and the two cannot drift.
  */
 
-import { getBearingBetween2GeoPoints, getGeoPointFromStartPointDistanceBearing } from '../../lib/math_geo';
-import { makeLitchiMission } from '../../lib/litchi';
-import type { LitchiAction } from '../../lib/litchi';
+import { getBearingBetween2GeoPoints, getGeoPointFromStartPointDistanceBearing } from '../../src/core/geo/great-circle';
+import { getGeoSteps, getPointsForViewport } from '../../src/core/geo/flight-path';
+import { makeLitchiMission } from '../../src/core/export/litchi-csv';
+import type { LitchiAction } from '../../src/core/export/litchi-csv';
 import { CASES, type Case } from './cases';
 import { makeCurve, runPipeline, type PipelineResult } from './pipeline';
 
@@ -242,6 +243,48 @@ export function buildGeo(): unknown {
         destinations,
         bearingPairs,
         roundTrips,
+    };
+}
+
+// ─── Flight path placement ────────────────────────────────────────────────────
+//
+// getGeoSteps and getPointsForViewport lived inside index.ts next to jQuery
+// until Phase 3, so they could not be imported headless and went uncovered.
+// This baseline was captured immediately after the move and before any other
+// change to them — a copy in the harness would have drifted and ended up
+// validating itself.
+
+/** DJI Mavic Pro horizontal field of view, degrees. */
+const MAVIC_PRO_HFOV = 62.4;
+
+export function buildFlightPath(): unknown {
+    const anchors = [
+        { name: 'index.ts defaults, heading roughly west', start: ORIGIN, direction: TARGET },
+        { name: 'due north', start: ORIGIN, direction: { lat: ORIGIN.lat + 0.01, lon: ORIGIN.lon } },
+        { name: 'due east', start: ORIGIN, direction: { lat: ORIGIN.lat, lon: ORIGIN.lon + 0.01 } },
+    ];
+
+    // A couple of real plans, so the min-spacing nudge and the backwards-heading
+    // inversion both get exercised.
+    const planCases = CASES.filter(c => c.id === 'simple/default' || c.id === 'stunning/default');
+
+    return {
+        description:
+            'Baseline for src/core/geo/flight-path.ts — projecting plan steps onto the map, ' +
+            'including the 0.6 m minimum waypoint spacing and the inverted heading for ' +
+            'backwards steps.',
+        hFov: MAVIC_PRO_HFOV,
+        cases: planCases.flatMap(testCase => {
+            const { steps } = runPipeline(testCase);
+            return anchors.map(anchor => ({
+                plan: testCase.id,
+                anchor: anchor.name,
+                start: anchor.start,
+                direction: anchor.direction,
+                geoSteps: getGeoSteps(anchor.start, anchor.direction, steps),
+                viewports: steps.map(step => getPointsForViewport(step, MAVIC_PRO_HFOV)),
+            }));
+        }),
     };
 }
 

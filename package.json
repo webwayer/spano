@@ -27,16 +27,14 @@
     "dev": "vite",
     "build": "npm run typecheck && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc -p tsconfig.json && tsc -p tools/golden/tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json && tsc -p src/core/tsconfig.json && tsc -p tools/golden/tsconfig.json",
     "golden": "tsx tools/golden/verify.ts",
     "golden:capture": "tsx tools/golden/capture.ts"
   },
   "dependencies": {
-    "jquery": "^3.7.1",
     "three": "^0.185.1"
   },
   "devDependencies": {
-    "@types/jquery": "^4.0.1",
     "@types/node": "^24.13.3",
     "@types/three": "^0.185.4",
     "tsx": "^4.23.9",
