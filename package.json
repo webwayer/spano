@@ -7,8 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
-  "license": "",
+  "author": "Rodion Balandin",
+  "license": "MIT",
   "devDependencies": {
     "ts-loader": "^3.2.0",
     "typescript": "^2.7.0-dev.20171130",
