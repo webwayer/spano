@@ -1,0 +1,79 @@
+{
+  "description": "Baseline for makeLitchiMission() — the Mission Hub CSV formatter. Fed a static fixture, not real geo steps. NOTE: this pins the CSV as it is generated today; it does NOT verify the columns still match Litchi's current format. That check is Phase 7.",
+  "fixture": [
+    {
+      "geoPoint": {
+        "lat": 37.77068,
+        "lon": -122.393042
+      },
+      "shootingPoint": {
+        "x": 0,
+        "y": 50
+      },
+      "heading": 271,
+      "viewAngleToTheGround": -30
+    },
+    {
+      "geoPoint": {
+        "lat": 37.770501,
+        "lon": -122.396027
+      },
+      "shootingPoint": {
+        "x": 120,
+        "y": 78.5
+      },
+      "heading": 271,
+      "viewAngleToTheGround": -12.5
+    },
+    {
+      "geoPoint": {
+        "lat": 37.7704,
+        "lon": -122.398
+      },
+      "shootingPoint": {
+        "x": 240,
+        "y": 130
+      },
+      "heading": 91,
+      "viewAngleToTheGround": 8
+    }
+  ],
+  "missions": [
+    {
+      "name": "no actions",
+      "actionCount": 0,
+      "lineCount": 4,
+      "columnCounts": [
+        38,
+        38,
+        38,
+        38
+      ],
+      "csv": "latitude,longitude,altitude(m),heading(deg),curvesize(m),rotationdir,gimbalmode,gimbalpitchangle,actiontype1,actionparam1,actiontype2,actionparam2,actiontype3,actionparam3,actiontype4,actionparam4,actiontype5,actionparam5,actiontype6,actionparam6,actiontype7,actionparam7,actiontype8,actionparam8,actiontype9,actionparam9,actiontype10,actionparam10,actiontype11,actionparam11,actiontype12,actionparam12,actiontype13,actionparam13,actiontype14,actionparam14,actiontype15,actionparam15\n37.77068,-122.393042,50,271,0,0,2,-30,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0\n37.770501,-122.396027,78.5,271,0,0,2,-12.5,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0\n37.7704,-122.398,130,91,0,0,2,8,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0"
+    },
+    {
+      "name": "wait/photo/wait — the set index.ts uses",
+      "actionCount": 3,
+      "lineCount": 4,
+      "columnCounts": [
+        38,
+        38,
+        38,
+        38
+      ],
+      "csv": "latitude,longitude,altitude(m),heading(deg),curvesize(m),rotationdir,gimbalmode,gimbalpitchangle,actiontype1,actionparam1,actiontype2,actionparam2,actiontype3,actionparam3,actiontype4,actionparam4,actiontype5,actionparam5,actiontype6,actionparam6,actiontype7,actionparam7,actiontype8,actionparam8,actiontype9,actionparam9,actiontype10,actionparam10,actiontype11,actionparam11,actiontype12,actionparam12,actiontype13,actionparam13,actiontype14,actionparam14,actiontype15,actionparam15\n37.77068,-122.393042,50,271,0,0,2,-30,0,1000,1,0,0,1000,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0\n37.770501,-122.396027,78.5,271,0,0,2,-12.5,0,1000,1,0,0,1000,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0\n37.7704,-122.398,130,91,0,0,2,8,0,1000,1,0,0,1000,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0"
+    },
+    {
+      "name": "three photos, as makeLitchi builds them",
+      "actionCount": 7,
+      "lineCount": 4,
+      "columnCounts": [
+        38,
+        38,
+        38,
+        38
+      ],
+      "csv": "latitude,longitude,altitude(m),heading(deg),curvesize(m),rotationdir,gimbalmode,gimbalpitchangle,actiontype1,actionparam1,actiontype2,actionparam2,actiontype3,actionparam3,actiontype4,actionparam4,actiontype5,actionparam5,actiontype6,actionparam6,actiontype7,actionparam7,actiontype8,actionparam8,actiontype9,actionparam9,actiontype10,actionparam10,actiontype11,actionparam11,actiontype12,actionparam12,actiontype13,actionparam13,actiontype14,actionparam14,actiontype15,actionparam15\n37.77068,-122.393042,50,271,0,0,2,-30,0,1000,1,0,0,1000,1,0,0,1000,1,0,0,1000,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0\n37.770501,-122.396027,78.5,271,0,0,2,-12.5,0,1000,1,0,0,1000,1,0,0,1000,1,0,0,1000,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0\n37.7704,-122.398,130,91,0,0,2,8,0,1000,1,0,0,1000,1,0,0,1000,1,0,0,1000,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0,-1,0"
+    }
+  ]
+}
