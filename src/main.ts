@@ -15,7 +15,7 @@ import { plan } from './core/planner/plan';
 import { drawShots } from './adapters/canvas2d/draw-shots';
 import { canvas, el, setMessage } from './ui/dom';
 import { runReporting } from './ui/errors';
-import { populateCameraProfiles, readParams } from './ui/controls';
+import { applySharedPlanFromUrl, populateCameraProfiles, readParams, shareUrl } from './ui/controls';
 import { renderStepList } from './ui/step-list';
 import { resetPreviewListeners, setup3DPreview, setupRealPreview } from './ui/previews';
 
@@ -28,6 +28,11 @@ function generate(): void {
     drawShots(shots, viewPoint, canvas('topCanvas'), canvas('bottomCanvas'));
     renderStepList(steps, altitudeCeiling);
 
+    // Keep the address bar in step, so the page is shareable and reloadable
+    // without a server. replaceState, not pushState: regenerating is not
+    // navigation and should not fill the back button.
+    window.history.replaceState(null, '', shareUrl());
+
     const signal = resetPreviewListeners();
     setupRealPreview(steps, camera, signal);
     // Registers handlers only. The three.js chunk is fetched on first press of
@@ -36,6 +41,7 @@ function generate(): void {
 }
 
 populateCameraProfiles();
+applySharedPlanFromUrl(window.location.hash);
 
 el<HTMLFormElement>('planForm').addEventListener('submit', event => {
     event.preventDefault();

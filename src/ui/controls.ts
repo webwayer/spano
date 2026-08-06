@@ -5,6 +5,7 @@ import type { CameraProfile } from '../core/camera/profiles';
 import { CAMERA_PROFILES, DEFAULT_ALTITUDE_CEILING, MAVIC_PRO } from '../core/camera/profiles';
 import type { Point } from '../core/types';
 import { numberFrom, select } from './dom';
+import { decodePlan, encodePlan, type SharedPlan } from './share';
 
 export interface PlanParams {
     curve: Curve;
@@ -46,4 +47,46 @@ export function readParams(): PlanParams {
         camera,
         altitudeCeiling: numberFrom('altitudeCeiling', DEFAULT_ALTITUDE_CEILING),
     };
+}
+
+/** The form's current state, in the shape the URL encoder wants. */
+export function readSharedPlan(): SharedPlan {
+    return {
+        curveType: select('curveType').value,
+        cameraProfile: select('cameraProfile').value,
+        offset: numberFrom('offset'),
+        firstLineLength: numberFrom('firstLineLength'),
+        curvedLineLength: numberFrom('curvedLineLength'),
+        secondLineLength: numberFrom('secondLineLength'),
+        viewPointHeight: numberFrom('viewPointHeight'),
+        altitudeCeiling: numberFrom('altitudeCeiling', DEFAULT_ALTITUDE_CEILING),
+    };
+}
+
+/**
+ * Apply a plan from the URL fragment to the form, if there is one.
+ *
+ * Call after populateCameraProfiles(), so the camera <select> already has its
+ * options — assigning an unknown value to a <select> silently does nothing.
+ */
+export function applySharedPlanFromUrl(fragment: string): boolean {
+    const shared = decodePlan(fragment);
+    if (Object.keys(shared).length === 0) return false;
+
+    for (const [key, value] of Object.entries(shared)) {
+        const field = document.getElementById(key);
+        if (field instanceof HTMLSelectElement) {
+            // Ignore an option this build does not have.
+            if ([...field.options].some(o => o.value === value)) field.value = String(value);
+        } else if (field instanceof HTMLInputElement) {
+            field.value = String(value);
+        }
+    }
+    return true;
+}
+
+/** A link that reproduces the current form. */
+export function shareUrl(): string {
+    const { origin, pathname } = window.location;
+    return `${origin}${pathname}#${encodePlan(readSharedPlan())}`;
 }

@@ -146,6 +146,38 @@ test.describe('flight planner', () => {
         expect(overflows, 'the page must not scroll horizontally at 320px').toBe(false);
     });
 
+    test('puts the plan in the URL, and restores it from a shared link', async ({ page }) => {
+        await page.goto('/');
+        await waitForPlan(page);
+
+        // The fragment is deliberate: fragments are never sent to the server,
+        // so a shared link leaks nothing to the host's logs.
+        await expect.poll(() => page.evaluate(() => window.location.hash)).toContain('curvedLineLength=100');
+
+        await setParams(page, { radius: '175', height: '65' });
+        await expect.poll(() => page.evaluate(() => window.location.hash)).toContain('curvedLineLength=175');
+
+        const shared = await page.evaluate(() => window.location.href);
+
+        // A fresh visit to that link reproduces the form.
+        const other = await page.context().newPage();
+        await other.goto(shared);
+        await expect(other.locator('#curvedLineLength')).toHaveValue('175');
+        await expect(other.locator('#viewPointHeight')).toHaveValue('65');
+        await other.close();
+    });
+
+    test('ignores out-of-range values in a hostile link', async ({ page }) => {
+        await page.goto('/#offset=-99999&curvedLineLength=1e12&curveType=<script>');
+        await waitForPlan(page);
+
+        // Rejected values leave the defaults in place rather than reaching the
+        // planner.
+        await expect(page.locator('#offset')).toHaveValue('50');
+        await expect(page.locator('#curvedLineLength')).toHaveValue('100');
+        await expect(page.locator('#asText li')).toHaveCount(10);
+    });
+
     test('has no detectable accessibility violations', async ({ page }) => {
         await page.goto('/');
         await waitForPlan(page);

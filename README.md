@@ -81,6 +81,21 @@ More in [`docs/architecture.md`](docs/architecture.md). The maths is written up
 in [`docs/flight-model.md`](docs/flight-model.md), and the decisions behind the
 2026 rebuild are in [`docs/adr/`](docs/adr/).
 
+## Sharing a plan
+
+The current parameters live in the URL fragment, so a link reproduces the plan
+exactly. Fragments are never sent to the server, so a shared link leaks nothing
+to the host.
+
+## Not shipped yet
+
+**Mission export.** `src/core/export/litchi-csv.ts` produces a Litchi Mission
+Hub CSV, and it is unit-tested — but the column set has not been checked against
+Litchi since 2018, and a stale header silently mis-maps every field after the
+first missing one. In this context that means a wrong flight plan, so there is
+deliberately no download button until the format is validated against a current
+Litchi export. For recent DJI airframes, WPML `.kmz` is likely the better target.
+
 ## Safety
 
 spano generates flight plans. It is **not** a safety-critical system and carries
