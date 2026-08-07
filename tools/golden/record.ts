@@ -79,7 +79,7 @@ export function buildDigestEntry(testCase: Case): unknown {
         result = runPipeline(testCase);
     } catch (error) {
         // A throw is behaviour too. Record it rather than aborting the run —
-        // Phase 4 fixes these against a recorded baseline, not a guess.
+        // a fix is then reviewed against a recorded baseline, not a guess.
         const err = error as Error;
         return {
             ...head,
@@ -112,9 +112,10 @@ export function buildDigestEntry(testCase: Case): unknown {
 export function buildDigest(): unknown {
     return {
         description:
-            'Characterisation baseline for the spano planner chain. Captured from the ' +
-            'unmodified 2018 sources before any restructuring. These record current ' +
-            'behaviour, bugs included — they are not a claim that the output is correct.',
+            'Characterisation baseline for the spano planner chain. First captured from ' +
+            'the unmodified 2018 sources before any restructuring, and re-recorded only ' +
+            'for deliberate changes. Records current behaviour, bugs included — not a ' +
+            'claim that the output is correct. See tests/golden/README.md.',
         maxViewAngle: 20,
         maxDistortionAngle: 7,
         stepLength: 1,
@@ -125,7 +126,7 @@ export function buildDigest(): unknown {
 // ─── Full dump: complete intermediate state, references de-duplicated ─────────
 //
 // segments, shots and steps do not *contain* triples — they hold references to
-// the same objects in pointTriples, and divideSegmentsIntoShots (model.ts:140)
+// the same objects in pointTriples, and divideSegmentsIntoShots
 // deliberately unshifts each shot's last triple into the next so consecutive
 // shots overlap by one sample. Serialising them inline would both explode the
 // file size and silently discard that aliasing. Replacing each reference with
@@ -193,8 +194,8 @@ export function buildFullDump(testCase: Case): unknown {
 
 // ─── Geodesy ──────────────────────────────────────────────────────────────────
 //
-// lib/math_geo.ts is pure and importable on its own. The two anchor points are
-// the ones hard-coded in index.ts:182-188.
+// src/core/geo/great-circle.ts is pure. The two anchor points are the ones the
+// 2018 index.ts hard-coded for its map view.
 
 const ORIGIN = { lat: 37.77068, lon: -122.393042 };
 const TARGET = { lat: 37.770501, lon: -122.396027 };
@@ -239,7 +240,7 @@ export function buildGeo(): unknown {
     });
 
     return {
-        description: 'Baseline for lib/math_geo.ts — great-circle destination and initial bearing.',
+        description: 'Baseline for src/core/geo/great-circle.ts — destination point and initial bearing.',
         destinations,
         bearingPairs,
         roundTrips,

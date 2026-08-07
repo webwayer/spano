@@ -100,9 +100,11 @@ Split into runs where the error behaves consistently — a new segment starts
 where the error _changes_ by more than `SEGMENT_SPLIT_ERROR_DELTA` (0.1°)
 between adjacent samples.
 
-That threshold has wide margin: observed deltas are ~1e-14 on the legs and >0.5
-at each leg/arc transition, with nothing in between. Perturbing it to 0.11 moves
-no case in the golden corpus.
+Measured over the golden corpus — 10,985 deltas — 10,891 sit at or below the
+threshold and 94 above it, with the nearest neighbours either side at **0.0685**
+and **0.1877**. There is real margin, but it is roughly 0.07 to 0.19, not the
+orders of magnitude an earlier draft of this document claimed. Perturbing the
+threshold to 0.11 moves no case; 0.49 breaks three golden files.
 
 ### 4. Shot allocation — `allocation.ts`
 
@@ -120,9 +122,15 @@ shared reference point.
 
 Two consequences worth knowing:
 
-- The 20° budget is a **target, not a bound**. The greedy splitter admits the
-  final element of a run unconditionally, and the overlap then widens every
-  shot by one more sample. Frames reach ~20.3°. Harmless against a 46.8° sensor.
+- The 20° budget is a **target, not a bound**, and the gap is much larger than
+  it looks. The greedy splitter admits the final sample of a run
+  unconditionally, the anchored layout then merges _pairs_ of groups without
+  re-checking, and the one-sample overlap widens every shot again. Most frames
+  land near 20°, but degenerate geometry — a shooting point that lands on the
+  ground between the two points it frames — reaches **178°**, far beyond any
+  sensor. `stepsExceedingFieldOfView` reports these and the UI flags them;
+  correcting the allocation is a change to the flight model and belongs in its
+  own commit.
 - Segments yielding fewer than three groups cannot support the anchored layout
   and fall back to one frame per group. Before 2026 they instead indexed past
   the end of the array and produced `undefined` samples, which surfaced as a

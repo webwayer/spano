@@ -39,6 +39,20 @@ export default defineConfig([
         // that gap: the boundary is defended from both directions.
         files: ['src/core/**/*.ts'],
         rules: {
+            // no-restricted-imports only visits static ImportDeclaration, so
+            // `await import('three')` slipped past both this rule and the
+            // DOM-free tsconfig. Not hypothetical: src/ui/previews.ts already
+            // lazy-loads three.js with exactly that idiom, so it is the natural
+            // thing to copy. Found by probing the boundary rather than assuming it.
+            'no-restricted-syntax': [
+                'error',
+                {
+                    selector: 'ImportExpression > Literal.source[value=/^(three($|\\/)|.*\\/(adapters|ui)\\/)/]',
+                    message:
+                        'src/core must stay free of rendering, DOM and UI dependencies — ' +
+                        'dynamic import() included.',
+                },
+            ],
             'no-restricted-imports': [
                 'error',
                 {

@@ -5,5 +5,7 @@ node_modules/
 dist/
 .vite/
 coverage/
+playwright-report/
+test-results/
 .DS_Store
 *.log

@@ -23,7 +23,8 @@ component of any kind: `index.html` plus hashed assets, deployed to GitHub Pages
 ```
 
 Dependencies point one way. `core/` depends on nothing; `adapters/` reads core's
-types; `ui/` uses both; `main.ts` wires them together.
+types; `ui/` uses both; `main.ts` wires them together — reaching `core` and
+`adapters` directly as well as through `ui`, which the diagram simplifies.
 
 ## The purity boundary is enforced, not agreed
 
@@ -32,9 +33,15 @@ Layering rules decay because nothing checks them. This one is checked twice:
 1. **`src/core/tsconfig.json` omits `"DOM"` from `lib`.** `document`, `window`,
    `Image`, `Blob` and `canvas` do not resolve inside `core/`. Reaching for one
    is a build error, not a code-review note.
-2. **An ESLint `no-restricted-imports` rule** blocks `three`, `adapters/*` and
-   `ui/*` from `core/`. The tsconfig catches globals; this catches imports —
-   `three` would otherwise type-check fine, because it ships its own types.
+2. **Two ESLint rules.** `no-restricted-imports` blocks `three`, `adapters/*`
+   and `ui/*`; `no-restricted-syntax` blocks the same targets reached through a
+   dynamic `import()`. Both are needed: the tsconfig catches globals but not
+   imports (`three` type-checks fine, it ships its own types), and
+   `no-restricted-imports` never visits `ImportExpression` — a hole found by
+   probing the boundary rather than trusting it.
+
+Seventeen DOM and platform globals were tried against the first mechanism and
+all seventeen were rejected. Eight import forms were tried against the second.
 
 `npm run typecheck` runs three projects: the app, the DOM-free core, and the
 Node-only golden harness.
@@ -55,19 +62,17 @@ unit and property suites need no jsdom, no browser, and no mocks.
 | `src/adapters/canvas2d/` | the two diagram canvases                                              |
 | `src/adapters/imaging/`  | cropping, rotation, image loading                                     |
 | `src/adapters/scene3d/`  | three.js scene, synthetic ground and landmarks, plan rendering        |
-| `src/adapters/export/`   | Blob and object-URL download                                          |
 | `src/ui/`                | form reading, step list, previews, typed DOM helpers, error reporting |
 
 ## Deliberate choices
 
-**No UI framework.** One form and three output regions. `src/ui/dom.ts` is about
-sixty lines and replaces everything jQuery was doing.
+**No UI framework.** One form and three output regions. `src/ui/dom.ts` is 134
+lines and replaces everything jQuery was doing.
 
 **three.js is loaded on demand.** It is the large majority of the bundle and the
 3D preview is behind a button many visitors never press, so
 `src/ui/previews.ts` reaches it through a dynamic `import()`. First-load JS is
-around 18 KB; the renderer chunk is roughly 523 KB and arrives only when asked
-for. Rendering eagerly would defer the download by a few hundred milliseconds
+around 21 KB; the renderer chunk is 523 KB and arrives only when asked for. Rendering eagerly would defer the download by a few hundred milliseconds
 and no more, which is not what lazy loading is for.
 
 **One shared WebGL renderer.** Browsers cap live WebGL contexts at around 16.
@@ -87,12 +92,12 @@ blocks, leaving the page unstyled while developing. See the plugin in
 
 ## Testing
 
-| Layer      | Tool                | Covers                                                              |
-| ---------- | ------------------- | ------------------------------------------------------------------- |
-| Golden     | plain Node + `tsx`  | 36 planner cases, geodesy, flight-path placement, Litchi CSV        |
-| Unit       | Vitest              | geometry, camera profiles, CSV formatting                           |
-| Property   | Vitest + fast-check | curve totality and continuity, geodesy round-trips, plan invariants |
-| End-to-end | Playwright + axe    | the real page against the production build                          |
+| Layer      | Tool                | Covers                                                                                                                  |
+| ---------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Golden     | plain Node + `tsx`  | 36 planner cases, geodesy, flight-path placement, Litchi CSV. **Covers `core/` only** — nothing in `adapters/` or `ui/` |
+| Unit       | Vitest              | geometry, camera profiles, CSV formatting                                                                               |
+| Property   | Vitest + fast-check | curve totality and continuity, geodesy round-trips, plan invariants                                                     |
+| End-to-end | Playwright + axe    | the real page against the production build                                                                              |
 
 The golden baselines are characterisation tests: they record what the planner
 **does**, bugs included, so a refactor that changes behaviour cannot pass

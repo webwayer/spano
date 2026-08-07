@@ -44,13 +44,13 @@ console.log(`full/          ${dumped} complete intermediate dumps`);
 
 // ─── geodesy ──────────────────────────────────────────────────────────────────
 writeFileSync(join(goldenDir, 'geo.json'), toJson(buildGeo()));
-console.log('geo.json       lib/math_geo.ts');
+console.log('geo.json       src/core/geo/great-circle.ts');
 
 // ─── litchi ───────────────────────────────────────────────────────────────────
 writeFileSync(join(goldenDir, 'flight-path.json'), toJson(buildFlightPath()));
 console.log('flight-path.json  getGeoSteps + getPointsForViewport');
 
 writeFileSync(join(goldenDir, 'litchi.json'), toJson(buildLitchi()));
-console.log('litchi.json    makeLitchiMission()');
+console.log('litchi.json    src/core/export/litchi-csv.ts');
 
 console.log(`\nBaselines written to ${goldenDir}`);

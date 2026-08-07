@@ -21,8 +21,11 @@ Patching webpack 3 would have been effort spent on something due for deletion.
 
 ## Consequences
 
-- 618 packages resolving 128 advisories became 31 resolving none.
-- Shipped JS fell from 1,449,440 bytes to about 18 KB on first load.
+- 618 packages resolving 128 advisories became 219 resolving none. (The tree
+  was 31 packages immediately after this phase; the test tooling added later
+  accounts for the rest.)
+- Shipped JS fell from 1,449,440 bytes to about 21 KB on first load, with the
+  three.js chunk (523 KB) fetched only when the 3D preview is asked for.
 - `dist/` stopped being tracked, so the published site broke until the Pages
   source was switched from a branch to GitHub Actions. That gap was accepted
   knowingly.

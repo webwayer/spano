@@ -24,6 +24,8 @@ jobs:
       # repoint it at new code that runs with this workflow's token, which is
       # what OpenSSF Scorecard's Pinned-Dependencies check is about.
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc

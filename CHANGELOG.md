@@ -15,7 +15,7 @@ fixed case changed output across the whole restructuring.
   a page whose map feature was commented out the entire time. The key requires
   rotation in Google Cloud; deleting the line does not revoke it.
 - Dependency tree went from 618 packages resolving 128 advisories (47 critical)
-  to 31 resolving none.
+  to 219 resolving none.
 - Added a strict Content-Security-Policy, achievable only because the Bootstrap
   CDN and Maps SDK are gone.
 - Added `SECURITY.md`, including a flight-safety reporting route.
@@ -40,7 +40,7 @@ fixed case changed output across the whole restructuring.
 
 - A camera profile type, so supporting another aircraft is a five-line change.
 - An altitude ceiling warning, defaulting to 120 m.
-- 49 unit and property tests, 9 end-to-end tests, and golden characterisation
+- 85 unit and property tests, 11 end-to-end tests, and golden characterisation
   baselines for the planner, geodesy, flight-path placement and CSV export.
 - CI, Pages deployment over OIDC, CodeQL, OpenSSF Scorecard, dependency review
   and grouped Dependabot updates.
@@ -56,7 +56,7 @@ fixed case changed output across the whole restructuring.
   boundary enforced by the compiler and the linter rather than by convention.
 - jQuery and Bootstrap removed. The page is hand-written, WCAG 2.2 AA, works at
   320 px and supports light and dark themes.
-- three.js moved behind a dynamic import: first-load JS is about 18 KB, down
+- three.js moved behind a dynamic import: first-load JS is about 21 KB, down
   from 1.45 MB.
 - `dist/` is no longer tracked; the site is built and published by CI.
 

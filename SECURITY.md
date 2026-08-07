@@ -36,9 +36,11 @@ the tool to leak the contents or metadata of a user's local files.
 `spano` generates drone flight plans. It is **not** a safety-critical system and
 carries no warranty of correctness — see [LICENSE](LICENSE). Always verify a
 generated plan against your aircraft's limits and your local aviation
-regulations before flying. In particular, the tool does not currently enforce
-an altitude ceiling, and default parameters can produce waypoints above the
-120 m / 400 ft limit that applies in many jurisdictions.
+regulations before flying. The tool warns when a plan exceeds a configurable
+altitude ceiling (120 m by default) or asks for a frame wider than the selected
+camera can capture — but those are warnings, not guarantees, and the default
+parameters do produce waypoints above the limit that applies in many
+jurisdictions.
 
 If you find a defect that causes `spano` to emit an unsafe or invalid flight
 plan, please report it through the same private channel — that is treated with

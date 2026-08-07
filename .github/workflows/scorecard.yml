@@ -12,9 +12,14 @@ permissions: read-all
 jobs:
   analysis:
     runs-on: ubuntu-latest
+    # Restated because job-level permissions replace the workflow-level block.
+    # actions: read is what Scorecard's workflow-analysis checks need.
+    #
+    # No id-token: write — its only purpose is publish_results, which is off.
     permissions:
+      contents: read
+      actions: read
       security-events: write
-      id-token: write
     steps:
       - uses: actions/checkout@v7
         with: { persist-credentials: false }

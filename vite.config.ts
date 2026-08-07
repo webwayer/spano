@@ -3,8 +3,15 @@ import { defineConfig, type Plugin } from 'vite';
 /**
  * The policy the published site runs under.
  *
- * data: and blob: in img-src are load-bearing: every generated preview is a
- * canvas.toDataURL() result and the mission export uses URL.createObjectURL.
+ * `data:` in img-src is load-bearing: every generated preview is a
+ * canvas.toDataURL() result fed to an <img>, and the favicon is a data URI.
+ *
+ * `blob:` is deliberately absent. An earlier version allowed it, justified by
+ * "the mission export uses URL.createObjectURL" — but that code is imported by
+ * nothing, and an object URL for a CSV is an <a download>, which img-src does
+ * not govern anyway. Add it back only alongside code that puts a blob in an
+ * image.
+ *
  * A policy this tight is only achievable because the Bootstrap CDN and the
  * Google Maps SDK are both gone.
  */
@@ -12,7 +19,7 @@ const CONTENT_SECURITY_POLICY = [
     "default-src 'none'",
     "script-src 'self'",
     "style-src 'self'",
-    "img-src 'self' data: blob:",
+    "img-src 'self' data:",
     "font-src 'self'",
     "connect-src 'self'",
     "base-uri 'none'",
