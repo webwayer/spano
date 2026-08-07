@@ -1,0 +1,15 @@
+{
+  // The purity boundary, expressed as a compiler setting rather than a
+  // convention. Dropping "DOM" from lib means document, window, Image, Blob and
+  // canvas do not resolve inside src/core — reaching for one is a build error,
+  // not a code-review note. "types": [] keeps ambient @types packages out too.
+  //
+  // This is what makes the whole planner testable in Node in milliseconds.
+  // Run alongside the main project: see the "typecheck" script.
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2022"],
+    "types": []
+  },
+  "include": ["."]
+}

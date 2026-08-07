@@ -1,0 +1,1206 @@
+{
+  "description": "Baseline for src/core/geo/flight-path.ts — projecting plan steps onto the map, including the 0.6 m minimum waypoint spacing and the inverted heading for backwards steps.",
+  "hFov": 62.4,
+  "cases": [
+    {
+      "plan": "simple/default",
+      "anchor": "index.ts defaults, heading roughly west",
+      "start": {
+        "lat": 37.77068,
+        "lon": -122.393042
+      },
+      "direction": {
+        "lat": 37.770501,
+        "lon": -122.396027
+      },
+      "geoSteps": [
+        {
+          "geoPoint": {
+            "lat": 37.77068,
+            "lon": -122.393042
+          },
+          "heading": 266,
+          "shootingPoint": {
+            "x": 0,
+            "y": 50.00000000000002
+          },
+          "viewAngleToTheGround": -35.78252558853903
+        },
+        {
+          "geoPoint": {
+            "lat": 37.770679623598774,
+            "lon": -122.39304880961359
+          },
+          "heading": 266,
+          "shootingPoint": {
+            "x": 0,
+            "y": 50.00000000000001
+          },
+          "viewAngleToTheGround": -26.565051177077983
+        },
+        {
+          "geoPoint": {
+            "lat": 37.7706691555115,
+            "lon": -122.3932381887818
+          },
+          "heading": 266,
+          "shootingPoint": {
+            "x": 17.286338528969395,
+            "y": 78.48459885058853
+          },
+          "viewAngleToTheGround": -36.08333319183039
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77065400065393,
+            "lon": -122.39351234695106
+          },
+          "heading": 266,
+          "shootingPoint": {
+            "x": 41.44262588828154,
+            "y": 107.4129805947466
+          },
+          "viewAngleToTheGround": -44.377236720834695
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77063414027773,
+            "lon": -122.39387161249805
+          },
+          "heading": 266,
+          "shootingPoint": {
+            "x": 73.09780481389593,
+            "y": 135.84306145914883
+          },
+          "viewAngleToTheGround": -52.482355110950984
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77060981213015,
+            "lon": -122.39431167093403
+          },
+          "heading": 266,
+          "shootingPoint": {
+            "x": 111.87173393112643,
+            "y": 161.86377016481532
+          },
+          "viewAngleToTheGround": -60.47240402041246
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77058270468301,
+            "lon": -122.39480196738332
+          },
+          "heading": 266,
+          "shootingPoint": {
+            "x": 155.0722078666816,
+            "y": 182.9808771104899
+          },
+          "viewAngleToTheGround": -67.73167185064494
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77058232818051,
+            "lon": -122.39480877697898
+          },
+          "heading": 266,
+          "shootingPoint": {
+            "x": 155.0722078666816,
+            "y": 182.9808771104899
+          },
+          "viewAngleToTheGround": -67.73167185064494
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77055016829145,
+            "lon": -122.3953904089775
+          },
+          "heading": 266,
+          "shootingPoint": {
+            "x": 206.920383182335,
+            "y": 199.9601519576468
+          },
+          "viewAngleToTheGround": -75.9396013780263
+        },
+        {
+          "geoPoint": {
+            "lat": 37.770549791755094,
+            "lon": -122.39539721856717
+          },
+          "heading": 266,
+          "shootingPoint": {
+            "x": 207.0796326794897,
+            "y": 200
+          },
+          "viewAngleToTheGround": -69.71921593711328
+        }
+      ],
+      "viewports": [
+        {
+          "bottomViewportOffset": 42.823908856887755,
+          "topViewportOffset": 67.71054514961146
+        },
+        {
+          "bottomViewportOffset": 67.71054514961146,
+          "topViewportOffset": 74.83531679015874
+        },
+        {
+          "bottomViewportOffset": 74.96248428362217,
+          "topViewportOffset": 87.7086505144825
+        },
+        {
+          "bottomViewportOffset": 87.87772797212983,
+          "topViewportOffset": 99.1518657040342
+        },
+        {
+          "bottomViewportOffset": 99.32811722410611,
+          "topViewportOffset": 108.93490848005533
+        },
+        {
+          "bottomViewportOffset": 109.11471905959168,
+          "topViewportOffset": 116.88939859833947
+        },
+        {
+          "bottomViewportOffset": 116.9916786723529,
+          "topViewportOffset": 119.7480475783819
+        },
+        {
+          "bottomViewportOffset": 119.7480475783819,
+          "topViewportOffset": 123.21109661531828
+        },
+        {
+          "bottomViewportOffset": 123.16465950041093,
+          "topViewportOffset": 124.840369554929
+        },
+        {
+          "bottomViewportOffset": 124.84038818443571,
+          "topViewportOffset": 135.3995292817922
+        }
+      ]
+    },
+    {
+      "plan": "simple/default",
+      "anchor": "due north",
+      "start": {
+        "lat": 37.77068,
+        "lon": -122.393042
+      },
+      "direction": {
+        "lat": 37.78068,
+        "lon": -122.393042
+      },
+      "geoSteps": [
+        {
+          "geoPoint": {
+            "lat": 37.77068,
+            "lon": -122.393042
+          },
+          "heading": 0,
+          "shootingPoint": {
+            "x": 0,
+            "y": 50.00000000000002
+          },
+          "viewAngleToTheGround": -35.78252558853903
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77068539592963,
+            "lon": -122.393042
+          },
+          "heading": 0,
+          "shootingPoint": {
+            "x": 0,
+            "y": 50.00000000000001
+          },
+          "viewAngleToTheGround": -26.565051177077983
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77083545977726,
+            "lon": -122.393042
+          },
+          "heading": 0,
+          "shootingPoint": {
+            "x": 17.286338528969395,
+            "y": 78.48459885058853
+          },
+          "viewAngleToTheGround": -36.08333319183039
+        },
+        {
+          "geoPoint": {
+            "lat": 37.771052702488674,
+            "lon": -122.393042
+          },
+          "heading": 0,
+          "shootingPoint": {
+            "x": 41.44262588828154,
+            "y": 107.4129805947466
+          },
+          "viewAngleToTheGround": -44.377236720834695
+        },
+        {
+          "geoPoint": {
+            "lat": 37.771337384352144,
+            "lon": -122.393042
+          },
+          "heading": 0,
+          "shootingPoint": {
+            "x": 73.09780481389593,
+            "y": 135.84306145914883
+          },
+          "viewAngleToTheGround": -52.482355110950984
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77168608667415,
+            "lon": -122.393042
+          },
+          "heading": 0,
+          "shootingPoint": {
+            "x": 111.87173393112643,
+            "y": 161.86377016481532
+          },
+          "viewAngleToTheGround": -60.47240402041246
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77207459787012,
+            "lon": -122.393042
+          },
+          "heading": 0,
+          "shootingPoint": {
+            "x": 155.0722078666816,
+            "y": 182.9808771104899
+          },
+          "viewAngleToTheGround": -67.73167185064494
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77207999379976,
+            "lon": -122.393042
+          },
+          "heading": 0,
+          "shootingPoint": {
+            "x": 155.0722078666816,
+            "y": 182.9808771104899
+          },
+          "viewAngleToTheGround": -67.73167185064494
+        },
+        {
+          "geoPoint": {
+            "lat": 37.772540879713006,
+            "lon": -122.393042
+          },
+          "heading": 0,
+          "shootingPoint": {
+            "x": 206.920383182335,
+            "y": 199.9601519576468
+          },
+          "viewAngleToTheGround": -75.9396013780263
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77254627564265,
+            "lon": -122.393042
+          },
+          "heading": 0,
+          "shootingPoint": {
+            "x": 207.0796326794897,
+            "y": 200
+          },
+          "viewAngleToTheGround": -69.71921593711328
+        }
+      ],
+      "viewports": [
+        {
+          "bottomViewportOffset": 42.823908856887755,
+          "topViewportOffset": 67.71054514961146
+        },
+        {
+          "bottomViewportOffset": 67.71054514961146,
+          "topViewportOffset": 74.83531679015874
+        },
+        {
+          "bottomViewportOffset": 74.96248428362217,
+          "topViewportOffset": 87.7086505144825
+        },
+        {
+          "bottomViewportOffset": 87.87772797212983,
+          "topViewportOffset": 99.1518657040342
+        },
+        {
+          "bottomViewportOffset": 99.32811722410611,
+          "topViewportOffset": 108.93490848005533
+        },
+        {
+          "bottomViewportOffset": 109.11471905959168,
+          "topViewportOffset": 116.88939859833947
+        },
+        {
+          "bottomViewportOffset": 116.9916786723529,
+          "topViewportOffset": 119.7480475783819
+        },
+        {
+          "bottomViewportOffset": 119.7480475783819,
+          "topViewportOffset": 123.21109661531828
+        },
+        {
+          "bottomViewportOffset": 123.16465950041093,
+          "topViewportOffset": 124.840369554929
+        },
+        {
+          "bottomViewportOffset": 124.84038818443571,
+          "topViewportOffset": 135.3995292817922
+        }
+      ]
+    },
+    {
+      "plan": "simple/default",
+      "anchor": "due east",
+      "start": {
+        "lat": 37.77068,
+        "lon": -122.393042
+      },
+      "direction": {
+        "lat": 37.77068,
+        "lon": -122.38304199999999
+      },
+      "geoSteps": [
+        {
+          "geoPoint": {
+            "lat": 37.77068,
+            "lon": -122.393042
+          },
+          "heading": 90,
+          "shootingPoint": {
+            "x": 0,
+            "y": 50.00000000000002
+          },
+          "viewAngleToTheGround": -35.78252558853903
+        },
+        {
+          "geoPoint": {
+            "lat": 37.7706799999998,
+            "lon": -122.393035173758
+          },
+          "heading": 90,
+          "shootingPoint": {
+            "x": 0,
+            "y": 50.00000000000001
+          },
+          "viewAngleToTheGround": -26.565051177077983
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77067999983658,
+            "lon": -122.39284533211632
+          },
+          "heading": 90,
+          "shootingPoint": {
+            "x": 17.286338528969395,
+            "y": 78.48459885058853
+          },
+          "viewAngleToTheGround": -36.08333319183039
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77067999906072,
+            "lon": -122.39257050434384
+          },
+          "heading": 90,
+          "shootingPoint": {
+            "x": 41.44262588828154,
+            "y": 107.4129805947466
+          },
+          "viewAngleToTheGround": -44.377236720834695
+        },
+        {
+          "geoPoint": {
+            "lat": 37.770679997077806,
+            "lon": -122.392210361157
+          },
+          "heading": 90,
+          "shootingPoint": {
+            "x": 73.09780481389593,
+            "y": 135.84306145914883
+          },
+          "viewAngleToTheGround": -52.482355110950984
+        },
+        {
+          "geoPoint": {
+            "lat": 37.770679993155504,
+            "lon": -122.39176922745092
+          },
+          "heading": 90,
+          "shootingPoint": {
+            "x": 111.87173393112643,
+            "y": 161.86377016481532
+          },
+          "viewAngleToTheGround": -60.47240402041246
+        },
+        {
+          "geoPoint": {
+            "lat": 37.7706799868487,
+            "lon": -122.39127773263456
+          },
+          "heading": 90,
+          "shootingPoint": {
+            "x": 155.0722078666816,
+            "y": 182.9808771104899
+          },
+          "viewAngleToTheGround": -67.73167185064494
+        },
+        {
+          "geoPoint": {
+            "lat": 37.770679986746735,
+            "lon": -122.39127090639256
+          },
+          "heading": 90,
+          "shootingPoint": {
+            "x": 155.0722078666816,
+            "y": 182.9808771104899
+          },
+          "viewAngleToTheGround": -67.73167185064494
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77067997658429,
+            "lon": -122.39068785231437
+          },
+          "heading": 90,
+          "shootingPoint": {
+            "x": 206.920383182335,
+            "y": 199.9601519576468
+          },
+          "viewAngleToTheGround": -75.9396013780263
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77067997644829,
+            "lon": -122.39068102607237
+          },
+          "heading": 90,
+          "shootingPoint": {
+            "x": 207.0796326794897,
+            "y": 200
+          },
+          "viewAngleToTheGround": -69.71921593711328
+        }
+      ],
+      "viewports": [
+        {
+          "bottomViewportOffset": 42.823908856887755,
+          "topViewportOffset": 67.71054514961146
+        },
+        {
+          "bottomViewportOffset": 67.71054514961146,
+          "topViewportOffset": 74.83531679015874
+        },
+        {
+          "bottomViewportOffset": 74.96248428362217,
+          "topViewportOffset": 87.7086505144825
+        },
+        {
+          "bottomViewportOffset": 87.87772797212983,
+          "topViewportOffset": 99.1518657040342
+        },
+        {
+          "bottomViewportOffset": 99.32811722410611,
+          "topViewportOffset": 108.93490848005533
+        },
+        {
+          "bottomViewportOffset": 109.11471905959168,
+          "topViewportOffset": 116.88939859833947
+        },
+        {
+          "bottomViewportOffset": 116.9916786723529,
+          "topViewportOffset": 119.7480475783819
+        },
+        {
+          "bottomViewportOffset": 119.7480475783819,
+          "topViewportOffset": 123.21109661531828
+        },
+        {
+          "bottomViewportOffset": 123.16465950041093,
+          "topViewportOffset": 124.840369554929
+        },
+        {
+          "bottomViewportOffset": 124.84038818443571,
+          "topViewportOffset": 135.3995292817922
+        }
+      ]
+    },
+    {
+      "plan": "stunning/default",
+      "anchor": "index.ts defaults, heading roughly west",
+      "start": {
+        "lat": 37.77068,
+        "lon": -122.393042
+      },
+      "direction": {
+        "lat": 37.770501,
+        "lon": -122.396027
+      },
+      "geoSteps": [
+        {
+          "geoPoint": {
+            "lat": 37.77068,
+            "lon": -122.393042
+          },
+          "heading": 266,
+          "shootingPoint": {
+            "x": 0,
+            "y": 50.00000000000002
+          },
+          "viewAngleToTheGround": -35.78252558853903
+        },
+        {
+          "geoPoint": {
+            "lat": 37.770679623598774,
+            "lon": -122.39304880961359
+          },
+          "heading": 266,
+          "shootingPoint": {
+            "x": 0,
+            "y": 50.00000000000001
+          },
+          "viewAngleToTheGround": -26.565051177077983
+        },
+        {
+          "geoPoint": {
+            "lat": 37.7706691555115,
+            "lon": -122.3932381887818
+          },
+          "heading": 266,
+          "shootingPoint": {
+            "x": 17.286338528969395,
+            "y": 78.48459885058853
+          },
+          "viewAngleToTheGround": -36.08333319183039
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77065400065393,
+            "lon": -122.39351234695106
+          },
+          "heading": 266,
+          "shootingPoint": {
+            "x": 41.44262588828154,
+            "y": 107.4129805947466
+          },
+          "viewAngleToTheGround": -44.377236720834695
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77063414027773,
+            "lon": -122.39387161249805
+          },
+          "heading": 266,
+          "shootingPoint": {
+            "x": 73.09780481389606,
+            "y": 135.84306145914906
+          },
+          "viewAngleToTheGround": -52.482355110951076
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77060981213015,
+            "lon": -122.39431167093403
+          },
+          "heading": 266,
+          "shootingPoint": {
+            "x": 111.87173393112643,
+            "y": 161.86377016481532
+          },
+          "viewAngleToTheGround": -60.47240402041246
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77058155412699,
+            "lon": -122.39482277684122
+          },
+          "heading": 266,
+          "shootingPoint": {
+            "x": 156.90574916609637,
+            "y": 183.72599353463994
+          },
+          "viewAngleToTheGround": -68.38996868058065
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77055016829145,
+            "lon": -122.3953904089775
+          },
+          "heading": 266,
+          "shootingPoint": {
+            "x": 206.920383182335,
+            "y": 199.9601519576468
+          },
+          "viewAngleToTheGround": -76.2622325013403
+        },
+        {
+          "geoPoint": {
+            "lat": 37.770516666953746,
+            "lon": -122.39599624641465
+          },
+          "heading": 266,
+          "shootingPoint": {
+            "x": 260.3013712310875,
+            "y": 209.47498459470592
+          },
+          "viewAngleToTheGround": -84.10835670981366
+        },
+        {
+          "geoPoint": {
+            "lat": 37.7704835333443,
+            "lon": -122.39659537816141
+          },
+          "heading": 86,
+          "shootingPoint": {
+            "x": 313.09156125806,
+            "y": 211.68740306746963
+          },
+          "viewAngleToTheGround": -88.62217245284894
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77048315673859,
+            "lon": -122.3966021877388
+          },
+          "heading": 86,
+          "shootingPoint": {
+            "x": 313.09156125806,
+            "y": 211.68740306746963
+          },
+          "viewAngleToTheGround": -88.62217245284894
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77044800133324,
+            "lon": -122.3972378169809
+          },
+          "heading": 86,
+          "shootingPoint": {
+            "x": 369.6976400378132,
+            "y": 206.28298911776213
+          },
+          "viewAngleToTheGround": -80.45199275936295
+        },
+        {
+          "geoPoint": {
+            "lat": 37.770447199618715,
+            "lon": -122.39725231169761
+          },
+          "heading": 86,
+          "shootingPoint": {
+            "x": 370.97478807856174,
+            "y": 206.06601717798216
+          },
+          "viewAngleToTheGround": -86.99540476841712
+        }
+      ],
+      "viewports": [
+        {
+          "bottomViewportOffset": 42.823908856887755,
+          "topViewportOffset": 67.71054514961146
+        },
+        {
+          "bottomViewportOffset": 67.71054514961146,
+          "topViewportOffset": 74.83531679015874
+        },
+        {
+          "bottomViewportOffset": 74.96248428362217,
+          "topViewportOffset": 87.7086505144825
+        },
+        {
+          "bottomViewportOffset": 87.87772797212983,
+          "topViewportOffset": 99.1518657040342
+        },
+        {
+          "bottomViewportOffset": 99.32811722410618,
+          "topViewportOffset": 108.93490848005536
+        },
+        {
+          "bottomViewportOffset": 109.11471905959168,
+          "topViewportOffset": 116.88939859833947
+        },
+        {
+          "bottomViewportOffset": 117.06925675227185,
+          "topViewportOffset": 122.87919111036258
+        },
+        {
+          "bottomViewportOffset": 123.05567924264676,
+          "topViewportOffset": 126.80208035162086
+        },
+        {
+          "bottomViewportOffset": 126.97189363279848,
+          "topViewportOffset": 128.5912410565786
+        },
+        {
+          "bottomViewportOffset": 128.2395262175292,
+          "topViewportOffset": 128.66979321089582
+        },
+        {
+          "bottomViewportOffset": 128.31591993165173,
+          "topViewportOffset": 128.2395262175292
+        },
+        {
+          "bottomViewportOffset": 126.68438210132203,
+          "topViewportOffset": 128.22559085668243
+        },
+        {
+          "bottomViewportOffset": 125.0867392031124,
+          "topViewportOffset": 126.68552713484955
+        }
+      ]
+    },
+    {
+      "plan": "stunning/default",
+      "anchor": "due north",
+      "start": {
+        "lat": 37.77068,
+        "lon": -122.393042
+      },
+      "direction": {
+        "lat": 37.78068,
+        "lon": -122.393042
+      },
+      "geoSteps": [
+        {
+          "geoPoint": {
+            "lat": 37.77068,
+            "lon": -122.393042
+          },
+          "heading": 0,
+          "shootingPoint": {
+            "x": 0,
+            "y": 50.00000000000002
+          },
+          "viewAngleToTheGround": -35.78252558853903
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77068539592963,
+            "lon": -122.393042
+          },
+          "heading": 0,
+          "shootingPoint": {
+            "x": 0,
+            "y": 50.00000000000001
+          },
+          "viewAngleToTheGround": -26.565051177077983
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77083545977726,
+            "lon": -122.393042
+          },
+          "heading": 0,
+          "shootingPoint": {
+            "x": 17.286338528969395,
+            "y": 78.48459885058853
+          },
+          "viewAngleToTheGround": -36.08333319183039
+        },
+        {
+          "geoPoint": {
+            "lat": 37.771052702488674,
+            "lon": -122.393042
+          },
+          "heading": 0,
+          "shootingPoint": {
+            "x": 41.44262588828154,
+            "y": 107.4129805947466
+          },
+          "viewAngleToTheGround": -44.377236720834695
+        },
+        {
+          "geoPoint": {
+            "lat": 37.771337384352144,
+            "lon": -122.393042
+          },
+          "heading": 0,
+          "shootingPoint": {
+            "x": 73.09780481389606,
+            "y": 135.84306145914906
+          },
+          "viewAngleToTheGround": -52.482355110951076
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77168608667415,
+            "lon": -122.393042
+          },
+          "heading": 0,
+          "shootingPoint": {
+            "x": 111.87173393112643,
+            "y": 161.86377016481532
+          },
+          "viewAngleToTheGround": -60.47240402041246
+        },
+        {
+          "geoPoint": {
+            "lat": 37.772091087303174,
+            "lon": -122.393042
+          },
+          "heading": 0,
+          "shootingPoint": {
+            "x": 156.90574916609637,
+            "y": 183.72599353463994
+          },
+          "viewAngleToTheGround": -68.38996868058065
+        },
+        {
+          "geoPoint": {
+            "lat": 37.772540879713006,
+            "lon": -122.393042
+          },
+          "heading": 0,
+          "shootingPoint": {
+            "x": 206.920383182335,
+            "y": 199.9601519576468
+          },
+          "viewAngleToTheGround": -76.2622325013403
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77302094647199,
+            "lon": -122.393042
+          },
+          "heading": 0,
+          "shootingPoint": {
+            "x": 260.3013712310875,
+            "y": 209.47498459470592
+          },
+          "viewAngleToTheGround": -84.10835670981366
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77349570005669,
+            "lon": -122.393042
+          },
+          "heading": 180,
+          "shootingPoint": {
+            "x": 313.09156125806,
+            "y": 211.68740306746963
+          },
+          "viewAngleToTheGround": -88.62217245284894
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77350109598633,
+            "lon": -122.393042
+          },
+          "heading": 180,
+          "shootingPoint": {
+            "x": 313.09156125806,
+            "y": 211.68740306746963
+          },
+          "viewAngleToTheGround": -88.62217245284894
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77400477075343,
+            "lon": -122.393042
+          },
+          "heading": 180,
+          "shootingPoint": {
+            "x": 369.6976400378132,
+            "y": 206.28298911776213
+          },
+          "viewAngleToTheGround": -80.45199275936295
+        },
+        {
+          "geoPoint": {
+            "lat": 37.7740162564217,
+            "lon": -122.393042
+          },
+          "heading": 180,
+          "shootingPoint": {
+            "x": 370.97478807856174,
+            "y": 206.06601717798216
+          },
+          "viewAngleToTheGround": -86.99540476841712
+        }
+      ],
+      "viewports": [
+        {
+          "bottomViewportOffset": 42.823908856887755,
+          "topViewportOffset": 67.71054514961146
+        },
+        {
+          "bottomViewportOffset": 67.71054514961146,
+          "topViewportOffset": 74.83531679015874
+        },
+        {
+          "bottomViewportOffset": 74.96248428362217,
+          "topViewportOffset": 87.7086505144825
+        },
+        {
+          "bottomViewportOffset": 87.87772797212983,
+          "topViewportOffset": 99.1518657040342
+        },
+        {
+          "bottomViewportOffset": 99.32811722410618,
+          "topViewportOffset": 108.93490848005536
+        },
+        {
+          "bottomViewportOffset": 109.11471905959168,
+          "topViewportOffset": 116.88939859833947
+        },
+        {
+          "bottomViewportOffset": 117.06925675227185,
+          "topViewportOffset": 122.87919111036258
+        },
+        {
+          "bottomViewportOffset": 123.05567924264676,
+          "topViewportOffset": 126.80208035162086
+        },
+        {
+          "bottomViewportOffset": 126.97189363279848,
+          "topViewportOffset": 128.5912410565786
+        },
+        {
+          "bottomViewportOffset": 128.2395262175292,
+          "topViewportOffset": 128.66979321089582
+        },
+        {
+          "bottomViewportOffset": 128.31591993165173,
+          "topViewportOffset": 128.2395262175292
+        },
+        {
+          "bottomViewportOffset": 126.68438210132203,
+          "topViewportOffset": 128.22559085668243
+        },
+        {
+          "bottomViewportOffset": 125.0867392031124,
+          "topViewportOffset": 126.68552713484955
+        }
+      ]
+    },
+    {
+      "plan": "stunning/default",
+      "anchor": "due east",
+      "start": {
+        "lat": 37.77068,
+        "lon": -122.393042
+      },
+      "direction": {
+        "lat": 37.77068,
+        "lon": -122.38304199999999
+      },
+      "geoSteps": [
+        {
+          "geoPoint": {
+            "lat": 37.77068,
+            "lon": -122.393042
+          },
+          "heading": 90,
+          "shootingPoint": {
+            "x": 0,
+            "y": 50.00000000000002
+          },
+          "viewAngleToTheGround": -35.78252558853903
+        },
+        {
+          "geoPoint": {
+            "lat": 37.7706799999998,
+            "lon": -122.393035173758
+          },
+          "heading": 90,
+          "shootingPoint": {
+            "x": 0,
+            "y": 50.00000000000001
+          },
+          "viewAngleToTheGround": -26.565051177077983
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77067999983658,
+            "lon": -122.39284533211632
+          },
+          "heading": 90,
+          "shootingPoint": {
+            "x": 17.286338528969395,
+            "y": 78.48459885058853
+          },
+          "viewAngleToTheGround": -36.08333319183039
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77067999906072,
+            "lon": -122.39257050434384
+          },
+          "heading": 90,
+          "shootingPoint": {
+            "x": 41.44262588828154,
+            "y": 107.4129805947466
+          },
+          "viewAngleToTheGround": -44.377236720834695
+        },
+        {
+          "geoPoint": {
+            "lat": 37.770679997077806,
+            "lon": -122.392210361157
+          },
+          "heading": 90,
+          "shootingPoint": {
+            "x": 73.09780481389606,
+            "y": 135.84306145914906
+          },
+          "viewAngleToTheGround": -52.482355110951076
+        },
+        {
+          "geoPoint": {
+            "lat": 37.770679993155504,
+            "lon": -122.39176922745092
+          },
+          "heading": 90,
+          "shootingPoint": {
+            "x": 111.87173393112643,
+            "y": 161.86377016481532
+          },
+          "viewAngleToTheGround": -60.47240402041246
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77067998653586,
+            "lon": -122.39125687230687
+          },
+          "heading": 90,
+          "shootingPoint": {
+            "x": 156.90574916609637,
+            "y": 183.72599353463994
+          },
+          "viewAngleToTheGround": -68.38996868058065
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77067997658429,
+            "lon": -122.39068785231437
+          },
+          "heading": 90,
+          "shootingPoint": {
+            "x": 206.920383182335,
+            "y": 199.9601519576468
+          },
+          "viewAngleToTheGround": -76.2622325013403
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77067996294441,
+            "lon": -122.3900805330766
+          },
+          "heading": 90,
+          "shootingPoint": {
+            "x": 260.3013712310875,
+            "y": 209.47498459470592
+          },
+          "viewAngleToTheGround": -84.10835670981366
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77067994639028,
+            "lon": -122.3894799353895
+          },
+          "heading": 270,
+          "shootingPoint": {
+            "x": 313.09156125806,
+            "y": 211.68740306746963
+          },
+          "viewAngleToTheGround": -88.62217245284894
+        },
+        {
+          "geoPoint": {
+            "lat": 37.77067994618461,
+            "lon": -122.38947310914753
+          },
+          "heading": 270,
+          "shootingPoint": {
+            "x": 313.09156125806,
+            "y": 211.68740306746963
+          },
+          "viewAngleToTheGround": -88.62217245284894
+        },
+        {
+          "geoPoint": {
+            "lat": 37.770679925252935,
+            "lon": -122.38883592406931
+          },
+          "heading": 270,
+          "shootingPoint": {
+            "x": 369.6976400378132,
+            "y": 206.28298911776213
+          },
+          "viewAngleToTheGround": -80.45199275936295
+        },
+        {
+          "geoPoint": {
+            "lat": 37.7706799247356,
+            "lon": -122.38882139386668
+          },
+          "heading": 270,
+          "shootingPoint": {
+            "x": 370.97478807856174,
+            "y": 206.06601717798216
+          },
+          "viewAngleToTheGround": -86.99540476841712
+        }
+      ],
+      "viewports": [
+        {
+          "bottomViewportOffset": 42.823908856887755,
+          "topViewportOffset": 67.71054514961146
+        },
+        {
+          "bottomViewportOffset": 67.71054514961146,
+          "topViewportOffset": 74.83531679015874
+        },
+        {
+          "bottomViewportOffset": 74.96248428362217,
+          "topViewportOffset": 87.7086505144825
+        },
+        {
+          "bottomViewportOffset": 87.87772797212983,
+          "topViewportOffset": 99.1518657040342
+        },
+        {
+          "bottomViewportOffset": 99.32811722410618,
+          "topViewportOffset": 108.93490848005536
+        },
+        {
+          "bottomViewportOffset": 109.11471905959168,
+          "topViewportOffset": 116.88939859833947
+        },
+        {
+          "bottomViewportOffset": 117.06925675227185,
+          "topViewportOffset": 122.87919111036258
+        },
+        {
+          "bottomViewportOffset": 123.05567924264676,
+          "topViewportOffset": 126.80208035162086
+        },
+        {
+          "bottomViewportOffset": 126.97189363279848,
+          "topViewportOffset": 128.5912410565786
+        },
+        {
+          "bottomViewportOffset": 128.2395262175292,
+          "topViewportOffset": 128.66979321089582
+        },
+        {
+          "bottomViewportOffset": 128.31591993165173,
+          "topViewportOffset": 128.2395262175292
+        },
+        {
+          "bottomViewportOffset": 126.68438210132203,
+          "topViewportOffset": 128.22559085668243
+        },
+        {
+          "bottomViewportOffset": 125.0867392031124,
+          "topViewportOffset": 126.68552713484955
+        }
+      ]
+    }
+  ]
+}

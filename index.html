@@ -1,146 +1,249 @@
 <!doctype html>
 <html lang="en">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkC7o5fGKTjKB3jQj_9E6ypQ44ZIMAXW0">
-</script>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>spano — drone panorama flight planner</title>
+        <meta
+            name="description"
+            content="Plan the drone flight for a vertical curved panorama: where to hover, at what altitude and gimbal angle, and which slice of each frame to keep."
+        />
 
-<div class="container" style="min-width: 1200px; text-align: center">
-    <div class="jumbotron">
-        <form>
-            <div class="row">
-                <div class="col">
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon1">Curve Type</span>
-                        </div>
-                        <select class="form-control" id="curveType">
-                            <option value="simpleCurve">Simple Curve</option>
-                            <option value="stunningCurve">More Curved Curve</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon2">Offset</span>
-                        </div>
-                        <input type="number" class="form-control" id="offset" placeholder="Offset"
-                               min="10"
-                               max="200"
-                               value="50">
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon3">First Line Length</span>
-                        </div>
-                        <input type="number" class="form-control" id="firstLineLength"
-                               placeholder="First Line Length"
-                               min="10" max="200" value="50">
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon4">Curved Line Radius</span>
-                        </div>
-                        <input type="number" class="form-control" id="curvedLineLength"
-                               placeholder="Curved Line Radius"
-                               min="10" max="200" value="100">
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon5">Second Line Length</span>
-                        </div>
-                        <input type="number" class="form-control" id="secondLineLength"
-                               placeholder="Second Segment Length"
-                               min="10" max="200" value="50">
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon6">View Point Height</span>
-                        </div>
-                        <input type="number" class="form-control" id="viewPointHeight"
-                               placeholder="View Point Height"
-                               min="10"
-                               max="200" value="50">
-                    </div>
-                </div>
-                <div class="col" style="text-align: right">
-                    <button type="button" class="btn btn-primary" id="generateButton">Generate</button>
-                </div>
-            </div>
-        </form>
-    </div>
+        <meta property="og:title" content="spano — drone panorama flight planner" />
+        <meta
+            property="og:description"
+            content="Work out the drone flight for a vertical curved panorama, entirely in your browser."
+        />
+        <meta property="og:type" content="website" />
+        <link rel="icon" href="data:," />
+    </head>
+    <body>
+        <a class="skip-link" href="#results">Skip to results</a>
 
-    <div class="row">
-        <div class="col-md">
-            <canvas id="topCanvas" width="580" height="300"></canvas>
-            <br/>
-            <canvas id="bottomCanvas" width="580" height="300"></canvas>
+        <div class="theme-switch">
+            <label for="theme">Theme</label>
+            <select id="theme" name="theme">
+                <option value="system">Match system</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+            </select>
         </div>
-        <div class="col-md" style="text-align: left">
-            <ul id="asText">
-            </ul>
-        </div>
-    </div>
 
-    <div class="jumbotron" style="text-align: center">
-        <button type="button" class="btn btn-danger btn-lg" id="generateButton3D" disabled>Generate in 3D</button>
-        <div style="margin-top: 10px" id="scene3D"></div>
-    </div>
-    <div class="jumbotron" style="text-align: center" id="preview3D"></div>
-    <button type="button" class="btn btn-danger btn-sm" style="margin-bottom: 50px" id="generateDebug3D" disabled>
-        Generate Debug Images
-    </button>
-    <div class="jumbotron" style="text-align: center" id="debug3D">
-    </div>
+        <header class="page-header">
+            <h1>spano</h1>
+            <p class="tagline">
+                Work out the drone flight for a vertical curved panorama: where to hover, at what altitude and gimbal
+                angle, and which slice of each frame to keep.
+            </p>
+            <p class="privacy">Everything runs in your browser. Photos you choose are never uploaded anywhere.</p>
+        </header>
 
-    <div class="jumbotron" style="text-align: center">
-        <input type="file" class="form-control-file" id="filesReal" multiple>
-        <button type="button" class="btn btn-success btn-lg" id="generateButtonReal">Generate from Real Images</button>
-    </div>
-    <div class="jumbotron" style="text-align: center" id="previewReal">
-    </div>
-    <button type="button" class="btn btn-success btn-sm" style="margin-bottom: 50px" id="generateDebugReal" disabled>
-        Generate Debug Images
-    </button>
-    <div class="jumbotron" style="text-align: center" id="debugReal">
-    </div>
+        <main>
+            <form id="planForm" novalidate>
+                <div class="field-grid">
+                    <fieldset>
+                        <legend>Panorama shape</legend>
 
-    <!--<div id="map" style="width: 1200px; height: 1000px; margin-bottom: 30px"></div>-->
+                        <div class="field">
+                            <label for="curveType">Curve type</label>
+                            <select id="curveType" name="curveType">
+                                <option value="simpleCurve">Simple — 90° arc</option>
+                                <option value="stunningCurve">More curved — 135° arc</option>
+                            </select>
+                        </div>
 
-    <!--<div class="jumbotron" style="text-align: center">-->
-        <!--<a role="button" class="btn btn-info btn-lg" href="#">Download Litchi mission</a>-->
-    <!--</div>-->
-</div>
+                        <div class="field">
+                            <label for="offset">Offset <span class="unit">metres</span></label>
+                            <input type="number" id="offset" name="offset" min="10" max="200" step="1" value="50" />
+                            <p class="hint">Ground under the start point you don’t want in shot.</p>
+                        </div>
 
-<script>
-    function getScript(src) {
-        const script = document.createElement('script');
-        script.src = src;
-        document.body.appendChild(script);
-    }
+                        <div class="field">
+                            <label for="firstLineLength">First flat leg <span class="unit">metres</span></label>
+                            <input
+                                type="number"
+                                id="firstLineLength"
+                                name="firstLineLength"
+                                min="10"
+                                max="200"
+                                step="1"
+                                value="50"
+                            />
+                        </div>
 
-    document.addEventListener("DOMContentLoaded", function () {
-        getScript('dist/bundle.js?' + Math.random())
-    });
-</script>
+                        <div class="field">
+                            <label for="curvedLineLength">Arc radius <span class="unit">metres</span></label>
+                            <input
+                                type="number"
+                                id="curvedLineLength"
+                                name="curvedLineLength"
+                                min="10"
+                                max="200"
+                                step="1"
+                                value="100"
+                            />
+                        </div>
 
-<style type="text/css">
-    #topCanvas {
-        -moz-transform: scale(1, -1);
-        -webkit-transform: scale(1, -1);
-        -o-transform: scale(1, -1);
-        transform: scale(1, -1);
-    }
+                        <div class="field">
+                            <label for="secondLineLength">Second leg <span class="unit">metres</span></label>
+                            <input
+                                type="number"
+                                id="secondLineLength"
+                                name="secondLineLength"
+                                min="10"
+                                max="200"
+                                step="1"
+                                value="50"
+                            />
+                        </div>
+                    </fieldset>
 
-    #bottomCanvas {
-        -moz-transform: scale(1, 1);
-        -webkit-transform: scale(1, 1);
-        -o-transform: scale(1, 1);
-        transform: scale(1, 1);
-    }
-</style>
+                    <fieldset>
+                        <legend>Viewer and aircraft</legend>
+
+                        <div class="field">
+                            <label for="viewPointHeight">Viewpoint height <span class="unit">metres</span></label>
+                            <input
+                                type="number"
+                                id="viewPointHeight"
+                                name="viewPointHeight"
+                                min="10"
+                                max="200"
+                                step="1"
+                                value="50"
+                            />
+                            <p class="hint">The eye the finished panorama is composed for.</p>
+                        </div>
+
+                        <div class="field">
+                            <label for="cameraProfile">Camera</label>
+                            <select id="cameraProfile" name="cameraProfile"></select>
+                        </div>
+
+                        <div class="field">
+                            <label for="altitudeCeiling">Altitude ceiling <span class="unit">metres</span></label>
+                            <input
+                                type="number"
+                                id="altitudeCeiling"
+                                name="altitudeCeiling"
+                                min="10"
+                                max="500"
+                                step="1"
+                                value="120"
+                            />
+                            <p class="hint">
+                                Most jurisdictions cap uncrewed flight at 120&nbsp;m AGL (EASA) or 400&nbsp;ft
+                                ≈&nbsp;122&nbsp;m (FAA Part&nbsp;107). Waypoints above this are flagged below.
+                            </p>
+                        </div>
+
+                        <button type="submit" id="generateButton" class="primary">Generate plan</button>
+                    </fieldset>
+                </div>
+            </form>
+
+            <p id="errorRegion" class="error" role="alert" hidden></p>
+
+            <section id="results" aria-labelledby="resultsHeading">
+                <h2 id="resultsHeading">The plan</h2>
+
+                <p id="planStatus" role="status" class="status"></p>
+                <p id="ceilingWarning" class="warning" role="alert" hidden></p>
+
+                <div class="results-grid">
+                    <div class="diagrams">
+                        <figure>
+                            <canvas
+                                id="topCanvas"
+                                width="580"
+                                height="300"
+                                role="img"
+                                aria-label="Side view of the flight: sight lines from each hover position down to the ground it photographs."
+                            ></canvas>
+                            <figcaption>Where the aircraft hovers, and what each frame covers.</figcaption>
+                        </figure>
+                        <figure>
+                            <canvas
+                                id="bottomCanvas"
+                                width="580"
+                                height="300"
+                                role="img"
+                                aria-label="Side view of the panorama surface, with sight lines from the viewer's eye onto the curve."
+                            ></canvas>
+                            <figcaption>The curve the finished panorama is projected onto.</figcaption>
+                        </figure>
+                    </div>
+
+                    <ol id="asText" class="steps"></ol>
+                </div>
+            </section>
+
+            <section aria-labelledby="preview3DHeading">
+                <h2 id="preview3DHeading">Synthetic preview</h2>
+                <p class="section-intro">
+                    Render the plan against a made-up scene, so the framing can be checked without flying anything.
+                </p>
+
+                <div id="scene3D" class="scene"></div>
+
+                <div class="button-row">
+                    <button type="button" id="generateButton3D" disabled>Build panorama from preview</button>
+                    <button type="button" id="generateDebug3D" hidden>Show what was cropped</button>
+                </div>
+
+                <div id="preview3D" class="strip-stack" hidden aria-live="polite"></div>
+                <div id="debug3D" class="strip-stack" hidden></div>
+            </section>
+
+            <section aria-labelledby="mapHeading">
+                <h2 id="mapHeading">On the map</h2>
+                <p class="section-intro">
+                    Place the flight on real ground and see what each frame covers. Needs no account and no API key —
+                    the street map is OpenStreetMap, the satellite imagery is Esri, and both are free to use.
+                </p>
+
+                <div class="button-row">
+                    <button type="button" id="showMapButton">Show the map</button>
+                </div>
+
+                <div class="field" id="baseLayerField" hidden>
+                    <label for="baseLayer">Base layer</label>
+                    <select id="baseLayer" name="baseLayer"></select>
+                </div>
+
+                <p id="mapStatus" role="status" class="status"></p>
+                <div id="map" class="map" hidden></div>
+            </section>
+
+            <section aria-labelledby="realHeading">
+                <h2 id="realHeading">Your photos</h2>
+                <p class="section-intro">
+                    Choose one photo per step, in the order they were taken. They are read locally and never uploaded.
+                </p>
+
+                <div class="field">
+                    <label for="filesReal">Flight photos</label>
+                    <input type="file" id="filesReal" accept="image/*" multiple />
+                </div>
+
+                <div class="button-row">
+                    <button type="button" id="generateButtonReal">Build panorama from photos</button>
+                    <button type="button" id="generateDebugReal" hidden>Show what was cropped</button>
+                </div>
+
+                <div id="previewReal" class="strip-stack" hidden aria-live="polite"></div>
+                <div id="debugReal" class="strip-stack" hidden></div>
+            </section>
+        </main>
+
+        <footer>
+            <p>
+                spano is a proof of concept and carries no warranty. Always check a generated plan against your
+                aircraft’s limits and your local aviation rules before flying.
+                <a href="https://github.com/webwayer/spano">Source on GitHub</a>.
+            </p>
+        </footer>
+
+        <script type="module" src="/src/main.ts"></script>
+    </body>
 </html>
