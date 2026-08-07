@@ -52,6 +52,10 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v5
-# ONE-TIME SETUP: switch the repository's Pages source from "Deploy from a
-# branch" to "GitHub Actions" (Settings -> Pages). Until that is done this
-# workflow runs successfully and Pages keeps serving the old committed bundle.
+# The one-time setup this file used to ask for is done: the repository's Pages
+# source is "GitHub Actions" (build_type: workflow), so the artifact this
+# workflow uploads is what gets served, not the old committed bundle.
+#
+# The `github-pages` environment restricts deployments to `master` by branch
+# policy, and requires no reviewer — so a merge to master publishes with no
+# further approval.
