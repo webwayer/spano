@@ -1,5 +1,5 @@
 import { clear, el, setMessage } from './dom';
-import { waypointsAboveCeiling } from '../core/camera/profiles';
+import { stepsExceedingFieldOfView, waypointsAboveCeiling, type CameraProfile } from '../core/camera/profiles';
 import type { Step } from '../core/types';
 
 /**
@@ -9,7 +9,7 @@ import type { Step } from '../core/types';
  * the app computed, but building markup by concatenation is exactly how that
  * stops being true later.
  */
-export function renderStepList(steps: Step[], altitudeCeiling: number): void {
+export function renderStepList(steps: Step[], camera: CameraProfile, altitudeCeiling: number): void {
     const list = el('asText');
     clear(list);
 
@@ -19,10 +19,16 @@ export function renderStepList(steps: Step[], altitudeCeiling: number): void {
             altitudeCeiling
         )
     );
+    const overFov = new Set(
+        stepsExceedingFieldOfView(
+            steps.map(s => s.angleOfView),
+            camera
+        )
+    );
 
     steps.forEach((step, i) => {
         const item = document.createElement('li');
-        if (overCeiling.has(i)) {
+        if (overCeiling.has(i) || overFov.has(i)) {
             item.classList.add('over-ceiling');
         }
 
@@ -56,18 +62,33 @@ export function renderStepList(steps: Step[], altitudeCeiling: number): void {
             item.append(' ', strong(`Above the ${altitudeCeiling} m ceiling.`));
         }
 
+        if (overFov.has(i)) {
+            item.append(
+                ' ',
+                strong(`Wider than the ${camera.name} can see in one frame (${camera.vFov}°) — not capturable.`)
+            );
+        }
+
         list.append(item);
     });
 
     setMessage('planStatus', `${steps.length} shots. Fly them in order.`);
 
-    setMessage(
-        'ceilingWarning',
-        overCeiling.size === 0
-            ? ''
-            : `${overCeiling.size} of ${steps.length} waypoints are above the ${altitudeCeiling} m ceiling ` +
-                  '(highlighted below). Check your local rules before flying this plan.'
-    );
+    const warnings: string[] = [];
+    if (overCeiling.size > 0) {
+        warnings.push(
+            `${overCeiling.size} of ${steps.length} waypoints are above the ${altitudeCeiling} m ceiling. ` +
+                'Check your local rules before flying this plan.'
+        );
+    }
+    if (overFov.size > 0) {
+        warnings.push(
+            `${overFov.size} of ${steps.length} frames ask for more ground than the ${camera.name} can see ` +
+                `in one shot (${camera.vFov}°). Those steps cannot be captured as planned — try a larger arc ` +
+                'radius or a shorter trailing leg.'
+        );
+    }
+    setMessage('ceilingWarning', warnings.length === 0 ? '' : `${warnings.join(' ')} Highlighted below.`);
 }
 
 function strong(text: string): HTMLElement {

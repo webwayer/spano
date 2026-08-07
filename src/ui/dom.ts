@@ -8,6 +8,7 @@
  */
 
 import { runReporting } from './errors';
+import { NUMERIC_FIELD_IDS, parseStrictNumber, type FieldBound, type FieldBounds } from './share';
 
 /**
  * Look up a required element, failing loudly rather than returning null.
@@ -72,8 +73,30 @@ export function onClick(node: HTMLElement, signal: AbortSignal, handler: () => v
     );
 }
 
+/** The bounds an input declares in the markup. */
+export function boundsOf(id: string): FieldBound {
+    const field = input(id);
+    return {
+        min: parseStrictNumber(field.min) ?? Number.NEGATIVE_INFINITY,
+        max: parseStrictNumber(field.max) ?? Number.POSITIVE_INFINITY,
+        integer: field.step === '1',
+    };
+}
+
+/** Bounds for every numeric field, read from the markup. */
+export function readFieldBounds(): FieldBounds {
+    return Object.fromEntries(NUMERIC_FIELD_IDS.map(id => [id, boundsOf(id)]));
+}
+
 /**
- * Read a number out of a form field, rejecting anything that is not one.
+ * Read a number out of a form field, enforcing the range the markup declares.
+ *
+ * The form carries `novalidate` — the browser's own bubbles are replaced by a
+ * proper live region — so nothing else enforces `min`, `max` and `step`. Until
+ * this checked them they were decorative, and out-of-range values reached parts
+ * of the planner that no test covers.
+ *
+ * Reading the constraints off the element keeps one definition: the markup.
  *
  * With a fallback, an empty field falls back rather than failing — useful for
  * optional settings like the altitude ceiling.
@@ -86,11 +109,20 @@ export function numberFrom(id: string, fallback?: number): number {
         return fallback;
     }
 
-    const value = Number.parseFloat(raw);
-    if (!Number.isFinite(value)) {
-        const label = document.querySelector(`label[for="${id}"]`)?.textContent.trim() ?? id;
+    const label = document.querySelector(`label[for="${id}"]`)?.textContent.trim() ?? id;
+    const value = parseStrictNumber(raw);
+    if (value === undefined) {
         throw new Error(`“${raw}” is not a number. Check the ${label} field.`);
     }
+
+    const { min, max, integer } = boundsOf(id);
+    if (value < min || value > max) {
+        throw new Error(`${label} must be between ${min} and ${max}. You entered ${value}.`);
+    }
+    if (integer && !Number.isInteger(value)) {
+        throw new Error(`${label} must be a whole number. You entered ${value}.`);
+    }
+
     return value;
 }
 

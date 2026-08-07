@@ -104,17 +104,24 @@ export function calcViewport(
         activeImageArea = height - srcY;
     }
 
-    // A canvas dimension is an unsigned long: assigning 59.7 truncates to 59.
-    // Flooring here just makes that explicit rather than incidental.
+    // The height must land inside [1, frame height], and a canvas dimension is
+    // an unsigned long, so flooring is what the assignment would do anyway.
     //
-    // The clamp to 1 is the load-bearing part. A plan can contain a shot whose
-    // angle of view rounds to 0 degrees — the tail of a curve where consecutive
-    // samples nearly coincide — and (0 / vFOV) * height is 0. A zero-height
-    // canvas serialises to the string "data:," which no <img> can decode, so
-    // the whole strip loop died with "Image could not be decoded". One pixel of
-    // useless strip is a far better outcome than a broken render.
-    activeImageArea = Math.max(1, Math.floor(activeImageArea));
-    srcY = Math.min(Math.max(0, Math.floor(srcY)), Math.max(0, height - activeImageArea));
+    // Lower clamp: a plan can contain a shot whose angle of view rounds to 0° —
+    // the tail of a curve where consecutive samples nearly coincide. A
+    // zero-height canvas serialises to the string "data:," which no <img> can
+    // decode, and the whole strip loop died on it.
+    //
+    // Upper clamp: a step whose angle of view exceeds the sensor asks for a crop
+    // taller than the frame, and drawImage would read past the edge. Such plans
+    // exist — see stepsExceedingFieldOfView — and the UI warns about them, but
+    // the crop must stay inside the picture regardless.
+    activeImageArea = Math.max(1, Math.min(Math.floor(activeImageArea), height));
+
+    // srcY is a drawImage *source* coordinate, not a canvas dimension, and the
+    // 2018 code passed it through unrounded — so it is kept unrounded. Only the
+    // clamp into the frame is applied, which the crop height above requires.
+    srcY = Math.min(Math.max(0, srcY), height - activeImageArea);
 
     return { srcY, activeImageArea };
 }

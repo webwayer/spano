@@ -36,12 +36,24 @@ async function loadRenderer(): Promise<typeof import('../adapters/scene3d/render
  * Prepending rather than appending builds the panorama bottom-up, matching the
  * order the aircraft flies: the first step images the ground nearest the viewer.
  */
+/**
+ * Read the flag without letting narrowing collapse it.
+ *
+ * TypeScript narrows `signal.aborted` to `false` after one check, but it is a
+ * live getter that can flip across any `await` — so the second check inside the
+ * loop is exactly the one that matters.
+ */
+function isAborted(signal: AbortSignal): boolean {
+    return signal.aborted;
+}
+
 async function renderStrips(
     steps: Step[],
     images: string[],
     vFov: number,
     target: HTMLElement,
-    mode: 'crop' | 'debug'
+    mode: 'crop' | 'debug',
+    signal: AbortSignal
 ): Promise<void> {
     if (images.length !== steps.length) {
         throw new Error(
@@ -51,6 +63,11 @@ async function renderStrips(
     }
 
     for (let i = 0; i < steps.length; i++) {
+        // Aborting removes listeners, but says nothing about a loop already
+        // running. Without this check a regeneration mid-render kept appending
+        // strips from the previous plan into a node the new one had cleared.
+        if (isAborted(signal)) return;
+
         const step = steps[i];
         const image = images[i];
         if (!step || !image) continue;
@@ -62,6 +79,8 @@ async function renderStrips(
             mode === 'crop'
                 ? await cutImage(step, image, vFov, isLast, isFirst)
                 : await generateCutPreviewImage(step, image, vFov, isLast, isFirst);
+
+        if (isAborted(signal)) return;
 
         const imageObject = await waitForImage(dataUrl);
         imageObject.alt =
@@ -130,7 +149,7 @@ export function setup3DPreview(steps: Step[], viewPoint: Point, signal: AbortSig
             const { frames } = await render();
             show(preview);
             show(debugButton);
-            await renderStrips(steps, frames, PREVIEW_CAMERA.vFov, preview, 'crop');
+            await renderStrips(steps, frames, PREVIEW_CAMERA.vFov, preview, 'crop', signal);
             setMessage('planStatus', `${steps.length} shots. Fly them in order.`);
         } catch (error) {
             setDisabled(generateButton, false);
@@ -142,7 +161,7 @@ export function setup3DPreview(steps: Step[], viewPoint: Point, signal: AbortSig
         setDisabled(debugButton, true);
         const { frames } = await render();
         show(debug);
-        await renderStrips(steps, frames, PREVIEW_CAMERA.vFov, debug, 'debug');
+        await renderStrips(steps, frames, PREVIEW_CAMERA.vFov, debug, 'debug', signal);
     });
 }
 
@@ -166,13 +185,13 @@ export function setupRealPreview(steps: Step[], camera: CameraProfile, signal: A
         setDisabled(debugButton, false);
         show(preview);
         show(debugButton);
-        await renderStrips(steps, await readSelectedImages(), camera.vFov, preview, 'crop');
+        await renderStrips(steps, await readSelectedImages(), camera.vFov, preview, 'crop', signal);
     });
 
     onClick(debugButton, signal, async () => {
         setDisabled(debugButton, true);
         show(debug);
-        await renderStrips(steps, await readSelectedImages(), camera.vFov, debug, 'debug');
+        await renderStrips(steps, await readSelectedImages(), camera.vFov, debug, 'debug', signal);
     });
 }
 

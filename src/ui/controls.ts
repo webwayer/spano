@@ -4,7 +4,7 @@ import type { Curve } from '../core/curves/curve';
 import type { CameraProfile } from '../core/camera/profiles';
 import { CAMERA_PROFILES, DEFAULT_ALTITUDE_CEILING, MAVIC_PRO } from '../core/camera/profiles';
 import type { Point } from '../core/types';
-import { numberFrom, select } from './dom';
+import { numberFrom, readFieldBounds, select } from './dom';
 import { decodePlan, encodePlan, type SharedPlan } from './share';
 
 export interface PlanParams {
@@ -70,7 +70,8 @@ export function readSharedPlan(): SharedPlan {
  * options — assigning an unknown value to a <select> silently does nothing.
  */
 export function applySharedPlanFromUrl(fragment: string): boolean {
-    const shared = decodePlan(fragment);
+    // Bounds come from the form, so a link can only carry what a user could type.
+    const shared = decodePlan(fragment, readFieldBounds());
     if (Object.keys(shared).length === 0) return false;
 
     for (const [key, value] of Object.entries(shared)) {

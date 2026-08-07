@@ -16,7 +16,7 @@ export function convertShotsIntoSteps(shots: Shot[]): Step[] {
 
 function toStep(shot: Shot): Step {
     const firstElement = at(shot.triples, 0, shot);
-    const centerElement = at(shot.triples, parseInt((shot.triples.length / 2).toFixed(), 10), shot);
+    const centerElement = at(shot.triples, centerIndex(shot.triples.length), shot);
     const lastElement = at(shot.triples, shot.triples.length - 1, shot);
 
     const { shootingPoint, shootedPoint } = anchor(shot.shotOn, firstElement, centerElement, lastElement);
@@ -82,10 +82,26 @@ function anchor(
 }
 
 /**
+ * The middle sample of a shot.
+ *
+ * Rounding up means a 1-sample shot would index past the end, which threw and
+ * denied the user a plan entirely — even for `start` and `end` anchors that
+ * never read this value. The 2018 code left it `undefined` and worked, because
+ * nothing downstream touches it for those anchors.
+ *
+ * Clamping is a no-op for every shot the planner produces today (the golden
+ * corpus confirms it), and turns a crash into the obviously-correct answer for
+ * a one-sample shot: the middle of one thing is that thing.
+ */
+function centerIndex(length: number): number {
+    return Math.min(Math.round(length / 2), Math.max(0, length - 1));
+}
+
+/**
  * Indexed access that says what went wrong.
  *
  * Under noUncheckedIndexedAccess every triples[i] is possibly undefined. It
- * genuinely can be — see the allocation defect this phase fixes — and the old
+ * genuinely can be — see the allocation defect Phase 4 fixed — and the old
  * symptom was "Cannot read properties of undefined (reading 'pointOnTheGround')"
  * four stack frames from the cause.
  */

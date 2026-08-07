@@ -26,7 +26,7 @@ function generate(): void {
     const { shots, steps } = plan(curve, viewPoint);
 
     drawShots(shots, viewPoint, canvas('topCanvas'), canvas('bottomCanvas'));
-    renderStepList(steps, altitudeCeiling);
+    renderStepList(steps, camera, altitudeCeiling);
 
     // Keep the address bar in step, so the page is shareable and reloadable
     // without a server. replaceState, not pushState: regenerating is not

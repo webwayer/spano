@@ -57,3 +57,23 @@ export function waypointsAboveCeiling(
 ): number[] {
     return altitudes.map((altitude, i) => (altitude > ceiling ? i : -1)).filter(i => i >= 0);
 }
+
+/**
+ * Steps asking for more ground than the camera can see in one frame.
+ *
+ * `maxViewAngle` (20°) is a planning *target*, not a bound. The greedy splitter
+ * admits the final sample of a run unconditionally, the anchored layout then
+ * merges pairs of groups, and every shot is widened again by the deliberate
+ * one-sample overlap — none of which re-checks the budget. Most plans stay near
+ * 20°, but degenerate geometry (a shooting point that lands on the ground
+ * between the two points it frames) reaches 178°.
+ *
+ * This behaviour is inherited from the 2018 planner and is preserved
+ * deliberately: the differential against those sources matches across ~165,000
+ * parameter combinations. Correcting the allocation is a change to the flight
+ * model and belongs in its own commit, with its own baseline review. What is
+ * not acceptable is shipping such a plan without saying so — hence this.
+ */
+export function stepsExceedingFieldOfView(anglesOfView: readonly number[], camera: CameraProfile): number[] {
+    return anglesOfView.map((angle, i) => (angle > camera.vFov ? i : -1)).filter(i => i >= 0);
+}

@@ -1,5 +1,5 @@
 {
-  "description": "Characterisation baseline for the spano planner chain. Captured from the unmodified 2018 sources before any restructuring. These record current behaviour, bugs included — they are not a claim that the output is correct.",
+  "description": "Characterisation baseline for the spano planner chain. First captured from the unmodified 2018 sources before any restructuring, and re-recorded only for deliberate changes. Records current behaviour, bugs included — not a claim that the output is correct. See tests/golden/README.md.",
   "maxViewAngle": 20,
   "maxDistortionAngle": 7,
   "stepLength": 1,

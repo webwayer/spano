@@ -1,5 +1,5 @@
 {
-  "description": "Baseline for lib/math_geo.ts — great-circle destination and initial bearing.",
+  "description": "Baseline for src/core/geo/great-circle.ts — destination point and initial bearing.",
   "destinations": [
     {
       "from": {

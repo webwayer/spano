@@ -3,8 +3,8 @@ import fc from 'fast-check';
 
 import { Arc90Curve } from '../../src/core/curves/arc-90';
 import { Arc135Curve } from '../../src/core/curves/arc-135';
-import { DEFAULT_MAX_VIEW_ANGLE, plan } from '../../src/core/planner/plan';
-import { MAVIC_PRO } from '../../src/core/camera/profiles';
+import { plan } from '../../src/core/planner/plan';
+import { MAVIC_PRO, stepsExceedingFieldOfView } from '../../src/core/camera/profiles';
 import { getGeoSteps, MIN_WAYPOINT_SPACING } from '../../src/core/geo/flight-path';
 
 const params = fc.record({
@@ -60,27 +60,63 @@ describe('plan', () => {
         );
     });
 
-    it('keeps every frame within what the sensor can actually see', () => {
-        // The guarantee the pilot relies on: no frame is asked to cover more
-        // ground than the camera's vertical field of view.
+    it('produces a physically meaningful angle of view for every frame', () => {
+        // What this does NOT assert, and why.
         //
-        // Note this asserts against the SENSOR, not DEFAULT_MAX_VIEW_ANGLE.
-        // The 20-degree planning budget is soft by design: splitBy pushes the
-        // final element of a run unconditionally, and every shot is then
-        // widened by one sample by the deliberate overlap unshift. A property
-        // test caught frames at 20.29 degrees. That is fine against a 46.8
-        // degree sensor, but it does mean the budget is a target, not a bound.
+        // An earlier version of this test claimed every frame stays inside the
+        // sensor's 46.8° field of view. That is false, and the test failed on
+        // roughly 15% of runs — each failure telling the truth. Sweeping the
+        // form's own range finds frames at 178°: a shooting point that lands on
+        // the ground between the two points it frames subtends almost a
+        // straight line.
+        //
+        // maxViewAngle is a planning target, not a bound — see
+        // stepsExceedingFieldOfView. The behaviour is inherited from the 2018
+        // planner and preserved deliberately, so the honest contract is: the
+        // angle is always a real angle, and anything beyond the sensor is
+        // reported rather than hidden.
         fc.assert(
             fc.property(params, fc.constantFrom(0 as const, 1 as const), (p, kind) => {
                 const { steps } = planFor(p, kind);
                 for (const step of steps) {
-                    expect(step.angleOfView).toBeLessThan(MAVIC_PRO.vFov);
-                    // Still close to the budget: never more than half again.
-                    expect(step.angleOfView).toBeLessThan(DEFAULT_MAX_VIEW_ANGLE * 1.5);
+                    expect(Number.isFinite(step.angleOfView)).toBe(true);
+                    expect(step.angleOfView).toBeGreaterThanOrEqual(0);
+                    expect(step.angleOfView).toBeLessThan(180);
                 }
             }),
             { numRuns: 200 }
         );
+    });
+
+    it('reports every frame the camera cannot capture, and no others', () => {
+        fc.assert(
+            fc.property(params, fc.constantFrom(0 as const, 1 as const), (p, kind) => {
+                const { steps } = planFor(p, kind);
+                const angles = steps.map(s => s.angleOfView);
+                const flagged = new Set(stepsExceedingFieldOfView(angles, MAVIC_PRO));
+
+                angles.forEach((angle, i) => {
+                    expect(flagged.has(i), `step ${i} at ${angle}°`).toBe(angle > MAVIC_PRO.vFov);
+                });
+            }),
+            { numRuns: 200 }
+        );
+    });
+
+    it('flags the known uncapturable plan', () => {
+        // Concrete regression for the case above: 178° against a 46.8° sensor.
+        const { steps } = planFor({ offset: 11, firstLeg: 37, radius: 17, secondLeg: 200, viewPointY: 89 }, 1);
+        const flagged = stepsExceedingFieldOfView(
+            steps.map(s => s.angleOfView),
+            MAVIC_PRO
+        );
+
+        expect(flagged.length).toBeGreaterThan(0);
+        for (const i of flagged) {
+            const step = steps[i];
+            expect(step).toBeDefined();
+            expect(step?.angleOfView).toBeGreaterThan(MAVIC_PRO.vFov);
+        }
     });
 
     it('gives every shot at least two samples, so it spans real ground', () => {
@@ -130,9 +166,16 @@ describe('flight path placement', () => {
                     const deltaY = current.shootingPoint.y - previous.shootingPoint.y;
                     const separation = Math.hypot(deltaX, deltaY);
 
-                    // Either they are far enough apart already, or the nudge
-                    // moved the waypoint out to the minimum.
-                    expect(separation >= MIN_WAYPOINT_SPACING || current.geoPoint !== previous.geoPoint).toBe(true);
+                    // Compare COORDINATES, not object identity. The earlier
+                    // version tested `current.geoPoint !== previous.geoPoint`,
+                    // and getGeoPointFromStartPointDistanceBearing returns a
+                    // fresh object on every call — so that could never fail.
+                    // Setting the spacing to 6, to 0, and disabling the nudge
+                    // entirely all passed it.
+                    const moved =
+                        current.geoPoint.lat !== previous.geoPoint.lat ||
+                        current.geoPoint.lon !== previous.geoPoint.lon;
+                    expect(separation >= MIN_WAYPOINT_SPACING || moved, `step ${i}`).toBe(true);
                 }
             }),
             { numRuns: 60 }

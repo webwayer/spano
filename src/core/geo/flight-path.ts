@@ -16,8 +16,7 @@ export const MIN_WAYPOINT_SPACING = 0.6;
  * direction point. Backwards steps keep the same position but face the other
  * way.
  *
- * Moved verbatim out of index.ts in Phase 3 — see tests/golden/geo-steps.json,
- * captured before any further change.
+ * Baseline: tests/golden/flight-path.json.
  */
 export function getGeoSteps(startPoint: GeoPoint, directionPoint: GeoPoint, steps: Step[]): GeoStep[] {
     const bearing = Math.round(getBearingBetween2GeoPoints(startPoint, directionPoint));
@@ -36,6 +35,18 @@ export function getGeoSteps(startPoint: GeoPoint, directionPoint: GeoPoint, step
         };
     });
 
+    // Push coincident waypoints apart, measuring against where the previous one
+    // was actually PLACED rather than where it was asked to go.
+    //
+    // The 2018 version measured from `prevStep.shootingPoint.x` — the requested
+    // position — so three consecutive steps sharing a shooting point produced
+    // two waypoints at the identical coordinate: both were nudged to the same
+    // `x + 0.6`. That is precisely the situation this rule exists to prevent,
+    // and it happens routinely, because an `end` shot and the `start` shot that
+    // follows it hover in the same place. A property test comparing coordinates
+    // rather than object identity found it immediately.
+    let lastPlacedX = geoSteps[0]?.shootingPoint.x ?? 0;
+
     for (let i = 1; i < geoSteps.length; i++) {
         const step = geoSteps[i];
         const prevStep = geoSteps[i - 1];
@@ -46,11 +57,10 @@ export function getGeoSteps(startPoint: GeoPoint, directionPoint: GeoPoint, step
         const distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
 
         if (distance < MIN_WAYPOINT_SPACING) {
-            step.geoPoint = getGeoPointFromStartPointDistanceBearing(
-                startPoint,
-                prevStep.shootingPoint.x + MIN_WAYPOINT_SPACING,
-                bearing
-            );
+            lastPlacedX += MIN_WAYPOINT_SPACING;
+            step.geoPoint = getGeoPointFromStartPointDistanceBearing(startPoint, lastPlacedX, bearing);
+        } else {
+            lastPlacedX = step.shootingPoint.x;
         }
     }
 
@@ -60,8 +70,6 @@ export function getGeoSteps(startPoint: GeoPoint, directionPoint: GeoPoint, step
 /**
  * Half-widths of the frame's ground footprint at its near and far edges, given
  * the sensor's horizontal field of view. Used to draw the covered area on a map.
- *
- * Moved verbatim out of index.ts in Phase 3.
  */
 export function getPointsForViewport(
     step: Step,

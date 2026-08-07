@@ -101,11 +101,15 @@ function planCurvedSegment(segment: Segment, maxViewAngle: number, maxDistortion
     return shots;
 }
 
+/**
+ * Only called when there are fewer groups than the anchored layout needs, so
+ * `total` is 1 or 2 and every case is covered by the three lines below. A
+ * trailing `return 'center'` looked like a sensible default and was in fact
+ * unreachable.
+ */
 function anchorFor(index: number, total: number): ShotAnchor {
     if (total === 1) return 'center';
-    if (index === 0) return 'start';
-    if (index === total - 1) return 'end';
-    return 'center';
+    return index === 0 ? 'start' : 'end';
 }
 
 /** Angular height of ground covered by a group, as seen from its first sample. */
@@ -128,6 +132,15 @@ function required<T>(array: T[], index: number): T {
  * next item would make the group fail `isGood`.
  */
 function splitBy<T>(array: T[], isGood: (candidate: T[]) => boolean): T[][] {
+    // The loop below closes a group only when it meets the final element, so a
+    // one-element array falls straight through and returns nothing — silently
+    // dropping that stretch of ground from the plan. Not reachable from the UI
+    // today (no segment has fewer than two samples), but the helper is generic
+    // and the failure mode is invisible.
+    if (array.length <= 1) {
+        return array.length === 1 ? [[...array]] : [];
+    }
+
     const groups: T[][] = [];
 
     let current: T[] = [];

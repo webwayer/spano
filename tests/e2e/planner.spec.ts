@@ -178,6 +178,41 @@ test.describe('flight planner', () => {
         await expect(page.locator('#asText li')).toHaveCount(10);
     });
 
+    test('declares the bounds the rest of the code assumes', async ({ page }) => {
+        // numberFrom and decodePlan both read their limits off these attributes,
+        // and tests/unit/share.test.ts mirrors them. Pinning them here is what
+        // stops the mirror drifting from the markup.
+        await page.goto('/');
+
+        const expected: Record<string, [string, string, string]> = {
+            offset: ['10', '200', '1'],
+            firstLineLength: ['10', '200', '1'],
+            curvedLineLength: ['10', '200', '1'],
+            secondLineLength: ['10', '200', '1'],
+            viewPointHeight: ['10', '200', '1'],
+            altitudeCeiling: ['10', '500', '1'],
+        };
+
+        for (const [id, [min, max, step]] of Object.entries(expected)) {
+            const field = page.locator(`#${id}`);
+            await expect(field, `#${id} min`).toHaveAttribute('min', min);
+            await expect(field, `#${id} max`).toHaveAttribute('max', max);
+            await expect(field, `#${id} step`).toHaveAttribute('step', step);
+        }
+    });
+
+    test('rejects out-of-range input typed into the form, not just shared links', async ({ page }) => {
+        // The form carries novalidate, so nothing but numberFrom enforces these.
+        await page.goto('/');
+        await waitForPlan(page);
+
+        await page.fill('#firstLineLength', '0');
+        await page.click('#generateButton');
+
+        await expect(page.locator('#errorRegion')).toBeVisible();
+        await expect(page.locator('#errorRegion')).toContainText('between 10 and 200');
+    });
+
     test('has no detectable accessibility violations', async ({ page }) => {
         await page.goto('/');
         await waitForPlan(page);
