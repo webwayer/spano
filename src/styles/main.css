@@ -31,6 +31,16 @@
     --radius: 4px;
     --gap: 1rem;
     --measure: 68ch;
+
+    /*
+     * The select caret, drawn here rather than by the browser — see the `select`
+     * rule for why. A data URI cannot pick up `currentColor`, so the shape is
+     * spelled out once per ink colour and the theme blocks below alias one of
+     * these two. `img-src 'self' data:` in the CSP already covers it.
+     */
+    --caret-light: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2012%208'%3E%3Cpath%20d='M2%202.5%206%206.5%2010%202.5'%20fill='none'%20stroke='%234a4f5a'%20stroke-width='1.6'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E");
+    --caret-dark: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2012%208'%3E%3Cpath%20d='M2%202.5%206%206.5%2010%202.5'%20fill='none'%20stroke='%23b3b8c2'%20stroke-width='1.6'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E");
+    --caret: var(--caret-light);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -51,6 +61,8 @@
         --error-bg: #2b1614;
         --error-ink: #f2a49d;
         --error-rule: #b3564e;
+
+        --caret: var(--caret-dark);
     }
 }
 
@@ -74,6 +86,7 @@
     --error-bg: #fdeceb;
     --error-ink: #8a1f18;
     --error-rule: #b3312a;
+    --caret: var(--caret-light);
     color-scheme: light;
 }
 
@@ -91,6 +104,7 @@
     --error-bg: #2b1614;
     --error-ink: #f2a49d;
     --error-rule: #b3564e;
+    --caret: var(--caret-dark);
     color-scheme: dark;
 }
 
@@ -113,7 +127,8 @@
     width: auto;
     min-width: 9rem;
     min-height: 36px;
-    padding: 0.25rem 0.5rem;
+    /* Right side keeps clear of the caret drawn on `select` further down. */
+    padding: 0.25rem 2.1rem 0.25rem 0.5rem;
     font-size: 0.85rem;
 }
 
@@ -264,6 +279,29 @@ select {
 }
 input[type='file'] {
     padding: 0.5rem;
+}
+
+/*
+ * The arrow is drawn here rather than by the browser.
+ *
+ * A native select paints its arrow against the *border* box, so it lands ~4px
+ * from the right edge while the text keeps the 10.4px inset above. The two
+ * never match, and `padding-right` cannot close the gap: it moves the text and
+ * leaves the arrow where it is. Long labels then crowd it — "DJI Mavic Pro —
+ * 46.8° vertical FOV" reaches the arrow with no gap at all around 730px wide.
+ *
+ * An SVG rather than the usual pair of gradients: a gradient's hard colour stop
+ * gets no antialiasing, so the diagonals come out visibly stepped. The renderer
+ * antialiases a stroked path at any device pixel ratio.
+ */
+select {
+    appearance: none;
+    /* Room for the caret, so no option label can ever reach it. */
+    padding-right: 2.1rem;
+    background-image: var(--caret);
+    background-position: right 0.65rem center;
+    background-size: 12px 8px;
+    background-repeat: no-repeat;
 }
 
 button {
