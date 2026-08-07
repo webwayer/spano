@@ -20,6 +20,15 @@
     <body>
         <a class="skip-link" href="#results">Skip to results</a>
 
+        <div class="theme-switch">
+            <label for="theme">Theme</label>
+            <select id="theme" name="theme">
+                <option value="system">Match system</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+            </select>
+        </div>
+
         <header class="page-header">
             <h1>spano</h1>
             <p class="tagline">
@@ -184,6 +193,26 @@
 
                 <div id="preview3D" class="strip-stack" hidden aria-live="polite"></div>
                 <div id="debug3D" class="strip-stack" hidden></div>
+            </section>
+
+            <section aria-labelledby="mapHeading">
+                <h2 id="mapHeading">On the map</h2>
+                <p class="section-intro">
+                    Place the flight on real ground and see what each frame covers. Needs no account and no API key —
+                    the street map is OpenStreetMap, the satellite imagery is Esri, and both are free to use.
+                </p>
+
+                <div class="button-row">
+                    <button type="button" id="showMapButton">Show the map</button>
+                </div>
+
+                <div class="field" id="baseLayerField" hidden>
+                    <label for="baseLayer">Base layer</label>
+                    <select id="baseLayer" name="baseLayer"></select>
+                </div>
+
+                <p id="mapStatus" role="status" class="status"></p>
+                <div id="map" class="map" hidden></div>
             </section>
 
             <section aria-labelledby="realHeading">

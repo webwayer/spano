@@ -18,6 +18,8 @@ import { runReporting } from './ui/errors';
 import { applySharedPlanFromUrl, populateCameraProfiles, readParams, shareUrl } from './ui/controls';
 import { renderStepList } from './ui/step-list';
 import { resetPreviewListeners, setup3DPreview, setupRealPreview } from './ui/previews';
+import { populateBaseLayers, setupMap } from './ui/map-panel';
+import { setupThemeSwitch } from './ui/theme';
 
 function generate(): void {
     const { curve, viewPoint, camera, altitudeCeiling } = readParams();
@@ -38,9 +40,12 @@ function generate(): void {
     // Registers handlers only. The three.js chunk is fetched on first press of
     // "Build panorama from preview", not now.
     setup3DPreview(steps, viewPoint, signal);
+    setupMap(steps, camera, signal);
 }
 
+setupThemeSwitch();
 populateCameraProfiles();
+populateBaseLayers();
 applySharedPlanFromUrl(window.location.hash);
 
 el<HTMLFormElement>('planForm').addEventListener('submit', event => {

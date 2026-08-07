@@ -54,6 +54,69 @@
     }
 }
 
+/*
+ * The explicit choice has to beat the media query in BOTH directions — a
+ * viewer on a dark OS asking for light must get light. Redefining the same
+ * tokens under a data attribute on :root does that, because a later rule of
+ * equal specificity wins.
+ */
+:root[data-theme='light'] {
+    --paper: #ffffff;
+    --paper-2: #f4f5f7;
+    --ink: #16181d;
+    --ink-2: #4a4f5a;
+    --rule: #c9ccd4;
+    --accent: #0b4fa8;
+    --accent-ink: #ffffff;
+    --warn-bg: #fdf3e2;
+    --warn-ink: #6b4708;
+    --warn-rule: #a97a1a;
+    --error-bg: #fdeceb;
+    --error-ink: #8a1f18;
+    --error-rule: #b3312a;
+    color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+    --paper: #14161a;
+    --paper-2: #1c1f25;
+    --ink: #e9ebef;
+    --ink-2: #b3b8c2;
+    --rule: #3a3f49;
+    --accent: #8ab4f8;
+    --accent-ink: #10131a;
+    --warn-bg: #2a2210;
+    --warn-ink: #f0c96a;
+    --warn-rule: #a4802c;
+    --error-bg: #2b1614;
+    --error-ink: #f2a49d;
+    --error-rule: #b3564e;
+    color-scheme: dark;
+}
+
+.theme-switch {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding-top: 0.75rem;
+}
+.theme-switch label {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--ink-2);
+}
+.theme-switch select {
+    width: auto;
+    min-width: 9rem;
+    min-height: 36px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.85rem;
+}
+
 *,
 *::before,
 *::after {
@@ -380,4 +443,24 @@ footer a {
         animation-duration: 0.01ms !important;
         transition-duration: 0.01ms !important;
     }
+}
+
+/* ── Map ────────────────────────────────────────────────────────────── */
+.map {
+    height: min(70vh, 520px);
+    margin: 0.75rem 0;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+/*
+ * MapLibre ships its own stylesheet, imported by the adapter. These override
+ * only what clashes with the page's own palette.
+ */
+.maplibregl-ctrl-attrib {
+    font-size: 0.72rem;
+}
+.maplibregl-ctrl-attrib a {
+    color: var(--accent);
 }
