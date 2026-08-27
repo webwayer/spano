@@ -14,6 +14,9 @@
 
 export interface SharedPlan {
     curveType: string;
+    captureStrategy: string;
+    captureDensity: string;
+    processingMode: string;
     offset: number;
     firstLineLength: number;
     curvedLineLength: number;
@@ -21,6 +24,7 @@ export interface SharedPlan {
     viewPointHeight: number;
     cameraProfile: string;
     altitudeCeiling: number;
+    objectHeight: number;
 }
 
 /** Accepted range for one numeric field, and whether it must be a whole number. */
@@ -39,9 +43,14 @@ export const NUMERIC_FIELD_IDS = [
     'secondLineLength',
     'viewPointHeight',
     'altitudeCeiling',
+    'objectHeight',
 ] as const;
 
-const TEXT_FIELD_IDS = ['curveType', 'cameraProfile'] as const;
+/**
+ * Appended rather than inserted: the order here fixes the order of the query
+ * string, and an existing link should keep reading the way it was copied.
+ */
+const TEXT_FIELD_IDS = ['curveType', 'cameraProfile', 'captureStrategy', 'captureDensity', 'processingMode'] as const;
 
 export function encodePlan(planParams: SharedPlan): string {
     const params = new URLSearchParams();

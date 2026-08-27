@@ -9,6 +9,8 @@ import { getBearingBetween2GeoPoints, getGeoPointFromStartPointDistanceBearing }
 import { getGeoSteps, getPointsForViewport } from '../../src/core/geo/flight-path';
 import { makeLitchiMission } from '../../src/core/export/litchi-csv';
 import type { LitchiAction } from '../../src/core/export/litchi-csv';
+import { makeColmapModel } from '../../src/core/export/colmap';
+import { MAVIC_PRO } from '../../src/core/camera/profiles';
 import { CASES, type Case } from './cases';
 import { makeCurve, runPipeline, type PipelineResult } from './pipeline';
 
@@ -255,8 +257,14 @@ export function buildGeo(): unknown {
 // change to them — a copy in the harness would have drifted and ended up
 // validating itself.
 
-/** DJI Mavic Pro horizontal field of view, degrees. */
-const MAVIC_PRO_HFOV = 62.4;
+/**
+ * Taken from the profile rather than repeated as a literal.
+ *
+ * It used to be a hard-coded 62.4 here. When that value was corrected in 2026
+ * the copy would have gone on pinning the old number, and the baseline would
+ * have kept passing while describing a camera that no longer existed.
+ */
+const MAVIC_PRO_HFOV = MAVIC_PRO.hFov;
 
 export function buildFlightPath(): unknown {
     const anchors = [
@@ -354,6 +362,42 @@ export function buildLitchi(): unknown {
                 lineCount: lines.length,
                 columnCounts: lines.map(line => line.split(',').length),
                 csv,
+            };
+        }),
+    };
+}
+
+// ─── COLMAP pose export ───────────────────────────────────────────────────────
+//
+// Fed real plans, unlike the Litchi baseline: makeColmapModel consumes Step[]
+// directly, so there is nothing to copy into a fixture and nothing that could
+// drift into validating itself.
+//
+// This pins two things that are easy to break and hard to notice. The quaternion
+// convention: COLMAP stores world-to-camera, so the translation is -R*C and not
+// the camera position, and writing the position instead yields a file that loads
+// cleanly and reconstructs into nonsense. And the blank second line per image,
+// which COLMAP requires for its 2D observations — dropping it shifts every
+// subsequent image by one line.
+
+export function buildColmap(): unknown {
+    const planCases = CASES.filter(c => c.id === 'simple/default' || c.id === 'stunning/default');
+
+    return {
+        description:
+            'Baseline for src/core/export/colmap.ts — the planned camera poses as a COLMAP ' +
+            'text model. These are PLANNED poses, not measured ones; the export exists so a ' +
+            'reconstruction can be rendered along the panorama curve, not so SfM can be skipped.',
+        camera: MAVIC_PRO.id,
+        cases: planCases.map(testCase => {
+            const { steps } = runPipeline(testCase);
+            const model = makeColmapModel(steps, MAVIC_PRO);
+            return {
+                plan: testCase.id,
+                stepCount: steps.length,
+                cameras: model.cameras,
+                images: model.images,
+                points3D: model.points3D,
             };
         }),
     };

@@ -22,17 +22,22 @@ const BOUNDS: FieldBounds = {
     secondLineLength: { min: 10, max: 200, integer: true },
     viewPointHeight: { min: 10, max: 200, integer: true },
     altitudeCeiling: { min: 10, max: 500, integer: true },
+    objectHeight: { min: 0, max: 100, integer: true },
 };
 
 const plan: SharedPlan = {
     curveType: 'stunningCurve',
     cameraProfile: 'dji-mavic-pro',
+    captureStrategy: 'fine-strips',
+    captureDensity: 'x8',
+    processingMode: 'homography',
     offset: 50,
     firstLineLength: 60,
     curvedLineLength: 120,
     secondLineLength: 30,
     viewPointHeight: 45,
     altitudeCeiling: 120,
+    objectHeight: 10,
 };
 
 describe('plan sharing', () => {

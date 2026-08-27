@@ -1,8 +1,27 @@
 import { getTopAngle } from '../geometry/triangle';
 import type { Segment, Shot, ShotAnchor, Triple } from '../types';
 
-/** A segment whose average error is below this is treated as flat. */
-export const FLAT_SEGMENT_ERROR = 0.01;
+/**
+ * A segment whose average error per metre of arc is below this is treated as
+ * flat, and split by field of view alone.
+ *
+ * Per *metre*, not per sample, and the difference is not pedantry. `avgError`
+ * is measured between neighbouring samples, so it scales with `stepLength`:
+ * halve the sampling interval and every error halves with it. As an absolute
+ * threshold this was therefore a statement about the sampling rate rather than
+ * about the ground, and any curve became "flat" once sampled finely enough.
+ *
+ * The consequence was not subtle. On `Arc90Curve(200, 200, 200, 200)` at a
+ * 0.07 m interval the average fell to 8.8e-3, the whole arc took the flat
+ * branch, and the greedy splitter — which measures its angle from the first
+ * sample's shooting point — closed no group at all: 14,284 samples became one
+ * photograph. The bug had been unreachable since 2018 only because nothing ever
+ * passed a `stepLength` other than 1.
+ *
+ * At `stepLength` 1 the product is the old constant exactly, so every existing
+ * plan is untouched — which `tests/golden/` checks rather than takes on trust.
+ */
+export const FLAT_SEGMENT_ERROR_PER_METRE = 0.01;
 
 /**
  * Below this many sub-groups, the start / centre-pairs / end layout cannot be
@@ -26,11 +45,16 @@ const MIN_GROUPS_FOR_ANCHORED_LAYOUT = 3;
  * and are laid out start / centre-pairs / end so the seams fall where the
  * mismatch between adjacent frames is smallest.
  */
-export function divideSegmentsIntoShots(segments: Segment[], maxViewAngle: number, maxDistortionAngle: number): Shot[] {
+export function divideSegmentsIntoShots(
+    segments: Segment[],
+    maxViewAngle: number,
+    maxDistortionAngle: number,
+    stepLength = 1
+): Shot[] {
     const shots: Shot[] = [];
 
     for (const segment of segments) {
-        if (segment.avgError < FLAT_SEGMENT_ERROR) {
+        if (segment.avgError < FLAT_SEGMENT_ERROR_PER_METRE * stepLength) {
             shots.push(...planFlatSegment(segment, maxViewAngle));
         } else {
             shots.push(...planCurvedSegment(segment, maxViewAngle, maxDistortionAngle));
