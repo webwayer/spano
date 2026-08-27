@@ -86,8 +86,8 @@ export interface Vec3 {
  * scene's z; its y is altitude, which stays y; and it has no width component,
  * so the camera sits on the centreline.
  */
-export function sliceToScene(point: Point): Vec3 {
-    return { x: 0, y: point.y, z: point.x };
+export function sliceToScene(point: Point, lateral = 0): Vec3 {
+    return { x: lateral, y: point.y, z: point.x };
 }
 
 /** Point the camera at a target and return the frame as a data URL. */

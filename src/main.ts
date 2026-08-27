@@ -11,24 +11,37 @@
 
 import './styles/main.css';
 
-import { plan } from './core/planner/plan';
 import { drawShots } from './adapters/canvas2d/draw-shots';
 import { canvas, el, setMessage } from './ui/dom';
 import { runReporting } from './ui/errors';
-import { applySharedPlanFromUrl, populateCameraProfiles, readParams, shareUrl } from './ui/controls';
+import {
+    applySharedPlanFromUrl,
+    populateCameraProfiles,
+    populateCaptureDensities,
+    populateCaptureStrategies,
+    readParams,
+    setupCaptureStrategySwitch,
+    shareUrl,
+} from './ui/controls';
+import { renderComparison } from './ui/comparison';
 import { renderStepList } from './ui/step-list';
 import { resetPreviewListeners, setup3DPreview, setupRealPreview } from './ui/previews';
 import { populateBaseLayers, setupMap } from './ui/map-panel';
+import { setupPoseExport } from './ui/poses';
 import { setupThemeSwitch } from './ui/theme';
 
 function generate(): void {
-    const { curve, viewPoint, camera, altitudeCeiling } = readParams();
+    const { curve, viewPoint, camera, altitudeCeiling, strategy, density, objectHeight } = readParams();
 
     setMessage('planStatus', 'Working out the flight…');
-    const { shots, steps } = plan(curve, viewPoint);
+    // The capture strategy decides how the curve is photographed. arc-strips
+    // delegates to plan() with its own defaults, so the page opens on exactly
+    // the plan it always produced.
+    const { shots, steps } = strategy.build(curve, viewPoint, camera, density);
 
     drawShots(shots, viewPoint, canvas('topCanvas'), canvas('bottomCanvas'));
     renderStepList(steps, camera, altitudeCeiling);
+    renderComparison(curve, viewPoint, camera, altitudeCeiling, objectHeight, { strategy, density });
 
     // Keep the address bar in step, so the page is shareable and reloadable
     // without a server. replaceState, not pushState: regenerating is not
@@ -36,15 +49,19 @@ function generate(): void {
     window.history.replaceState(null, '', shareUrl());
 
     const signal = resetPreviewListeners();
-    setupRealPreview(steps, camera, signal);
+    setupRealPreview(steps, camera, viewPoint, signal);
     // Registers handlers only. The three.js chunk is fetched on first press of
     // "Build panorama from preview", not now.
     setup3DPreview(steps, viewPoint, signal);
     setupMap(steps, camera, signal);
+    setupPoseExport(steps, camera, signal);
 }
 
 setupThemeSwitch();
 populateCameraProfiles();
+populateCaptureStrategies();
+populateCaptureDensities();
+setupCaptureStrategySwitch();
 populateBaseLayers();
 applySharedPlanFromUrl(window.location.hash);
 

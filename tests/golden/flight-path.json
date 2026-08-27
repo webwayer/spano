@@ -1,6 +1,6 @@
 {
   "description": "Baseline for src/core/geo/flight-path.ts — projecting plan steps onto the map, including the 0.6 m minimum waypoint spacing and the inverted heading for backwards steps.",
-  "hFov": 62.4,
+  "hFov": 59.96859,
   "cases": [
     {
       "plan": "simple/default",
@@ -137,44 +137,44 @@
       ],
       "viewports": [
         {
-          "bottomViewportOffset": 42.823908856887755,
-          "topViewportOffset": 67.71054514961146
+          "bottomViewportOffset": 40.79899036572334,
+          "topViewportOffset": 64.50886789547592
         },
         {
-          "bottomViewportOffset": 67.71054514961146,
-          "topViewportOffset": 74.83531679015874
+          "bottomViewportOffset": 64.50886789547592,
+          "topViewportOffset": 71.29674637924758
         },
         {
-          "bottomViewportOffset": 74.96248428362217,
-          "topViewportOffset": 87.7086505144825
+          "bottomViewportOffset": 71.41790078759425,
+          "topViewportOffset": 83.56136753628964
         },
         {
-          "bottomViewportOffset": 87.87772797212983,
-          "topViewportOffset": 99.1518657040342
+          "bottomViewportOffset": 83.72245020598865,
+          "topViewportOffset": 94.46349297821617
         },
         {
-          "bottomViewportOffset": 99.32811722410611,
-          "topViewportOffset": 108.93490848005533
+          "bottomViewportOffset": 94.63141048647981,
+          "topViewportOffset": 103.78394686999461
         },
         {
-          "bottomViewportOffset": 109.11471905959168,
-          "topViewportOffset": 116.88939859833947
+          "bottomViewportOffset": 103.95525514843027,
+          "topViewportOffset": 111.36231078779281
         },
         {
-          "bottomViewportOffset": 116.9916786723529,
-          "topViewportOffset": 119.7480475783819
+          "bottomViewportOffset": 111.45975457248385,
+          "topViewportOffset": 114.08578922096197
         },
         {
-          "bottomViewportOffset": 119.7480475783819,
-          "topViewportOffset": 123.21109661531828
+          "bottomViewportOffset": 114.08578922096197,
+          "topViewportOffset": 117.3850887960233
         },
         {
-          "bottomViewportOffset": 123.16465950041093,
-          "topViewportOffset": 124.840369554929
+          "bottomViewportOffset": 117.34084744920817,
+          "topViewportOffset": 118.93732194663211
         },
         {
-          "bottomViewportOffset": 124.84038818443571,
-          "topViewportOffset": 135.3995292817922
+          "bottomViewportOffset": 118.93733969524696,
+          "topViewportOffset": 128.99719428117584
         }
       ]
     },
@@ -313,44 +313,44 @@
       ],
       "viewports": [
         {
-          "bottomViewportOffset": 42.823908856887755,
-          "topViewportOffset": 67.71054514961146
+          "bottomViewportOffset": 40.79899036572334,
+          "topViewportOffset": 64.50886789547592
         },
         {
-          "bottomViewportOffset": 67.71054514961146,
-          "topViewportOffset": 74.83531679015874
+          "bottomViewportOffset": 64.50886789547592,
+          "topViewportOffset": 71.29674637924758
         },
         {
-          "bottomViewportOffset": 74.96248428362217,
-          "topViewportOffset": 87.7086505144825
+          "bottomViewportOffset": 71.41790078759425,
+          "topViewportOffset": 83.56136753628964
         },
         {
-          "bottomViewportOffset": 87.87772797212983,
-          "topViewportOffset": 99.1518657040342
+          "bottomViewportOffset": 83.72245020598865,
+          "topViewportOffset": 94.46349297821617
         },
         {
-          "bottomViewportOffset": 99.32811722410611,
-          "topViewportOffset": 108.93490848005533
+          "bottomViewportOffset": 94.63141048647981,
+          "topViewportOffset": 103.78394686999461
         },
         {
-          "bottomViewportOffset": 109.11471905959168,
-          "topViewportOffset": 116.88939859833947
+          "bottomViewportOffset": 103.95525514843027,
+          "topViewportOffset": 111.36231078779281
         },
         {
-          "bottomViewportOffset": 116.9916786723529,
-          "topViewportOffset": 119.7480475783819
+          "bottomViewportOffset": 111.45975457248385,
+          "topViewportOffset": 114.08578922096197
         },
         {
-          "bottomViewportOffset": 119.7480475783819,
-          "topViewportOffset": 123.21109661531828
+          "bottomViewportOffset": 114.08578922096197,
+          "topViewportOffset": 117.3850887960233
         },
         {
-          "bottomViewportOffset": 123.16465950041093,
-          "topViewportOffset": 124.840369554929
+          "bottomViewportOffset": 117.34084744920817,
+          "topViewportOffset": 118.93732194663211
         },
         {
-          "bottomViewportOffset": 124.84038818443571,
-          "topViewportOffset": 135.3995292817922
+          "bottomViewportOffset": 118.93733969524696,
+          "topViewportOffset": 128.99719428117584
         }
       ]
     },
@@ -489,44 +489,44 @@
       ],
       "viewports": [
         {
-          "bottomViewportOffset": 42.823908856887755,
-          "topViewportOffset": 67.71054514961146
+          "bottomViewportOffset": 40.79899036572334,
+          "topViewportOffset": 64.50886789547592
         },
         {
-          "bottomViewportOffset": 67.71054514961146,
-          "topViewportOffset": 74.83531679015874
+          "bottomViewportOffset": 64.50886789547592,
+          "topViewportOffset": 71.29674637924758
         },
         {
-          "bottomViewportOffset": 74.96248428362217,
-          "topViewportOffset": 87.7086505144825
+          "bottomViewportOffset": 71.41790078759425,
+          "topViewportOffset": 83.56136753628964
         },
         {
-          "bottomViewportOffset": 87.87772797212983,
-          "topViewportOffset": 99.1518657040342
+          "bottomViewportOffset": 83.72245020598865,
+          "topViewportOffset": 94.46349297821617
         },
         {
-          "bottomViewportOffset": 99.32811722410611,
-          "topViewportOffset": 108.93490848005533
+          "bottomViewportOffset": 94.63141048647981,
+          "topViewportOffset": 103.78394686999461
         },
         {
-          "bottomViewportOffset": 109.11471905959168,
-          "topViewportOffset": 116.88939859833947
+          "bottomViewportOffset": 103.95525514843027,
+          "topViewportOffset": 111.36231078779281
         },
         {
-          "bottomViewportOffset": 116.9916786723529,
-          "topViewportOffset": 119.7480475783819
+          "bottomViewportOffset": 111.45975457248385,
+          "topViewportOffset": 114.08578922096197
         },
         {
-          "bottomViewportOffset": 119.7480475783819,
-          "topViewportOffset": 123.21109661531828
+          "bottomViewportOffset": 114.08578922096197,
+          "topViewportOffset": 117.3850887960233
         },
         {
-          "bottomViewportOffset": 123.16465950041093,
-          "topViewportOffset": 124.840369554929
+          "bottomViewportOffset": 117.34084744920817,
+          "topViewportOffset": 118.93732194663211
         },
         {
-          "bottomViewportOffset": 124.84038818443571,
-          "topViewportOffset": 135.3995292817922
+          "bottomViewportOffset": 118.93733969524696,
+          "topViewportOffset": 128.99719428117584
         }
       ]
     },
@@ -701,56 +701,56 @@
       ],
       "viewports": [
         {
-          "bottomViewportOffset": 42.823908856887755,
-          "topViewportOffset": 67.71054514961146
+          "bottomViewportOffset": 40.79899036572334,
+          "topViewportOffset": 64.50886789547592
         },
         {
-          "bottomViewportOffset": 67.71054514961146,
-          "topViewportOffset": 74.83531679015874
+          "bottomViewportOffset": 64.50886789547592,
+          "topViewportOffset": 71.29674637924758
         },
         {
-          "bottomViewportOffset": 74.96248428362217,
-          "topViewportOffset": 87.7086505144825
+          "bottomViewportOffset": 71.41790078759425,
+          "topViewportOffset": 83.56136753628964
         },
         {
-          "bottomViewportOffset": 87.87772797212983,
-          "topViewportOffset": 99.1518657040342
+          "bottomViewportOffset": 83.72245020598865,
+          "topViewportOffset": 94.46349297821617
         },
         {
-          "bottomViewportOffset": 99.32811722410618,
-          "topViewportOffset": 108.93490848005536
+          "bottomViewportOffset": 94.63141048647988,
+          "topViewportOffset": 103.78394686999465
         },
         {
-          "bottomViewportOffset": 109.11471905959168,
-          "topViewportOffset": 116.88939859833947
+          "bottomViewportOffset": 103.95525514843027,
+          "topViewportOffset": 111.36231078779281
         },
         {
-          "bottomViewportOffset": 117.06925675227185,
-          "topViewportOffset": 122.87919111036258
+          "bottomViewportOffset": 111.53366439108032,
+          "topViewportOffset": 117.0688773650614
         },
         {
-          "bottomViewportOffset": 123.05567924264676,
-          "topViewportOffset": 126.80208035162086
+          "bottomViewportOffset": 117.23702029738433,
+          "topViewportOffset": 120.8062737081828
         },
         {
-          "bottomViewportOffset": 126.97189363279848,
-          "topViewportOffset": 128.5912410565786
+          "bottomViewportOffset": 120.96805740816897,
+          "topViewportOffset": 122.51083436863641
         },
         {
-          "bottomViewportOffset": 128.2395262175292,
-          "topViewportOffset": 128.66979321089582
+          "bottomViewportOffset": 122.17575028329958,
+          "topViewportOffset": 122.5856722027516
         },
         {
-          "bottomViewportOffset": 128.31591993165173,
-          "topViewportOffset": 128.2395262175292
+          "bottomViewportOffset": 122.24853173855867,
+          "topViewportOffset": 122.17575028329958
         },
         {
-          "bottomViewportOffset": 126.68438210132203,
-          "topViewportOffset": 128.22559085668243
+          "bottomViewportOffset": 120.69414079205757,
+          "topViewportOffset": 122.16247385272361
         },
         {
-          "bottomViewportOffset": 125.0867392031124,
-          "topViewportOffset": 126.68552713484955
+          "bottomViewportOffset": 119.17204206375717,
+          "topViewportOffset": 120.69523168294316
         }
       ]
     },
@@ -925,56 +925,56 @@
       ],
       "viewports": [
         {
-          "bottomViewportOffset": 42.823908856887755,
-          "topViewportOffset": 67.71054514961146
+          "bottomViewportOffset": 40.79899036572334,
+          "topViewportOffset": 64.50886789547592
         },
         {
-          "bottomViewportOffset": 67.71054514961146,
-          "topViewportOffset": 74.83531679015874
+          "bottomViewportOffset": 64.50886789547592,
+          "topViewportOffset": 71.29674637924758
         },
         {
-          "bottomViewportOffset": 74.96248428362217,
-          "topViewportOffset": 87.7086505144825
+          "bottomViewportOffset": 71.41790078759425,
+          "topViewportOffset": 83.56136753628964
         },
         {
-          "bottomViewportOffset": 87.87772797212983,
-          "topViewportOffset": 99.1518657040342
+          "bottomViewportOffset": 83.72245020598865,
+          "topViewportOffset": 94.46349297821617
         },
         {
-          "bottomViewportOffset": 99.32811722410618,
-          "topViewportOffset": 108.93490848005536
+          "bottomViewportOffset": 94.63141048647988,
+          "topViewportOffset": 103.78394686999465
         },
         {
-          "bottomViewportOffset": 109.11471905959168,
-          "topViewportOffset": 116.88939859833947
+          "bottomViewportOffset": 103.95525514843027,
+          "topViewportOffset": 111.36231078779281
         },
         {
-          "bottomViewportOffset": 117.06925675227185,
-          "topViewportOffset": 122.87919111036258
+          "bottomViewportOffset": 111.53366439108032,
+          "topViewportOffset": 117.0688773650614
         },
         {
-          "bottomViewportOffset": 123.05567924264676,
-          "topViewportOffset": 126.80208035162086
+          "bottomViewportOffset": 117.23702029738433,
+          "topViewportOffset": 120.8062737081828
         },
         {
-          "bottomViewportOffset": 126.97189363279848,
-          "topViewportOffset": 128.5912410565786
+          "bottomViewportOffset": 120.96805740816897,
+          "topViewportOffset": 122.51083436863641
         },
         {
-          "bottomViewportOffset": 128.2395262175292,
-          "topViewportOffset": 128.66979321089582
+          "bottomViewportOffset": 122.17575028329958,
+          "topViewportOffset": 122.5856722027516
         },
         {
-          "bottomViewportOffset": 128.31591993165173,
-          "topViewportOffset": 128.2395262175292
+          "bottomViewportOffset": 122.24853173855867,
+          "topViewportOffset": 122.17575028329958
         },
         {
-          "bottomViewportOffset": 126.68438210132203,
-          "topViewportOffset": 128.22559085668243
+          "bottomViewportOffset": 120.69414079205757,
+          "topViewportOffset": 122.16247385272361
         },
         {
-          "bottomViewportOffset": 125.0867392031124,
-          "topViewportOffset": 126.68552713484955
+          "bottomViewportOffset": 119.17204206375717,
+          "topViewportOffset": 120.69523168294316
         }
       ]
     },
@@ -1149,56 +1149,56 @@
       ],
       "viewports": [
         {
-          "bottomViewportOffset": 42.823908856887755,
-          "topViewportOffset": 67.71054514961146
+          "bottomViewportOffset": 40.79899036572334,
+          "topViewportOffset": 64.50886789547592
         },
         {
-          "bottomViewportOffset": 67.71054514961146,
-          "topViewportOffset": 74.83531679015874
+          "bottomViewportOffset": 64.50886789547592,
+          "topViewportOffset": 71.29674637924758
         },
         {
-          "bottomViewportOffset": 74.96248428362217,
-          "topViewportOffset": 87.7086505144825
+          "bottomViewportOffset": 71.41790078759425,
+          "topViewportOffset": 83.56136753628964
         },
         {
-          "bottomViewportOffset": 87.87772797212983,
-          "topViewportOffset": 99.1518657040342
+          "bottomViewportOffset": 83.72245020598865,
+          "topViewportOffset": 94.46349297821617
         },
         {
-          "bottomViewportOffset": 99.32811722410618,
-          "topViewportOffset": 108.93490848005536
+          "bottomViewportOffset": 94.63141048647988,
+          "topViewportOffset": 103.78394686999465
         },
         {
-          "bottomViewportOffset": 109.11471905959168,
-          "topViewportOffset": 116.88939859833947
+          "bottomViewportOffset": 103.95525514843027,
+          "topViewportOffset": 111.36231078779281
         },
         {
-          "bottomViewportOffset": 117.06925675227185,
-          "topViewportOffset": 122.87919111036258
+          "bottomViewportOffset": 111.53366439108032,
+          "topViewportOffset": 117.0688773650614
         },
         {
-          "bottomViewportOffset": 123.05567924264676,
-          "topViewportOffset": 126.80208035162086
+          "bottomViewportOffset": 117.23702029738433,
+          "topViewportOffset": 120.8062737081828
         },
         {
-          "bottomViewportOffset": 126.97189363279848,
-          "topViewportOffset": 128.5912410565786
+          "bottomViewportOffset": 120.96805740816897,
+          "topViewportOffset": 122.51083436863641
         },
         {
-          "bottomViewportOffset": 128.2395262175292,
-          "topViewportOffset": 128.66979321089582
+          "bottomViewportOffset": 122.17575028329958,
+          "topViewportOffset": 122.5856722027516
         },
         {
-          "bottomViewportOffset": 128.31591993165173,
-          "topViewportOffset": 128.2395262175292
+          "bottomViewportOffset": 122.24853173855867,
+          "topViewportOffset": 122.17575028329958
         },
         {
-          "bottomViewportOffset": 126.68438210132203,
-          "topViewportOffset": 128.22559085668243
+          "bottomViewportOffset": 120.69414079205757,
+          "topViewportOffset": 122.16247385272361
         },
         {
-          "bottomViewportOffset": 125.0867392031124,
-          "topViewportOffset": 126.68552713484955
+          "bottomViewportOffset": 119.17204206375717,
+          "topViewportOffset": 120.69523168294316
         }
       ]
     }

@@ -12,7 +12,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { CASES, FULL_DUMP_IDS } from './cases';
-import { buildDigest, buildFlightPath, buildFullDump, buildGeo, buildLitchi, toJson } from './record';
+import { buildColmap, buildDigest, buildFlightPath, buildFullDump, buildGeo, buildLitchi, toJson } from './record';
 import { FULL_DIR, GOLDEN_DIR, fullDumpFilename } from './paths';
 
 const goldenDir = GOLDEN_DIR();
@@ -52,5 +52,8 @@ console.log('flight-path.json  getGeoSteps + getPointsForViewport');
 
 writeFileSync(join(goldenDir, 'litchi.json'), toJson(buildLitchi()));
 console.log('litchi.json    src/core/export/litchi-csv.ts');
+
+writeFileSync(join(goldenDir, 'colmap.json'), toJson(buildColmap()));
+console.log('colmap.json    src/core/export/colmap.ts');
 
 console.log(`\nBaselines written to ${goldenDir}`);

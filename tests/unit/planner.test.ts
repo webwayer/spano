@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
+import { Arc90Curve } from '../../src/core/curves/arc-90';
+import { plan } from '../../src/core/planner/plan';
+
 import { divideSegmentsIntoShots } from '../../src/core/planner/allocation';
 import { convertShotsIntoSteps } from '../../src/core/planner/steps';
 import type { Segment, Shot, ShotAnchor, Triple } from '../../src/core/types';
@@ -24,7 +27,7 @@ function segment(sampleCount: number, avgError: number): Segment {
     };
 }
 
-/** Above FLAT_SEGMENT_ERROR, so the curved (anchored-layout) branch is taken. */
+/** Above the flatness threshold, so the curved (anchored-layout) branch is taken. */
 const CURVED = 0.5;
 /** Below it, so the flat branch is taken. */
 const FLAT = 0.0001;
@@ -141,5 +144,31 @@ describe('divideSegmentsIntoShots', () => {
     it('returns nothing for an empty segment rather than throwing', () => {
         expect(divideSegmentsIntoShots([segment(0, CURVED)], 20, 1)).toEqual([]);
         expect(divideSegmentsIntoShots([], 20, 1)).toEqual([]);
+    });
+});
+
+describe('flatness at fine sampling', () => {
+    it('does not call a curve flat merely because it was sampled finely', () => {
+        // avgError is measured between neighbouring samples, so it scales with
+        // stepLength. Against an absolute threshold that made the test a
+        // statement about the sampling rate rather than about the ground: at a
+        // 0.07 m interval this curve's average fell below 0.01, the whole arc
+        // took the flat branch, and the greedy splitter closed no group at all
+        // — 14,284 samples became one photograph.
+        const curve = new Arc90Curve(200, 200, 200, 200);
+        const viewPoint = { x: 0, y: 50 };
+
+        const coarse = plan(curve, viewPoint, { stepLength: 0.25, maxDistortionAngle: 0.05 });
+        const fine = plan(curve, viewPoint, { stepLength: 0.05, maxDistortionAngle: 0.05 });
+
+        expect(fine.pointTriples.length).toBeGreaterThan(coarse.pointTriples.length);
+        expect(fine.steps.length).toBeGreaterThan(coarse.steps.length);
+    });
+
+    it('still treats a genuinely flat run as flat, at any sampling rate', () => {
+        // The flat legs really are flat: their error is ~1e-14 whatever the
+        // interval, so the branch must still be reachable.
+        const { segments } = plan(new Arc90Curve(50, 50, 100, 50), { x: 0, y: 50 }, { stepLength: 0.25 });
+        expect(segments.some(segment => segment.avgError < 1e-9)).toBe(true);
     });
 });

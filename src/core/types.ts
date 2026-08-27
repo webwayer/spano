@@ -59,6 +59,21 @@ export interface Step {
     viewAngleToTheGround: number;
     /** True when the aircraft faces back toward the start point. */
     backwards: boolean;
+    /**
+     * Sideways offset from the centreline, metres. Absent for every strip plan.
+     *
+     * The whole model is a vertical slice — x along the ground, y altitude —
+     * and that has served since 2018 because a panorama is photographed along
+     * one line. A photogrammetric survey is not: it flies a grid, and a grid
+     * needs an axis the slice does not have.
+     *
+     * Optional rather than required, and read through `?? 0`, so every existing
+     * plan produces the identical numbers it always did. `tests/golden/` proves
+     * that rather than asserting it: the recorders project a fixed list of
+     * fields, so a new one is simply never written, and `flight-path.json` did
+     * not move when this arrived.
+     */
+    lateralOffset?: number;
     firstElement: Triple;
     centerElement: Triple;
     lastElement: Triple;

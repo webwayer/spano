@@ -1,0 +1,20 @@
+{
+  "description": "Baseline for src/core/export/colmap.ts — the planned camera poses as a COLMAP text model. These are PLANNED poses, not measured ones; the export exists so a reconstruction can be rendered along the panorama curve, not so SfM can be skipped.",
+  "camera": "dji-mavic-pro",
+  "cases": [
+    {
+      "plan": "simple/default",
+      "stepCount": 10,
+      "cameras": "# Camera list with one line of data per camera:\n#   CAMERA_ID, MODEL, WIDTH, HEIGHT, PARAMS[]\n# Number of cameras: 1\n1 PINHOLE 4000 3000 3466.295488 3466.295481 2000.000000 1500.000000\n",
+      "images": "# Image list with two lines of data per image:\n#   IMAGE_ID, QW, QX, QY, QZ, TX, TY, TZ, CAMERA_ID, NAME\n#   POINTS2D[] as (X, Y, POINT3D_ID)\n# Number of images: 10, mean observations per image: 0\n# PLANNED poses, not measured ones. See src/core/export/colmap.ts.\n1 0.000000 0.000000 -0.307212 0.951641 0.000000 40.562109 29.235514 1 frame_0001.jpg\n\n2 0.000000 0.000000 -0.229753 0.973249 0.000000 44.721360 22.360680 1 frame_0002.jpg\n\n3 0.000000 0.000000 -0.309709 0.950832 0.000000 73.609195 32.254242 1 frame_0003.jpg\n\n4 0.000000 0.000000 -0.377657 0.925946 0.000000 105.757612 45.501288 1 frame_0004.jpg\n\n5 0.000000 0.000000 -0.442151 0.896941 0.000000 140.707883 63.229093 1 frame_0005.jpg\n\n6 0.000000 0.000000 -0.503566 0.863957 0.000000 177.115035 85.705481 1 frame_0006.jpg\n\n7 0.000000 0.000000 -0.557250 0.830345 0.000000 212.846446 110.570255 1 frame_0007.jpg\n\n8 0.000000 0.000000 -0.557250 0.830345 0.000000 212.846446 110.570255 1 frame_0008.jpg\n\n9 0.000000 0.000000 -0.615246 0.788335 0.000000 249.300322 143.699188 1 frame_0009.jpg\n\n10 0.000000 0.000000 -0.571568 0.820555 0.000000 263.565996 115.822881 1 frame_0010.jpg\n",
+      "points3D": "# 3D point list with one line of data per point:\n#   POINT3D_ID, X, Y, Z, R, G, B, ERROR, TRACK[] as (IMAGE_ID, POINT2D_IDX)\n# Number of points: 0, mean track length: 0\n"
+    },
+    {
+      "plan": "stunning/default",
+      "stepCount": 13,
+      "cameras": "# Camera list with one line of data per camera:\n#   CAMERA_ID, MODEL, WIDTH, HEIGHT, PARAMS[]\n# Number of cameras: 1\n1 PINHOLE 4000 3000 3466.295488 3466.295481 2000.000000 1500.000000\n",
+      "images": "# Image list with two lines of data per image:\n#   IMAGE_ID, QW, QX, QY, QZ, TX, TY, TZ, CAMERA_ID, NAME\n#   POINTS2D[] as (X, Y, POINT3D_ID)\n# Number of images: 13, mean observations per image: 0\n# PLANNED poses, not measured ones. See src/core/export/colmap.ts.\n1 0.000000 0.000000 -0.307212 0.951641 0.000000 40.562109 29.235514 1 frame_0001.jpg\n\n2 0.000000 0.000000 -0.229753 0.973249 0.000000 44.721360 22.360680 1 frame_0002.jpg\n\n3 0.000000 0.000000 -0.309709 0.950832 0.000000 73.609195 32.254242 1 frame_0003.jpg\n\n4 0.000000 0.000000 -0.377657 0.925946 0.000000 105.757612 45.501288 1 frame_0004.jpg\n\n5 0.000000 0.000000 -0.442151 0.896941 0.000000 140.707883 63.229093 1 frame_0005.jpg\n\n6 0.000000 0.000000 -0.503566 0.863957 0.000000 177.115035 85.705481 1 frame_0006.jpg\n\n7 0.000000 0.000000 -0.562011 0.827130 0.000000 213.541117 113.025865 1 frame_0007.jpg\n\n8 0.000000 0.000000 -0.617463 0.786600 0.000000 248.487207 145.100707 1 frame_0008.jpg\n\n9 0.000000 0.000000 -0.669833 0.742512 0.000000 280.428481 181.649222 1 frame_0009.jpg\n\n10 0.698554 0.715558 0.000000 0.000000 0.000000 -307.910948 219.154581 1 frame_0010.jpg\n\n11 0.698554 0.715558 0.000000 0.000000 0.000000 -307.910948 219.154581 1 frame_0011.jpg\n\n12 0.645804 0.763503 0.000000 0.000000 0.000000 -330.359233 264.748548 1 frame_0012.jpg\n\n13 0.688325 0.725402 0.000000 0.000000 0.000000 -359.663655 225.227778 1 frame_0013.jpg\n",
+      "points3D": "# 3D point list with one line of data per point:\n#   POINT3D_ID, X, Y, Z, R, G, B, ERROR, TRACK[] as (IMAGE_ID, POINT2D_IDX)\n# Number of points: 0, mean track length: 0\n"
+    }
+  ]
+}

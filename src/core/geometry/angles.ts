@@ -65,3 +65,12 @@ export function asin(ratio: number): Radians {
 export function atan2(y: number, x: number): Radians {
     return Math.atan2(y, x) as Radians;
 }
+
+/**
+ * Only needed where a ratio of distances is wanted rather than a projection —
+ * a field of view converted to a ground width, say. Most of the codebase gets
+ * by on sin and cos because it solves triangles from sides, not from slopes.
+ */
+export function tan(angle: Radians): number {
+    return Math.tan(angle);
+}

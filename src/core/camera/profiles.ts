@@ -15,15 +15,56 @@ export interface CameraProfile {
     readonly hFov: number;
     /** Gimbal pitch limits, degrees; negative points down. */
     readonly gimbalPitchRange: readonly [number, number];
+    /**
+     * Still-image dimensions, pixels.
+     *
+     * Needed the moment anything reasons in pixels rather than angles: how many
+     * pixels a seam defect spans, and the focal length a pose export has to
+     * declare. Carried on the profile rather than passed around, because it is
+     * a property of the camera and getting it wrong is silent — the numbers
+     * stay plausible and are simply untrue.
+     */
+    readonly sensorPixels: { readonly width: number; readonly height: number };
 }
 
-/** The aircraft everything in this repo was measured against. */
+/**
+ * The aircraft everything in this repo was measured against.
+ *
+ * `hFov` was 62.4 from 2018 until 2026, and it was wrong. The tell is that
+ * 62.4 / 46.8 is exactly 4/3: the horizontal figure had been obtained by
+ * scaling the vertical *angle* by the sensor's aspect ratio, and angles do not
+ * scale that way. For a pinhole camera it is the *tangents* that carry the
+ * aspect ratio, so the two declared fields described a sensor of ratio 1.3995
+ * while the camera writes 4:3 stills.
+ *
+ * Which of the two to keep was not a coin toss. `vFov` drives `calcViewport`
+ * and therefore every crop the tool has ever produced; strips have stacked
+ * cleanly along the flat legs for years, which is an empirical check, and a
+ * 28 mm-equivalent lens gives 46.40 degrees independently. `hFov` had no valid
+ * derivation at all and only one consumer — the ground footprints drawn on the
+ * map, which nobody has ever checked against reality. With `vFov` trusted and
+ * the sensor known to be 4:3, the horizontal field is determined rather than
+ * chosen: 2 * atan(4/3 * tan(23.4)) = 59.9686.
+ *
+ * Two plausible-looking alternatives were rejected for the same reason as the
+ * original: DJI publishes 78.8 degrees diagonal, which on a 4:3 sensor implies
+ * 66.62 horizontal — but also 52.47 vertical; and a 28 mm equivalent implies
+ * 65.47 horizontal — but on a 3:2 frame, with 46.40 vertical. Each is a
+ * self-consistent pair. Taking the horizontal from one and the vertical from
+ * another is precisely the mistake being corrected.
+ *
+ * The absolute figures remain unverified against the real optics. What is fixed
+ * here is that they can no longer contradict each other and the sensor:
+ * tests/unit/camera.test.ts asserts the tangent ratio for every profile.
+ */
 export const MAVIC_PRO: CameraProfile = {
     id: 'dji-mavic-pro',
     name: 'DJI Mavic Pro',
     vFov: 46.8,
-    hFov: 62.4,
+    hFov: 59.96859,
     gimbalPitchRange: [-90, 30],
+    // 4000x3000 stills, which is what the aircraft actually writes.
+    sensorPixels: { width: 4000, height: 3000 },
 };
 
 /**
@@ -36,8 +77,13 @@ export const PREVIEW_CAMERA: CameraProfile = {
     id: 'preview-3d',
     name: '3D preview camera',
     vFov: 45,
-    hFov: 60,
+    hFov: 57.822402,
     gimbalPitchRange: [-90, 90],
+    // Matches RENDER_WIDTH and RENDER_HEIGHT in src/adapters/scene3d/scene.ts.
+    // Its hFov was 60 and is now 57.8224, which is not a recalibration but a
+    // correction to what three.js already renders: a PerspectiveCamera with
+    // fov 45 and aspect 4/3 has exactly that horizontal field.
+    sensorPixels: { width: 1000, height: 750 },
 };
 
 export const CAMERA_PROFILES: readonly CameraProfile[] = [MAVIC_PRO];

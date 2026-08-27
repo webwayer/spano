@@ -13,7 +13,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { CASES, FULL_DUMP_IDS } from './cases';
-import { buildDigest, buildFlightPath, buildFullDump, buildGeo, buildLitchi, normalize } from './record';
+import { buildColmap, buildDigest, buildFlightPath, buildFullDump, buildGeo, buildLitchi, normalize } from './record';
 import { compare, formatDiffs } from './compare';
 import { FULL_DIR, GOLDEN_DIR, fullDumpFilename } from './paths';
 
@@ -31,6 +31,7 @@ const checks: Check[] = [
     { label: 'geo', file: join(goldenDir, 'geo.json'), build: buildGeo },
     { label: 'flight-path', file: join(goldenDir, 'flight-path.json'), build: buildFlightPath },
     { label: 'litchi', file: join(goldenDir, 'litchi.json'), build: buildLitchi },
+    { label: 'colmap', file: join(goldenDir, 'colmap.json'), build: buildColmap },
     ...CASES.filter(c => FULL_DUMP_IDS.has(c.id)).map(c => ({
         label: `full/${c.id}`,
         file: join(fullDir, fullDumpFilename(c.id)),

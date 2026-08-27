@@ -49,7 +49,16 @@ export async function renderPlanIn3D(steps: Step[], viewPoint: Point): Promise<R
 
         const overview = imageFrom3DScene(OVERVIEW_FROM, OVERVIEW_AT, scene, camera, renderer);
         const frames = steps.map(step =>
-            imageFrom3DScene(sliceToScene(step.shootingPoint), sliceToScene(step.shootedPoint), scene, camera, renderer)
+            imageFrom3DScene(
+                // A survey grid flies lines either side of the centreline, so
+                // the preview has to place the camera there too — otherwise
+                // every line renders the same view and the mode looks broken.
+                sliceToScene(step.shootingPoint, step.lateralOffset),
+                sliceToScene(step.shootedPoint, step.lateralOffset),
+                scene,
+                camera,
+                renderer
+            )
         );
 
         return { overview, frames };

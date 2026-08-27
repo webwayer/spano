@@ -50,7 +50,7 @@ export function plan(curve: Curve, viewPoint: Point, options: PlanOptions = {}):
     const pointTriples = getPointTriples(curve, viewPoint, stepLength);
     const shootingErrors = getShootingErrorsForTriples(pointTriples);
     const segments = divideTriplesIntoSegmentsByErrors(pointTriples, shootingErrors);
-    const shots = divideSegmentsIntoShots(segments, maxViewAngle, maxDistortionAngle);
+    const shots = divideSegmentsIntoShots(segments, maxViewAngle, maxDistortionAngle, stepLength);
     const steps = convertShotsIntoSteps(shots);
 
     return {

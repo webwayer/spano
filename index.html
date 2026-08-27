@@ -53,6 +53,17 @@
                         </div>
 
                         <div class="field">
+                            <label for="captureStrategy">Capture mode</label>
+                            <select id="captureStrategy" name="captureStrategy"></select>
+                            <p class="hint" id="captureSummary"></p>
+                        </div>
+
+                        <div class="field" id="captureDensityField" hidden>
+                            <label for="captureDensity">Frames</label>
+                            <select id="captureDensity" name="captureDensity"></select>
+                        </div>
+
+                        <div class="field">
                             <label for="offset">Offset <span class="unit">metres</span></label>
                             <input type="number" id="offset" name="offset" min="10" max="200" step="1" value="50" />
                             <p class="hint">Ground under the start point you don’t want in shot.</p>
@@ -137,6 +148,23 @@
                             </p>
                         </div>
 
+                        <div class="field">
+                            <label for="objectHeight">Object height <span class="unit">metres</span></label>
+                            <input
+                                type="number"
+                                id="objectHeight"
+                                name="objectHeight"
+                                min="0"
+                                max="100"
+                                step="1"
+                                value="10"
+                            />
+                            <p class="hint">
+                                How tall the tallest things standing on the ground are — trees, buildings. It changes
+                                nothing about the flight; it is what the comparison below is measured against.
+                            </p>
+                        </div>
+
                         <button type="submit" id="generateButton" class="primary">Generate plan</button>
                     </fieldset>
                 </div>
@@ -178,6 +206,36 @@
                 </div>
             </section>
 
+            <section id="comparison" aria-labelledby="comparisonHeading">
+                <h2 id="comparisonHeading">How the capture modes compare</h2>
+
+                <p class="hint">
+                    Every row is the same panorama, photographed a different way. Seam slide is how far an object
+                    standing on the ground jumps between one frame and the next, which is the defect a crop cannot fix.
+                    Nothing here is a score: the mode with no slide at all also flattens the distance.
+                </p>
+
+                <div class="table-scroll">
+                    <table class="metrics" id="comparisonTable">
+                        <caption id="comparisonCaption">
+                            Seam slide
+                        </caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Capture mode</th>
+                                <th scope="col">Frames</th>
+                                <th scope="col">Flight <span class="unit">m</span></th>
+                                <th scope="col">Peak <span class="unit">m</span></th>
+                                <th scope="col">Slide <span class="unit">m</span></th>
+                                <th scope="col">Slide <span class="unit">px</span></th>
+                                <th scope="col">Over ceiling</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparisonBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
             <section aria-labelledby="preview3DHeading">
                 <h2 id="preview3DHeading">Synthetic preview</h2>
                 <p class="section-intro">
@@ -186,9 +244,32 @@
 
                 <div id="scene3D" class="scene"></div>
 
+                <div class="field">
+                    <label for="processingMode">Processing</label>
+                    <select id="processingMode" name="processingMode">
+                        <option value="crop">Plain crop — cut a band out of each frame</option>
+                        <option value="homography">Reproject — resample each strip onto the curve</option>
+                        <option value="seam-blend">Reproject and blend — also route the seams around obstacles</option>
+                        <option value="depth-warp">
+                            Reproject and orthorectify — measure how tall things are and stand them over their bases
+                        </option>
+                        <option value="flow-blend">
+                            Reproject and morph — measure the disagreement at each seam and slide across it
+                        </option>
+                    </select>
+                    <p id="processingNote" class="hint" role="status"></p>
+                    <p class="hint">
+                        A crop selects pixels; it cannot change the projection they were captured under, so neighbouring
+                        strips disagree wherever the cut falls. Reprojecting resamples each strip onto the viewer's
+                        curve, which lines the ground up exactly at every seam. Anything standing above the ground still
+                        slides — see the comparison above for how far.
+                    </p>
+                </div>
+
                 <div class="button-row">
                     <button type="button" id="generateButton3D" disabled>Build panorama from preview</button>
                     <button type="button" id="generateDebug3D" hidden>Show what was cropped</button>
+                    <button type="button" id="savePanorama3D" hidden>Save panorama</button>
                 </div>
 
                 <div id="preview3D" class="strip-stack" hidden aria-live="polite"></div>
@@ -226,13 +307,40 @@
                     <input type="file" id="filesReal" accept="image/*" multiple />
                 </div>
 
+                <p class="hint">Uses the same processing setting as the synthetic preview above.</p>
+
                 <div class="button-row">
                     <button type="button" id="generateButtonReal">Build panorama from photos</button>
                     <button type="button" id="generateDebugReal" hidden>Show what was cropped</button>
+                    <button type="button" id="savePanoramaReal" hidden>Save panorama</button>
                 </div>
 
                 <div id="previewReal" class="strip-stack" hidden aria-live="polite"></div>
                 <div id="debugReal" class="strip-stack" hidden></div>
+            </section>
+
+            <section id="poses" aria-labelledby="posesHeading">
+                <h2 id="posesHeading">Camera poses, for reconstructing the scene</h2>
+
+                <p class="hint">
+                    A crop cannot remove the parallax of anything standing above the ground, because the ray the
+                    panorama needs exists in no photograph. The way out is to reconstruct the scene from the real
+                    photographs and render that ray — and once a reconstruction exists, extra frames are free, so the
+                    finest capture density above costs nothing to render.
+                </p>
+                <p class="hint">
+                    These are the <strong>planned</strong> poses, not measured ones. The aircraft hovers near them, not
+                    on them. Run ordinary structure-from-motion on your photographs first; use this model to align the
+                    result to the plan and to render the panorama along the curve.
+                </p>
+
+                <div class="button-row">
+                    <button type="button" id="downloadCameras">cameras.txt</button>
+                    <button type="button" id="downloadImages">images.txt</button>
+                    <button type="button" id="downloadPoints">points3D.txt</button>
+                </div>
+
+                <p id="posesStatus" role="status" class="status"></p>
             </section>
         </main>
 
